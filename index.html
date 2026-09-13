@@ -132,7 +132,6 @@
     </div>
 
     <script>
-        // آدرس دقیق و نهایی گوگل اسکریپت شما
         const API_URL = "https://script.google.com/macros/s/AKfycbyLAmhCoWqHKBNUUarrgXzXrasbpy7Ygq0V4dJCMwu5EwNJs5dxM_NvcXgzJBW68A4p/exec";
         
         let appData = { news: [], tabs: [], legalSystems: [], faq: [] };
@@ -175,7 +174,6 @@
             const container = document.getElementById('tabs-container');
             container.innerHTML = '';
             
-            // Default All tab
             const allBtn = document.createElement('button');
             allBtn.className = `px-4 py-1.5 rounded-xl text-xs font-medium shrink-0 transition ${activeTab === 'all' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
             allBtn.innerText = "کل اخبار";

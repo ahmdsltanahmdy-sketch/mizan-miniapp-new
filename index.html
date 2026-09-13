@@ -25,7 +25,6 @@
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col text-xs">
 
     <script>
-        // لینک جدید وب اپلیکیشن گوگل اسکریپت
         const API_URL = 'https://script.google.com/macros/s/AKfycbxxUpGDVY9Sxj6FCvWag89F8N7uZH619prLVALvg96vyMkdlwlqeO6IF9oWWex_LtXY/exec'; 
         let userId = localStorage.getItem('mizan_user_id');
         if (!userId) {
@@ -247,7 +246,6 @@
         let generatedCardBlob = null;
         let isSubmittingComment = false;
 
-        // تصویر تنظیم شده در گیت‌هاب
         const FIRST_NEWS_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
         function updateDateTime() {
@@ -279,7 +277,7 @@
                     }
                 }
 
-                const response = await fetch(API_URL + "?t=" + now);
+                const response = await fetch(API_URL + "?action=get_all&t=" + now);
                 appData = await response.json();
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 localStorage.setItem('mizan_cache_time', now.toString());
@@ -483,11 +481,7 @@
             summaryBox.classList.remove('hidden');
             summaryBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال پردازش توسط هوش مصنوعی...`;
             try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'ai_summary', text: currentSelectedNews.title + "\n" + currentSelectedNews.summary })
-                });
+                const res = await fetch(API_URL + "?action=ai_summary&text=" + encodeURIComponent(currentSelectedNews.title + "\n" + currentSelectedNews.summary));
                 const r = await res.json();
                 summaryBox.innerHTML = r.summary || 'خطا در دریافت خلاصه.';
             } catch (err) { summaryBox.innerHTML = 'خطا در ارتباط با هوش مصنوعی.'; }
@@ -570,11 +564,7 @@
         async function bookmarkCurrentNewsCloud() {
             if (!currentSelectedNews) return;
             try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'save_bookmark', userId: userId, newsItem: currentSelectedNews })
-                });
+                const res = await fetch(API_URL + "?action=save_bookmark&userId=" + userId + "&title=" + encodeURIComponent(currentSelectedNews.title) + "&link=" + encodeURIComponent(currentSelectedNews.link) + "&summary=" + encodeURIComponent(currentSelectedNews.summary || '') + "&category=" + encodeURIComponent(currentSelectedNews.category || 'all'));
                 const r = await res.json();
                 if (r.status === 'success') {
                     alert('خبر در فضای ابری ذخیره شد.');
@@ -617,11 +607,7 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'add_comment', newsLink: currentSelectedNews.link, userName: author || 'کاربر مهمان', commentText: text })
-                });
+                const res = await fetch(API_URL + "?action=add_comment&newsLink=" + encodeURIComponent(currentSelectedNews.link) + "&userName=" + encodeURIComponent(author || 'کاربر مهمان') + "&commentText=" + encodeURIComponent(text));
                 const r = await res.json();
                 if (r.status === 'success') {
                     document.getElementById('commentTextInput').value = '';
@@ -659,11 +645,7 @@
             const q = document.getElementById('questionInput').value;
             if (!q.trim()) return alert('لطفا سوال حقوقی خود را وارد کنید.');
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: q })
-                });
+                const response = await fetch(API_URL + "?action=add_faq&question=" + encodeURIComponent(q));
                 const result = await response.json();
                 if (result.status === "success") {
                     alert('سوال با موفقیت ثبت شد.');
@@ -687,11 +669,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'ai_chat', query: rawQ })
-                });
+                const res = await fetch(API_URL + "?action=ai_chat&query=" + encodeURIComponent(rawQ));
                 const r = await res.json();
                 document.getElementById(loadingId).remove();
                 chatBox.innerHTML += `<div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-xl leading-relaxed whitespace-pre-line text-slate-800 dark:text-slate-200">${r.reply || 'پاسخی دریافت نشد.'}</div>`;

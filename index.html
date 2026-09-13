@@ -1,321 +1,775 @@
-function doGet(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var action = e && e.parameter && e.parameter.action ? e.parameter.action : "get_all";
-  var userId = e && e.parameter && e.parameter.userId ? e.parameter.userId : "guest";
-  var newsLink = e && e.parameter && e.parameter.newsLink ? e.parameter.newsLink : "";
-
-  var newsSheet = ss.getSheetByName("News");
-  var tabsSheet = ss.getSheetByName("Tabs");
-  var legalSheet = ss.getSheetByName("LegalSystems");
-  var faqSheet = ss.getSheetByName("FAQ");
-
-  if (!newsSheet || !tabsSheet) {
-    setupSheetStructure();
-    newsSheet = ss.getSheetByName("News");
-    tabsSheet = ss.getSheetByName("Tabs");
-  }
-
-  try {
-    fetchAndSaveRssNews();
-  } catch (err) {}
-
-  var resultData;
-  
-  if (action === "bookmarks" && userId) {
-    resultData = getUserBookmarks(ss, userId);
-  } else if (action === "comments" && newsLink) {
-    resultData = getNewsComments(ss, newsLink);
-  } else if (action === "ai_summary") {
-    var text = e.parameter.text || "";
-    var summaryRes = callGeminiAPI("این خبر را به صورت صریح و کوتاه خلاصه‌سازی کن:\n\n" + text);
-    resultData = { status: "success", summary: summaryRes };
-  } else if (action === "ai_chat") {
-    var query = e.parameter.query || "";
-    var chatRes = callGeminiAPI("شما وکیل ارشد میزان هستید. به پرسش حقوقی زیر پاسخ دهید:\n\n" + query);
-    resultData = { status: "success", reply: chatRes };
-  } else if (action === "add_comment") {
-    if (isUserSpamming(userId, "comment", 30000)) {
-      resultData = { status: "error", message: "لطفاً چند ثانیه صبر کنید و سپس دوباره نظر خود را ثبت کنید." };
-    } else {
-      var cRes = saveNewsComment(ss, e.parameter.newsLink, e.parameter.userName, e.parameter.commentText);
-      sendTelegramNotification("💬 نظر جدید در مینی‌اپ ثبت شد:\n\nکاربر: " + (e.parameter.userName || "مهمان") + "\nمتن: " + e.parameter.commentText);
-      resultData = { status: "success" };
-    }
-  } else if (action === "save_bookmark") {
-    var newsItem = { title: e.parameter.title, link: e.parameter.link, summary: e.parameter.summary, category: e.parameter.category };
-    resultData = saveUserBookmark(ss, userId, newsItem);
-  } else if (action === "add_faq") {
-    if (isUserSpamming(userId, "faq", 60000)) {
-      resultData = { status: "error", message: "لطفاً برای ارسال سوال جدید کمی صبر کنید (جلوگیری از اسپم)." };
-    } else {
-      var qText = e.parameter.question || "";
-      var sheet = ss.getSheetByName("FAQ");
-      if (!sheet) sheet = ss.insertSheet("FAQ");
-      sheet.appendRow([qText, "در صف بررسی...", "وکیل آنلاین", "mizanonline.ir/fa/message", new Date()]);
-      sendTelegramNotification("⚖️ سوال حقوقی جدید از وکیل آنلاین:\n\n" + qText);
-      resultData = { status: "success" };
-    }
-  } else {
-    resultData = {
-      news: getSheetData(newsSheet),
-      tabs: getSheetData(tabsSheet),
-      legalSystems: legalSheet ? getSheetData(legalSheet) : [],
-      faq: faqSheet ? getSheetData(faqSheet) : []
-    };
-  }
-
-  return ContentService.createTextOutput(JSON.stringify(resultData))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  return doGet(e);
-}
-
-function isUserSpamming(userId, actionType, intervalMs) {
-  var cache = CacheService.getScriptCache();
-  var cacheKey = "spam_" + actionType + "_" + userId;
-  var lastTime = cache.get(cacheKey);
-  var now = new Date().getTime();
-
-  if (lastTime && (now - parseInt(lastTime) < intervalMs)) {
-    return true;
-  }
-  cache.put(cacheKey, now.toString(), 300);
-  return false;
-}
-
-function sendTelegramNotification(message) {
-  try {
-    var props = PropertiesService.getScriptProperties();
-    var token = props.getProperty('TELEGRAM_BOT_TOKEN') || '';
-    var chatId = props.getProperty('ADMIN_CHAT_ID') || '';
-    if (!token || !chatId) return;
-
-    var url = "https://api.telegram.org/bot" + token + "/sendMessage";
-    var payload = {
-      chat_id: chatId,
-      text: message,
-      parse_mode: "Markdown"
-    };
-    UrlFetchApp.fetch(url, {
-      method: "post",
-      contentType: "application/json",
-      payload: JSON.stringify(payload),
-      muteHttpExceptions: true
-    });
-  } catch (err) {}
-}
-
-function setupSheetStructure() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  var newsSheet = ss.getSheetByName("News");
-  if (!newsSheet) {
-    newsSheet = ss.insertSheet("News");
-    newsSheet.appendRow(["id", "title", "summary", "link", "image", "pubDate", "category", "isFeatured", "isBookmark", "views"]);
-  }
-
-  var tabsSheet = ss.getSheetByName("Tabs");
-  if (!tabsSheet) {
-    tabsSheet = ss.insertSheet("Tabs");
-    tabsSheet.appendRow(["tab_id", "tab_name", "rss_url", "is_active", "sort_order"]);
-    tabsSheet.appendRow(["all", "کل اخبار", "https://www.mizanonline.ir/fa/rss/allnews", true, 1]);
-    tabsSheet.appendRow(["judicial", "قضایی", "https://www.mizanonline.ir/fa/rss/17", true, 2]);
-    tabsSheet.appendRow(["humanrights", "حقوق بشر", "https://www.mizanonline.ir/fa/rss/7", true, 3]);
-  }
-
-  var legalSheet = ss.getSheetByName("LegalSystems");
-  if (!legalSheet) {
-    legalSheet = ss.insertSheet("LegalSystems");
-    legalSheet.appendRow(["title", "description", "url"]);
-    legalSheet.appendRow(["سامانه ثنا", "سامانه خدمات الکترونیک قضایی", "https://sana.adliran.ir"]);
-  }
-
-  var faqSheet = ss.getSheetByName("FAQ");
-  if (!faqSheet) {
-    faqSheet = ss.insertSheet("FAQ");
-    faqSheet.appendRow(["question", "answer", "category", "laws_ref", "timestamp"]);
-    faqSheet.appendRow(["شرایط مطالبه مهریه چیست؟", "مطابق قانون جدید حمایت خانواده...", "وکیل آنلاین", "mizanonline.ir/fa/message", new Date()]);
-  }
-
-  var commentsSheet = ss.getSheetByName("Comments");
-  if (!commentsSheet) {
-    commentsSheet = ss.insertSheet("Comments");
-    commentsSheet.appendRow(["newsLink", "userName", "commentText", "status", "timestamp"]);
-  }
-}
-
-function fetchAndSaveRssNews() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var tabsSheet = ss.getSheetByName("Tabs");
-  var newsSheet = ss.getSheetByName("News");
-  if (!tabsSheet || !newsSheet) return;
-
-  var tabRows = tabsSheet.getDataRange().getValues();
-  if (tabRows.length < 2) return;
-
-  var existingLinks = {};
-  var newsRows = newsSheet.getDataRange().getValues();
-  for (var i = 1; i < newsRows.length; i++) {
-    if (newsRows[i][3]) existingLinks[newsRows[i][3].toString().trim()] = true;
-  }
-
-  var newEntries = [];
-
-  for (var t = 1; t < tabRows.length; t++) {
-    var tabId = tabRows[t][0] ? tabRows[t][0].toString().trim().toLowerCase() : "all";
-    var rssUrl = tabRows[t][2] ? tabRows[t][2].toString().trim() : "";
-    var isActive = tabRows[t][3];
-
-    var isActiveBool = (isActive === true || isActive === "TRUE" || isActive === "true" || isActive === 1);
-
-    if (isActiveBool && rssUrl) {
-      try {
-        var response = UrlFetchApp.fetch(rssUrl, { muteHttpExceptions: true });
-        var xmlContent = response.getContentText();
-        var document = XmlService.parse(xmlContent);
-        var root = document.getRootElement();
-        var channel = root.getChild("channel");
-        if (!channel) continue;
-        var items = channel.getChildren("item");
-
-        for (var j = 0; j < items.length; j++) {
-          var item = items[j];
-          var title = item.getChildText("title") || "";
-          var link = item.getChildText("link") || "";
-          var pubDate = item.getChildText("pubDate") || "";
-          var descNode = item.getChild("description");
-          var description = descNode ? descNode.getValue() || "" : "";
-          var summary = description.replace(/<[^>]*>?/gm, '').trim();
-          var cleanLink = link.toString().trim();
-
-          if (cleanLink && !existingLinks[cleanLink]) {
-            existingLinks[cleanLink] = true;
-            var id = "news_" + new Date().getTime() + "_" + Math.floor(Math.random() * 10000);
-
-            newEntries.push([
-              id, title, summary || "مشاهده مشروح گزارش در پایگاه خبری میزان.", 
-              cleanLink, "https://www.mizanonline.ir/files/fa/news/d/2023/1/1/658933_705.jpg", 
-              pubDate, tabId, false, false, 0
-            ]);
-          }
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>خبرگزاری میزان | مینی‌اپ هوشمند</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { mizan: { 600: '#c51b24', 700: '#9b131a' } } } }
         }
-      } catch (e) {}
-    }
-  }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: var(--selected-font, Tahoma), Arial, sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .glass-tab { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .dark .glass-tab { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
+        .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
+    </style>
+</head>
+<body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col text-xs">
 
-  if (newEntries.length > 0) {
-    newsSheet.getRange(newsSheet.getLastRow() + 1, 1, newEntries.length, newEntries[0].length).setValues(newEntries);
-  }
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxxUpGDVY9Sxj6FCvWag89F8N7uZH619prLVALvg96vyMkdlwlqeO6IF9oWWex_LtXY/exec'; 
+        let userId = localStorage.getItem('mizan_user_id');
+        if (!userId) {
+            userId = 'user_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('mizan_user_id', userId);
+        }
+        if (localStorage.getItem('mizan_theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
 
-  var totalRows = newsSheet.getLastRow();
-  if (totalRows > 800) {
-    newsSheet.deleteRows(2, totalRows - 800);
-  }
-}
+    <header id="appHeader" class="sticky top-0 z-50 bg-[#c51b24] dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="bg-white text-[#c51b24] p-2 rounded-xl font-bold text-xs shadow">میزان</div>
+                <div>
+                    <h1 class="font-bold text-xs">خبرگزاری میزان</h1>
+                    <div id="liveDateTime" class="text-[9px] text-red-100 dark:text-slate-400 mt-0.5">بارگذاری...</div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <button onclick="showInstallGuide()" title="نصب مینی‌اپ" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                    <span>نصب</span>
+                </button>
+                <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-2 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
+                <button onclick="toggleFontMenu()" title="تنظیم فونت" class="p-2 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-text-height text-xs"></i></button>
+                <button onclick="toggleTheme()" title="تغییر تم" class="p-2 rounded-full hover:bg-white/10 transition"><i id="theme-icon" class="fa-solid fa-moon text-xs"></i></button>
+            </div>
+        </div>
 
-function getSheetData(sheet) {
-  var rows = sheet.getDataRange().getValues();
-  if (rows.length < 2) return [];
-  var headers = rows[0];
-  var data = [];
-  for (let i = 1; i < rows.length; i++) {
-    var obj = {};
-    for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = rows[i][j];
-    }
-    data.push(obj);
-  }
-  return data;
-}
+        <div class="max-w-md mx-auto px-4 pb-3 relative">
+            <div class="flex space-x-2 space-x-reverse relative">
+                <div class="relative flex-grow">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار..." class="w-full bg-white/15 dark:bg-slate-800 placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition">
+                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs cursor-pointer" onclick="triggerSearch()"></i>
+                </div>
+                <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته" class="glass-tab px-3 rounded-xl text-xs flex items-center justify-center transition">
+                    <i class="fa-solid fa-earth-americas"></i>
+                </button>
+            </div>
+            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto border border-slate-200 dark:border-slate-700 p-2 space-y-1"></div>
+        </div>
 
-// تابع تخصصی اتصال به هوش مصنوعی با نسخه پایدار v1
-function callGeminiAPI(promptText) {
-  var props = PropertiesService.getScriptProperties();
-  var geminiKey = props.getProperty('GEMINI_API_KEY') || '';
-  if (!geminiKey) return "کلید هوش مصنوعی ثبت نشده است.";
+        <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar border-t border-white/10 py-2"></div>
+    </header>
 
-  var url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + geminiKey;
-  var payload = {
-    contents: [{
-      parts: [{ text: promptText }]
-    }]
-  };
+    <div id="installGuideModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
+            <button onclick="closeInstallGuide()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-sm text-[#c51b24]"><i class="fa-solid fa-cloud-arrow-down ml-1"></i> نصب مینی‌اپ میزان</h3>
+            <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">برای استفاده مثل یک اپلیکیشن واقعی:</p>
+            <div class="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl space-y-2 text-[11px] text-slate-700 dark:text-slate-200">
+                <p><strong>اندروید:</strong> منوی مرورگر را باز کرده و گزینه <span class="text-red-600 font-bold">«افزودن به صفحه اصلی»</span> را انتخاب کنید.</p>
+                <p class="border-t border-slate-200 dark:border-slate-700 pt-2"><strong>آیفون:</strong> در سافاری دکمه اشتراک‌گذاری را زده و <span class="text-red-600 font-bold">«Add to Home Screen»</span> را انتخاب کنید.</p>
+            </div>
+            <button onclick="closeInstallGuide()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold">متوجه شدم</button>
+        </div>
+    </div>
 
-  try {
-    var response = UrlFetchApp.fetch(url, {
-      method: "post",
-      contentType: "application/json",
-      payload: JSON.stringify(payload),
-      muteHttpExceptions: true
-    });
-    
-    var responseText = response.getContentText();
-    var json = JSON.parse(responseText);
-    
-    if (json.error) {
-      return "خطای هوش مصنوعی: " + (json.error.message || JSON.stringify(json.error));
-    }
-    
-    if (json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts) {
-      return json.candidates[0].content.parts[0].text;
-    }
-    
-    return "پاسخی دریافت نشد.";
-  } catch (e) {
-    return "خطا در ارتباط با سرویس هوش مصنوعی: " + e.toString();
-  }
-}
+    <div id="fontMenu" class="hidden max-w-md mx-auto w-full px-4 py-3 bg-red-900 text-white space-y-2 text-xs shadow-inner">
+        <div class="flex justify-between items-center">
+            <span>اندازه فونت:</span>
+            <button onclick="changeFontSize('small')" class="px-2.5 py-1 bg-white/20 rounded">کوچک</button>
+            <button onclick="changeFontSize('normal')" class="px-2.5 py-1 bg-white/20 rounded">متوسط</button>
+            <button onclick="changeFontSize('large')" class="px-2.5 py-1 bg-white/20 rounded">بزرگ</button>
+        </div>
+        <div class="flex justify-between items-center pt-2 border-t border-white/20">
+            <span>قلم مینی‌اپ:</span>
+            <button onclick="changeFontFamily('Tahoma')" class="px-2 py-1 bg-white/20 rounded">Tahoma</button>
+            <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-1 bg-white/20 rounded">وزیرمتن</button>
+            <button onclick="changeFontFamily('Yekan Bakh')" class="px-2 py-1 bg-white/20 rounded">یکان‌بخش</button>
+        </div>
+    </div>
 
-function saveUserBookmark(ss, userId, newsItem) {
-  var sheet = ss.getSheetByName("Bookmarks");
-  if (!sheet) {
-    sheet = ss.insertSheet("Bookmarks");
-    sheet.appendRow(["userId", "title", "link", "summary", "category"]);
-  }
-  sheet.appendRow([userId, newsItem.title, newsItem.link, newsItem.summary, newsItem.category]);
-  return { status: "success" };
-}
+    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-20" onclick="closeSuggestionsOnClickOutside(event)">
+        <section id="news-tab" class="page-section">
+            <div id="featuredNewsContainer" class="mb-4"></div>
+            <div id="newsListContainer" class="space-y-3"></div>
+            <div id="loadMoreContainer" class="text-center py-4 hidden">
+                <button onclick="loadMoreNews()" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-50 transition">مشاهده اخبار بیشتر</button>
+            </div>
+        </section>
 
-function getUserBookmarks(ss, userId) {
-  var sheet = ss.getSheetByName("Bookmarks");
-  if (!sheet) return [];
-  var rows = sheet.getDataRange().getValues();
-  var userBookmarks = [];
-  for (let i = 1; i < rows.length; i++) {
-    if (rows[i][0] === userId) {
-      userBookmarks.push({ title: rows[i][1], link: rows[i][2], summary: rows[i][3], category: rows[i][4] });
-    }
-  }
-  return userBookmarks;
-}
+        <section id="legal-tab" class="page-section hidden">
+            <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300">سامانه‌های الکترونیک قضایی</h2>
+            <div id="legalSystemsContainer" class="space-y-3"></div>
+        </section>
 
-function saveNewsComment(ss, newsLink, userName, commentText) {
-  var sheet = ss.getSheetByName("Comments");
-  if (!sheet) {
-    sheet = ss.insertSheet("Comments");
-    sheet.appendRow(["newsLink", "userName", "commentText", "status", "timestamp"]);
-  }
-  sheet.appendRow([newsLink, userName || "کاربر مهمان", commentText, "pending", new Date()]);
-  return { status: "success" };
-}
+        <section id="lawyer-tab" class="page-section hidden space-y-4">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-user-tie ml-1"></i> پرسش از وکیل آنلاین</h2>
+                    <span id="pendingBadge" class="bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 text-[10px] px-2.5 py-1 rounded-full font-bold">۰ سوال در حال بررسی</span>
+                </div>
+                <textarea id="questionInput" placeholder="سوال حقوقی خود را بنویسید..." class="w-full bg-slate-50 dark:bg-slate-800 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-white h-24 mb-2 resize-none"></textarea>
+                <button onclick="submitQuestion()" class="w-full bg-[#c51b24] hover:bg-red-700 text-white py-2.5 rounded-xl text-xs font-bold transition">ارسال سوال</button>
+            </div>
+            <div class="bg-gradient-to-r from-[#c51b24] to-red-950 text-white p-4 rounded-2xl shadow-md flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-xs">سامانه پیام‌های مردمی و حقوقی میزان</h3>
+                    <p class="text-[10px] text-red-100 mt-0.5">درگاه رسمی نظارت و پیگیری مطالبات</p>
+                </div>
+                <a href="https://www.mizanonline.ir/fa/message" target="_blank" class="bg-white text-[#c51b24] px-3 py-1.5 rounded-xl text-xs font-bold shadow flex-shrink-0">ورود به درگاه</a>
+            </div>
+            <div class="space-y-3">
+                <h3 class="font-bold text-xs mb-2 text-slate-700 dark:text-slate-300">پرسش و پاسخ‌های حقوقی برگزیده</h3>
+                <div id="officialMessagesContainer" class="space-y-3"></div>
+            </div>
+        </section>
 
-function getNewsComments(ss, newsLink) {
-  var sheet = ss.getSheetByName("Comments");
-  if (!sheet) return { comments: [], pendingCount: 0 };
-  var rows = sheet.getDataRange().getValues();
-  var approvedComments = [];
-  var pendingCount = 0;
-  for (let i = 1; i < rows.length; i++) {
-    if (rows[i][0] === newsLink) {
-      var status = rows[i][3] ? rows[i][3].toString().trim().toLowerCase() : "pending";
-      if (status === "approved") {
-        approvedComments.push({ userName: rows[i][1], commentText: rows[i][2], timestamp: rows[i][4] });
-      } else {
-        pendingCount++;
-      }
-    }
-  }
-  return { comments: approvedComments, pendingCount: pendingCount };
-}
+        <section id="ai-tab" class="page-section hidden space-y-4">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                <h2 class="font-bold text-xs text-red-600 mb-2"><i class="fa-solid fa-scale-balanced ml-1"></i> دستیار هوش مصنوعی و وکیل ارشد حقوقی</h2>
+                <div id="chatBox" class="h-60 bg-slate-50 dark:bg-slate-950 rounded-xl p-3 overflow-y-auto text-[11px] space-y-2 mb-2 shadow-inner">
+                    <div class="bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-200 p-2.5 rounded-xl leading-relaxed border border-red-100 dark:border-red-900/30">درود! من دستیار حقوقی میزان هستم. پرسش خود پیرامون قوانین و مقررات را بپرسید.</div>
+                </div>
+                <div class="flex space-x-2 space-x-reverse">
+                    <input type="text" id="aiChatInput" placeholder="پرسش تخصصی حقوقی..." class="flex-grow bg-slate-50 dark:bg-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none dark:text-white" onkeydown="if(event.key==='Enter') sendAiMessage()">
+                    <button onclick="sendAiMessage()" class="bg-[#c51b24] hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">ارسال</button>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                <h3 class="font-bold text-xs text-red-600 mb-2"><i class="fa-solid fa-bookmark ml-1"></i> اخبار ذخیره‌شده ابری</h3>
+                <div id="bookmarksContainer" class="space-y-2 text-xs text-slate-500">در حال بارگذاری...</div>
+            </div>
+        </section>
+
+        <section id="search-tab" class="page-section hidden">
+            <h2 class="font-bold text-xs mb-3 text-red-600">نتایج جستجو</h2>
+            <div id="searchResultsContainer" class="space-y-3"></div>
+        </section>
+    </main>
+
+    <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div id="modalCardContainer" class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
+            <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            <div class="flex justify-between items-center mb-2">
+                <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-bold">دسته‌بندی</span>
+                <button onclick="toggleReadingMode()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1 rounded-lg font-medium transition"><i class="fa-solid fa-book-open ml-1"></i> حالت مطالعه</button>
+            </div>
+            <img id="modalImg" src="" class="w-full h-36 object-cover rounded-xl mb-3 shadow" alt="">
+            <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
+            <p id="modalSummary" class="text-[11px] text-slate-600 dark:text-slate-300 mt-2 leading-relaxed whitespace-pre-line">خلاصه کامل...</p>
+            
+            <button onclick="generateRealAiSummary()" class="w-full bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300 hover:bg-red-100 py-2.5 rounded-xl text-xs font-bold mt-3 transition border border-red-100 dark:border-red-900/40">
+                <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> خلاصه‌سازی هوشمند توسط هوش مصنوعی
+            </button>
+            <div id="aiSummaryResult" class="hidden mt-2 p-2.5 bg-red-50 dark:bg-red-950/40 text-[11px] rounded-xl text-red-900 dark:text-red-200 leading-relaxed whitespace-pre-line border border-red-100 dark:border-red-900/30"></div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-bold text-xs text-red-600">نظرات کاربران</h4>
+                    <span id="pendingCommentsBadge" class="text-[9px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-full font-medium">۰ نظر در صف انتشار</span>
+                </div>
+                <div id="commentsListContainer" class="max-h-32 overflow-y-auto space-y-1.5 text-[11px]"></div>
+                <div class="flex space-x-1 space-x-reverse pt-1">
+                    <input type="text" id="commentAuthorInput" placeholder="نام شما..." class="w-1/3 bg-slate-100 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg text-[10px] dark:text-white">
+                    <input type="text" id="commentTextInput" placeholder="نظر خود را بنویسید..." class="flex-grow bg-slate-100 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg text-[10px] dark:text-white" onkeydown="if(event.key==='Enter') submitComment()">
+                    <button id="submitCommentBtn" onclick="submitComment()" class="bg-[#c51b24] hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[10px] font-bold transition">ثبت</button>
+                </div>
+            </div>
+
+            <div class="flex space-x-2 space-x-reverse mt-4">
+                <a id="modalLink" href="#" target="_blank" class="flex-grow bg-[#c51b24] hover:bg-red-700 text-white text-center py-2.5 rounded-xl text-xs font-bold transition shadow">سایت میزان</a>
+                <button onclick="openCardPreviewModal()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs transition" title="کارت گرافیکی"><i class="fa-solid fa-image"></i></button>
+                <button onclick="shareCurrentNews()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs transition" title="اشتراک‌گذاری"><i class="fa-solid fa-share-nodes"></i></button>
+                <button onclick="bookmarkCurrentNewsCloud()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs transition" title="ذخیره ابری"><i class="fa-solid fa-bookmark"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cardPreviewModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3">
+            <button onclick="closeCardPreviewModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-xs text-[#c51b24]">کارت گرافیکی ویژه خبر</h3>
+            <div id="cardCanvasPreviewContainer" class="border dark:border-slate-800 rounded-xl overflow-hidden shadow-inner flex justify-center bg-white p-2"></div>
+            <div class="flex space-x-2 space-x-reverse">
+                <button onclick="downloadOrShareCard()" class="flex-grow bg-[#c51b24] hover:bg-red-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow">تایید و اشتراک‌گذاری / دانلود</button>
+                <button onclick="closeCardPreviewModal()" class="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 px-4 py-2.5 rounded-xl text-xs transition">انصراف</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl">
+            <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-sm text-[#c51b24] mb-3"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته کل سایت</h3>
+            <input type="text" id="advSearchInput" placeholder="جستجو در آرشیو..." class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-2.5 text-xs mb-3 focus:outline-none dark:text-white" onkeydown="if(event.key==='Enter') executeAdvancedSearch()">
+            <button onclick="executeAdvancedSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold mb-3">جستجوی جامع</button>
+            <div id="advSearchResults" class="max-h-60 overflow-y-auto space-y-2 text-xs"></div>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-6 flex justify-between items-center z-50 shadow-lg">
+        <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition">
+            <i class="fa-solid fa-newspaper text-base"></i>
+            <span class="text-[9px] mt-1 font-bold">اخبار</span>
+        </button>
+        <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+            <i class="fa-solid fa-scale-balanced text-base"></i>
+            <span class="text-[9px] mt-1">سامانه‌ها</span>
+        </button>
+        <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+            <i class="fa-solid fa-user-tie text-base"></i>
+            <span class="text-[9px] mt-1">وکیل آنلاین</span>
+        </button>
+        <button onclick="switchTab('ai-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+            <i class="fa-solid fa-robot text-base"></i>
+            <span class="text-[9px] mt-1">هوش مصنوعی</span>
+        </button>
+    </nav>
+
+    <script>
+        let appData = { news: [], tabs: [], legalSystems: [], faq: [] };
+        let currentCategory = 'all';
+        let currentSelectedNews = null;
+        let displayedNewsCount = 15;
+        let generatedCardBlob = null;
+        let isSubmittingComment = false;
+
+        const FIRST_NEWS_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('liveDateTime').innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        async function initApp(force = false) {
+            try {
+                const cacheTime = localStorage.getItem('mizan_cache_time');
+                const now = new Date().getTime();
+                const CACHE_TTL = 15 * 1000;
+
+                if (!force) {
+                    const cached = localStorage.getItem('mizan_cache');
+                    if (cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
+                        appData = JSON.parse(cached);
+                        if (!currentCategory || currentCategory === '') {
+                            const firstActive = (appData.tabs || []).find(t => String(t.is_active).toLowerCase() === 'true' || t.is_active === 1);
+                            currentCategory = firstActive ? String(firstActive.tab_id || firstActive.category).trim().toLowerCase() : 'all';
+                        }
+                        renderTabs();
+                        renderNews();
+                        renderLegalSystems();
+                        renderOfficialMessages();
+                        return;
+                    }
+                }
+
+                const response = await fetch(API_URL + "?action=get_all&t=" + now);
+                appData = await response.json();
+                localStorage.setItem('mizan_cache', JSON.stringify(appData));
+                localStorage.setItem('mizan_cache_time', now.toString());
+
+                if (!currentCategory || currentCategory === '') {
+                    const firstActive = (appData.tabs || []).find(t => String(t.is_active).toLowerCase() === 'true' || t.is_active === 1);
+                    currentCategory = firstActive ? String(firstActive.tab_id || firstActive.category).trim().toLowerCase() : 'all';
+                }
+
+                renderTabs();
+                renderNews();
+                renderLegalSystems();
+                renderOfficialMessages();
+                loadCloudBookmarks();
+            } catch (error) {
+                console.error("Error loading data:", error);
+            }
+        }
+
+        function showInstallGuide() { document.getElementById('installGuideModal').classList.remove('hidden'); }
+        function closeInstallGuide() { document.getElementById('installGuideModal').classList.add('hidden'); }
+
+        async function manualRefresh() {
+            const icon = document.getElementById('refreshIcon');
+            icon.classList.add('fa-spin');
+            localStorage.removeItem('mizan_cache');
+            localStorage.removeItem('mizan_cache_time');
+            await initApp(true);
+            setTimeout(() => icon.classList.remove('fa-spin'), 600);
+            alert('اخبار با موفقیت بروزرسانی شد.');
+        }
+
+        function changeFontFamily(fontName) {
+            document.documentElement.style.setProperty('--selected-font', fontName);
+            localStorage.setItem('mizan_font', fontName);
+            alert('قلم مینی‌اپ به ' + fontName + ' تغییر یافت.');
+            toggleFontMenu();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedFont = localStorage.getItem('mizan_font');
+            if (savedFont) document.documentElement.style.setProperty('--selected-font', savedFont);
+            if (localStorage.getItem('mizan_theme') === 'dark') {
+                isDarkTheme = true;
+                applyThemeUI();
+            }
+        });
+
+        function renderTabs() {
+            const container = document.getElementById('tabsContainer');
+            if (!appData.tabs || appData.tabs.length === 0) return;
+
+            const activeTabs = appData.tabs.filter(t => {
+                let v = t.is_active;
+                return v === true || String(v).toLowerCase() === 'true' || v === 1;
+            });
+
+            container.innerHTML = activeTabs.map(tab => {
+                const tabCat = String(tab.tab_id || tab.category || '').trim().toLowerCase();
+                const isSelected = (String(currentCategory).trim().toLowerCase() === tabCat);
+                const btnClass = isSelected 
+                    ? "px-4 py-1.5 rounded-full text-xs font-bold bg-white text-[#c51b24] shadow-md whitespace-nowrap transition" 
+                    : "px-4 py-1.5 rounded-full text-xs font-medium glass-tab text-white hover:bg-white/25 whitespace-nowrap transition";
+                return `<button onclick="filterNewsByTab('${tabCat}')" class="${btnClass}">${tab.tab_name}</button>`;
+            }).join('');
+        }
+
+        function filterNewsByTab(catId) {
+            currentCategory = String(catId).trim().toLowerCase();
+            displayedNewsCount = 15;
+            renderTabs();
+            renderNews();
+        }
+
+        function renderNews() {
+            const container = document.getElementById('newsListContainer');
+            const featuredContainer = document.getElementById('featuredNewsContainer');
+            const loadMoreBtn = document.getElementById('loadMoreContainer');
+
+            let uniqueNewsMap = new Map();
+            (appData.news || []).forEach(item => {
+                if (item.link && !uniqueNewsMap.has(item.link)) uniqueNewsMap.set(item.link, item);
+            });
+            let allNews = Array.from(uniqueNewsMap.values());
+
+            let filteredNews = allNews;
+            if (currentCategory && currentCategory !== 'all') {
+                filteredNews = allNews.filter(item => {
+                    const itemCat = item.category ? String(item.category).trim().toLowerCase() : 'all';
+                    return itemCat === currentCategory;
+                });
+            }
+
+            if (!filteredNews || filteredNews.length === 0) {
+                featuredContainer.innerHTML = '';
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs font-medium">هیچ خبری در این دسته‌بندی ثبت نشده است.</p>';
+                loadMoreBtn.classList.add('hidden');
+                return;
+            }
+
+            filteredNews.sort((a, b) => {
+                let dateA = a.pubDate ? new Date(a.pubDate).getTime() : 0;
+                let dateB = b.pubDate ? new Date(b.pubDate).getTime() : 0;
+                return dateB - dateA;
+            });
+
+            const firstNews = filteredNews[0];
+
+            featuredContainer.innerHTML = `
+                <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
+                    <img src="${FIRST_NEWS_IMAGE}" class="w-full h-44 object-cover" alt="">
+                    <div class="p-3.5">
+                        <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
+                        <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-normal">${firstNews.summary || ''}</p>
+                    </div>
+                </div>
+            `;
+
+            const currentBatch = filteredNews.slice(1, displayedNewsCount);
+            container.innerHTML = currentBatch.map(item => `
+                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
+                    <h3 class="font-bold text-xs line-clamp-2 leading-snug">${item.title}</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-normal">${item.summary || ''}</p>
+                </div>
+            `).join('');
+
+            if (filteredNews.length > displayedNewsCount) {
+                loadMoreBtn.classList.remove('hidden');
+            } else {
+                loadMoreBtn.classList.add('hidden');
+            }
+        }
+
+        function loadMoreNews() {
+            displayedNewsCount += 15;
+            renderNews();
+        }
+
+        function handleLiveSearch(query) {
+            const box = document.getElementById('liveSuggestionsBox');
+            const q = query.trim().toLowerCase();
+            if (!q) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+
+            let uniqueMap = new Map();
+            (appData.news || []).forEach(i => uniqueMap.set(i.link, i));
+            let allNews = Array.from(uniqueMap.values());
+
+            const matchedNews = allNews.filter(n => n.title.toLowerCase().includes(q) || (n.summary && n.summary.toLowerCase().includes(q))).slice(0, 6);
+            const matchedSystems = (appData.legalSystems || []).filter(s => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
+
+            if (matchedNews.length === 0 && matchedSystems.length === 0) {
+                box.innerHTML = '<div class="p-2 text-center text-slate-400">موردی یافت نشد</div>';
+                box.classList.remove('hidden');
+                return;
+            }
+
+            let html = '';
+            if (matchedSystems.length > 0) {
+                html += '<div class="text-[10px] font-bold text-red-600 px-2 py-1">سامانه‌ها</div>';
+                html += matchedSystems.map(sys => `<a href="${sys.url}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold text-slate-800 dark:text-white">${sys.title}</div><div class="text-[10px] text-slate-500">${sys.description}</div></a>`).join('');
+            }
+            if (matchedNews.length > 0) {
+                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-slate-100 dark:border-slate-700 mt-1">اخبار مرتبط</div>';
+                html += matchedNews.map(item => `<div onclick='selectLiveSuggestion(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer transition"><div class="font-bold line-clamp-1 text-slate-800 dark:text-white">${item.title}</div><div class="text-[10px] text-slate-500 line-clamp-1 mt-0.5">${item.summary || ''}</div></div>`).join('');
+            }
+            box.innerHTML = html;
+            box.classList.remove('hidden');
+        }
+
+        function selectLiveSuggestion(news) {
+            document.getElementById('liveSuggestionsBox').classList.add('hidden');
+            document.getElementById('searchInput').value = '';
+            openNewsModal(news);
+        }
+
+        function closeSuggestionsOnClickOutside(event) {
+            if (!event.target.closest('#searchInput') && !event.target.closest('#liveSuggestionsBox')) {
+                document.getElementById('liveSuggestionsBox').classList.add('hidden');
+            }
+        }
+
+        function openNewsModal(news) {
+            currentSelectedNews = news;
+            document.getElementById('modalTitle').innerText = news.title;
+            document.getElementById('modalSummary').innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
+            document.getElementById('modalCategory').innerText = news.category || 'عمومی';
+            document.getElementById('modalImg').src = FIRST_NEWS_IMAGE;
+            document.getElementById('modalLink').href = news.link;
+            document.getElementById('aiSummaryResult').classList.add('hidden');
+
+            loadNewsComments(news.link);
+            document.getElementById('newsModal').classList.remove('hidden');
+        }
+
+        function closeNewsModal() { document.getElementById('newsModal').classList.add('hidden'); }
+        function toggleReadingMode() { document.getElementById('modalCardContainer').classList.toggle('reading-mode-active'); }
+
+        async function generateRealAiSummary() {
+            const summaryBox = document.getElementById('aiSummaryResult');
+            summaryBox.classList.remove('hidden');
+            summaryBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال پردازش توسط هوش مصنوعی...`;
+            try {
+                const res = await fetch(API_URL + "?action=ai_summary&text=" + encodeURIComponent(currentSelectedNews.title + "\n" + currentSelectedNews.summary));
+                const r = await res.json();
+                summaryBox.innerHTML = r.summary || 'خطا در دریافت خلاصه.';
+            } catch (err) { summaryBox.innerHTML = 'خطا در ارتباط با هوش مصنوعی.'; }
+        }
+
+        function openCardPreviewModal() {
+            if (!currentSelectedNews) return;
+            const canvas = document.createElement('canvas');
+            canvas.width = 600; canvas.height = 450;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, 600, 450);
+            let gradient = ctx.createLinearGradient(0, 0, 600, 0);
+            gradient.addColorStop(0, '#c51b24'); gradient.addColorStop(1, '#7f1d1d');
+            ctx.fillStyle = gradient; ctx.fillRect(0, 0, 600, 95);
+
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px Tahoma'; ctx.direction = 'rtl';
+            ctx.fillText('خبرگزاری میزان | پایگاه خبری حقوقی و قضایی', 550, 55, 500);
+
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(35, 120, 530, 275);
+            ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.strokeRect(35, 120, 530, 275);
+
+            ctx.fillStyle = '#f87171'; ctx.font = 'bold 12px Tahoma';
+            ctx.fillText('📌 گزارش خبری ویژه', 520, 155, 450);
+
+            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 16px Tahoma';
+            wrapText(ctx, currentSelectedNews.title, 520, 190, 470, 28);
+
+            ctx.fillStyle = '#94a3b8'; ctx.font = '12px Tahoma';
+            let summaryClean = (currentSelectedNews.summary || '').substring(0, 130) + '...';
+            wrapText(ctx, summaryClean, 520, 285, 470, 22);
+
+            ctx.fillStyle = '#64748b'; ctx.font = '10px Tahoma';
+            ctx.fillText('mizanonline.ir | مرجع رسمی حقوقی و قضایی کشور', 520, 370, 470);
+
+            canvas.toBlob(blob => {
+                generatedCardBlob = blob;
+                const previewContainer = document.getElementById('cardCanvasPreviewContainer');
+                previewContainer.innerHTML = '';
+                canvas.className = "w-full h-auto rounded-xl shadow-md";
+                previewContainer.appendChild(canvas);
+                document.getElementById('cardPreviewModal').classList.remove('hidden');
+            });
+        }
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            let words = text.split(' ');
+            let line = '';
+            for(let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = context.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    context.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, y);
+        }
+
+        function closeCardPreviewModal() { document.getElementById('cardPreviewModal').classList.add('hidden'); }
+
+        function downloadOrShareCard() {
+            if (!generatedCardBlob) return;
+            const file = new File([generatedCardBlob], "mizan-news-card.png", { type: "image/png" });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({ files: [file], title: currentSelectedNews.title, text: currentSelectedNews.link });
+            } else {
+                const link = document.createElement('a');
+                link.download = 'mizan-card.png';
+                link.href = URL.createObjectURL(generatedCardBlob);
+                link.click();
+                alert('کارت گرافیکی خبر دانلود شد.');
+            }
+            closeCardPreviewModal();
+        }
+
+        async function bookmarkCurrentNewsCloud() {
+            if (!currentSelectedNews) return;
+            try {
+                const res = await fetch(API_URL + "?action=save_bookmark&userId=" + userId + "&title=" + encodeURIComponent(currentSelectedNews.title) + "&link=" + encodeURIComponent(currentSelectedNews.link) + "&summary=" + encodeURIComponent(currentSelectedNews.summary || '') + "&category=" + encodeURIComponent(currentSelectedNews.category || 'all'));
+                const r = await res.json();
+                if (r.status === 'success') {
+                    alert('خبر در فضای ابری ذخیره شد.');
+                    loadCloudBookmarks();
+                }
+            } catch (err) { alert('خطا در ذخیره ابری.'); }
+        }
+
+        async function loadCloudBookmarks() {
+            const container = document.getElementById('bookmarksContainer');
+            try {
+                const res = await fetch(API_URL + "?action=bookmarks&userId=" + userId);
+                const bookmarks = await res.json();
+                if (!bookmarks.length) { container.innerHTML = 'هیچ خبری ذخیره نشده است.'; return; }
+                container.innerHTML = bookmarks.map(b => `<a href="${b.link}" target="_blank" class="block p-2 bg-slate-50 dark:bg-slate-800 rounded-lg mb-1 line-clamp-1 hover:text-red-500 transition">${b.title}</a>`).join('');
+            } catch (e) { container.innerHTML = 'خطا در بارگذاری بوکمارک‌ها.'; }
+        }
+
+        async function loadNewsComments(newsLink) {
+            const container = document.getElementById('commentsListContainer');
+            const badge = document.getElementById('pendingCommentsBadge');
+            container.innerHTML = 'در حال بارگذاری نظرات...';
+            try {
+                const res = await fetch(API_URL + "?action=comments&newsLink=" + encodeURIComponent(newsLink));
+                const data = await res.json();
+                if (badge) badge.innerText = `${data.pendingCount} نظر در صف انتشار`;
+                if (!data.comments || !data.comments.length) { container.innerHTML = 'هنوز نظری تایید نشده است. اولین نفر باشید!'; return; }
+                container.innerHTML = data.comments.map(c => `<div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg space-y-0.5"><div class="font-bold text-red-600 dark:text-red-400">${c.userName}</div><div class="text-slate-700 dark:text-slate-300 leading-relaxed">${c.commentText}</div></div>`).join('');
+            } catch (e) { container.innerHTML = 'خطا در بارگذاری نظرات.'; }
+        }
+
+        async function submitComment() {
+            if (isSubmittingComment) return;
+            const author = document.getElementById('commentAuthorInput').value.trim();
+            const text = document.getElementById('commentTextInput').value.trim();
+            const submitBtn = document.getElementById('submitCommentBtn');
+            if (!text) return alert('لطفاً متن نظر خود را وارد کنید.');
+
+            isSubmittingComment = true;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            try {
+                const res = await fetch(API_URL + "?action=add_comment&userId=" + userId + "&newsLink=" + encodeURIComponent(currentSelectedNews.link) + "&userName=" + encodeURIComponent(author || 'کاربر مهمان') + "&commentText=" + encodeURIComponent(text));
+                const r = await res.json();
+                if (r.status === 'success') {
+                    document.getElementById('commentTextInput').value = '';
+                    alert('نظر شما ثبت شد و پس از بررسی منتشر خواهد شد.');
+                    loadNewsComments(currentSelectedNews.link);
+                } else { alert(r.message || 'خطا در ثبت نظر.'); }
+            } catch (err) { alert('خطا در ارتباط با سرور.'); }
+            finally { isSubmittingComment = false; submitBtn.disabled = false; submitBtn.innerText = 'ثبت'; }
+        }
+
+        function shareCurrentNews() {
+            if (!currentSelectedNews) return;
+            if (navigator.share) navigator.share({ title: currentSelectedNews.title, url: currentSelectedNews.link });
+            else { navigator.clipboard.writeText(currentSelectedNews.link); alert('لینک خبر کپی شد.'); }
+        }
+
+        function renderLegalSystems() {
+            const container = document.getElementById('legalSystemsContainer');
+            if (!appData.legalSystems || !appData.legalSystems.length) return;
+            container.innerHTML = appData.legalSystems.map(sys => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between"><div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${sys.title}</h3><p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${sys.description}</p></div><a href="${sys.url}" target="_blank" class="bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 px-3.5 py-1.5 rounded-xl text-xs font-bold transition">ورود</a></div>`).join('');
+        }
+
+        function renderOfficialMessages() {
+            const container = document.getElementById('officialMessagesContainer');
+            const badge = document.getElementById('pendingBadge');
+            if (!appData.faq || !appData.faq.length) return;
+            const officialFaq = appData.faq.filter(item => item.laws_ref && item.laws_ref.includes('mizanonline.ir/fa/message') && item.answer && !item.answer.includes('در صف بررسی'));
+            const pendingQuestions = appData.faq.filter(item => !item.answer || item.answer.includes('در صف بررسی'));
+            if (badge) badge.innerText = `${pendingQuestions.length} سوال در حال بررسی`;
+            if (!officialFaq.length) { container.innerHTML = '<p class="text-[11px] text-slate-500">مطلبی یافت نشد.</p>'; return; }
+            container.innerHTML = officialFaq.map(msg => `<div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2"><h4 class="font-bold text-xs text-red-600 dark:text-red-400 leading-snug whitespace-pre-line">${msg.question}</h4><p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">${msg.answer}</p></div>`).join('');
+        }
+
+        async function submitQuestion() {
+            const q = document.getElementById('questionInput').value;
+            if (!q.trim()) return alert('لطفا سوال حقوقی خود را وارد کنید.');
+            try {
+                const response = await fetch(API_URL + "?action=add_faq&userId=" + userId + "&question=" + encodeURIComponent(q));
+                const result = await response.json();
+                if (result.status === "success") {
+                    alert('سوال با موفقیت ثبت شد.');
+                    document.getElementById('questionInput').value = '';
+                    initApp(true);
+                } else { alert(result.message || 'خطا در ثبت سوال.'); }
+            } catch (err) { alert('خطا در ارتباط با سرور.'); }
+        }
+
+        async function sendAiMessage() {
+            const input = document.getElementById('aiChatInput');
+            const chatBox = document.getElementById('chatBox');
+            let rawQ = input.value.trim();
+            if (!rawQ) return;
+            chatBox.innerHTML += `<div class="bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-200 p-2.5 rounded-xl text-left border border-red-100 dark:border-red-900/30">شما: ${rawQ}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const loadingId = 'loading_' + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}" class="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl text-slate-600 dark:text-slate-300">در حال پردازش هوش مصنوعی...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const res = await fetch(API_URL + "?action=ai_chat&query=" + encodeURIComponent(rawQ));
+                const r = await res.json();
+                document.getElementById(loadingId).remove();
+                chatBox.innerHTML += `<div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-xl leading-relaxed whitespace-pre-line text-slate-800 dark:text-slate-200">${r.reply || 'پاسخی دریافت نشد.'}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (e) {
+                document.getElementById(loadingId).remove();
+                chatBox.innerHTML += `<div class="bg-red-50 text-red-600 p-2.5 rounded-xl">خطا در ارتباط با هوش مصنوعی.</div>`;
+            }
+        }
+
+        function handleSearchKey(event) { if (event.key === 'Enter') { document.getElementById('liveSuggestionsBox').classList.add('hidden'); triggerSearch(); } }
+        function triggerSearch() { handleGlobalSearch(document.getElementById('searchInput').value); }
+
+        function handleGlobalSearch(query) {
+            document.getElementById('liveSuggestionsBox').classList.add('hidden');
+            if (!query.trim()) { switchTab('news-tab'); return; }
+            switchTab('search-tab');
+            const container = document.getElementById('searchResultsContainer');
+            const q = query.toLowerCase();
+            let uniqueMap = new Map();
+            (appData.news || []).forEach(i => uniqueMap.set(i.link, i));
+            const allNews = Array.from(uniqueMap.values());
+            const matchedNews = allNews.filter(n => n.title.toLowerCase().includes(q) || (n.summary && n.summary.toLowerCase().includes(q)));
+            const matchedSystems = (appData.legalSystems || []).filter(s => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
+
+            let html = '';
+            if (matchedSystems.length > 0) {
+                html += `<h3 class="font-bold text-xs text-slate-500 mb-2">سامانه‌ها (${matchedSystems.length})</h3>`;
+                html += matchedSystems.map(sys => `<div class="p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm mb-2"><strong>${sys.title}</strong> - ${sys.description}</div>`).join('');
+            }
+            if (matchedNews.length > 0) {
+                html += `<h3 class="font-bold text-xs text-slate-500 mt-3 mb-2">اخبار (${matchedNews.length})</h3>`;
+                html += matchedNews.map(item => `<a href="${item.link}" target="_blank" class="block p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm mb-2 font-bold text-xs hover:text-red-600 transition">${item.title}</a>`).join('');
+            }
+            container.innerHTML = html || '<p class="text-center text-slate-400 py-8 text-xs">موردی یافت نشد.</p>';
+        }
+
+        function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
+        function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
+
+        function executeAdvancedSearch() {
+            const query = document.getElementById('advSearchInput').value.toLowerCase();
+            const resultsBox = document.getElementById('advSearchResults');
+            if (!query.trim()) return;
+            let uniqueMap = new Map();
+            (appData.news || []).forEach(i => uniqueMap.set(i.link, i));
+            const matches = Array.from(uniqueMap.values()).filter(n => n.title.toLowerCase().includes(query) || (n.summary && n.summary.toLowerCase().includes(query)));
+            resultsBox.innerHTML = matches.length ? matches.map(m => `<a href="${m.link}" target="_blank" class="block p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl hover:text-red-500 transition mb-1"><strong>${m.title}</strong></a>`).join('') : '<p class="text-center text-slate-400 py-4">موردی یافت نشد.</p>';
+        }
+
+        function toggleFontMenu() { document.getElementById('fontMenu').classList.toggle('hidden'); }
+        function changeFontSize(size) {
+            const items = document.querySelectorAll('h2, h3, h4, p, span, a, input, textarea');
+            items.forEach(el => {
+                if(size === 'small') el.style.fontSize = '11px';
+                if(size === 'normal') el.style.fontSize = '12.5px';
+                if(size === 'large') el.style.fontSize = '14.5px';
+            });
+            document.getElementById('fontMenu').classList.add('hidden');
+        }
+
+        let isDarkTheme = false;
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            localStorage.setItem('mizan_theme', isDarkTheme ? 'dark' : 'light');
+            applyThemeUI();
+        }
+
+        function applyThemeUI() {
+            const root = document.body;
+            const header = document.getElementById('appHeader');
+            const themeIcon = document.getElementById('theme-icon');
+            if (isDarkTheme) {
+                root.className = "bg-slate-950 text-slate-100 dark min-h-screen flex flex-col text-sm transition-colors duration-300";
+                header.className = "sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800 transition-colors duration-300";
+                document.documentElement.classList.add('dark');
+                if (themeIcon) themeIcon.className = "fa-solid fa-sun text-xs";
+            } else {
+                root.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm transition-colors duration-300";
+                header.className = "sticky top-0 z-50 bg-[#c51b24] text-white shadow-md transition-colors duration-300";
+                document.documentElement.classList.remove('dark');
+                if (themeIcon) themeIcon.className = "fa-solid fa-moon text-xs";
+            }
+        }
+
+        function switchTab(sectionId, btn) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+            const targetSec = document.getElementById(sectionId);
+            if (targetSec) targetSec.classList.remove('hidden');
+            if (btn) {
+                document.querySelectorAll('nav button').forEach(b => b.className = "nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition");
+                btn.className = "nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition";
+            }
+            if (sectionId === 'news-tab') {
+                renderNews();
+            }
+            window.scrollTo(0, 0);
+        }
+
+        window.onload = () => initApp();
+    </script>
+</body>
+</html>

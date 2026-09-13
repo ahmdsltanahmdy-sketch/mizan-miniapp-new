@@ -25,7 +25,8 @@
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col text-xs">
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxmBwbCoKY4LhCJTALmnwCYohkaNGEQezpnS_M4wluBS6PTD3eU-4S0rItnhXGi32Dx/exec'; 
+        // لینک جدید وب اپلیکیشن گوگل اسکریپت
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxxUpGDVY9Sxj6FCvWag89F8N7uZH619prLVALvg96vyMkdlwlqeO6IF9oWWex_LtXY/exec'; 
         let userId = localStorage.getItem('mizan_user_id');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -246,7 +247,7 @@
         let generatedCardBlob = null;
         let isSubmittingComment = false;
 
-        // تصویر جدید تنظیم شده در گیت‌هاب
+        // تصویر تنظیم شده در گیت‌هاب
         const FIRST_NEWS_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
         function updateDateTime() {

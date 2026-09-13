@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خبرگزاری میزان | مینی‌اپ هوشمند</title>
+    <title>خبرگزاری میزان | مینی‌اپ خبری</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -136,23 +136,6 @@
             </div>
         </section>
 
-        <section id="ai-tab" class="page-section hidden space-y-4">
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
-                <h2 class="font-bold text-xs text-red-600 mb-2"><i class="fa-solid fa-scale-balanced ml-1"></i> دستیار هوش مصنوعی و وکیل ارشد حقوقی</h2>
-                <div id="chatBox" class="h-60 bg-slate-50 dark:bg-slate-950 rounded-xl p-3 overflow-y-auto text-[11px] space-y-2 mb-2 shadow-inner">
-                    <div class="bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-200 p-2.5 rounded-xl leading-relaxed border border-red-100 dark:border-red-900/30">درود! من دستیار حقوقی میزان هستم. پرسش خود پیرامون قوانین و مقررات را بپرسید.</div>
-                </div>
-                <div class="flex space-x-2 space-x-reverse">
-                    <input type="text" id="aiChatInput" placeholder="پرسش تخصصی حقوقی..." class="flex-grow bg-slate-50 dark:bg-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none dark:text-white" onkeydown="if(event.key==='Enter') sendAiMessage()">
-                    <button onclick="sendAiMessage()" class="bg-[#c51b24] hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">ارسال</button>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
-                <h3 class="font-bold text-xs text-red-600 mb-2"><i class="fa-solid fa-bookmark ml-1"></i> اخبار ذخیره‌شده ابری</h3>
-                <div id="bookmarksContainer" class="space-y-2 text-xs text-slate-500">در حال بارگذاری...</div>
-            </div>
-        </section>
-
         <section id="search-tab" class="page-section hidden">
             <h2 class="font-bold text-xs mb-3 text-red-600">نتایج جستجو</h2>
             <div id="searchResultsContainer" class="space-y-3"></div>
@@ -170,11 +153,6 @@
             <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
             <p id="modalSummary" class="text-[11px] text-slate-600 dark:text-slate-300 mt-2 leading-relaxed whitespace-pre-line">خلاصه کامل...</p>
             
-            <button onclick="generateRealAiSummary()" class="w-full bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300 hover:bg-red-100 py-2.5 rounded-xl text-xs font-bold mt-3 transition border border-red-100 dark:border-red-900/40">
-                <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> خلاصه‌سازی هوشمند توسط هوش مصنوعی
-            </button>
-            <div id="aiSummaryResult" class="hidden mt-2 p-2.5 bg-red-50 dark:bg-red-950/40 text-[11px] rounded-xl text-red-900 dark:text-red-200 leading-relaxed whitespace-pre-line border border-red-100 dark:border-red-900/30"></div>
-
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
                 <div class="flex justify-between items-center">
                     <h4 class="font-bold text-xs text-red-600">نظرات کاربران</h4>
@@ -192,7 +170,6 @@
                 <a id="modalLink" href="#" target="_blank" class="flex-grow bg-[#c51b24] hover:bg-red-700 text-white text-center py-2.5 rounded-xl text-xs font-bold transition shadow">سایت میزان</a>
                 <button onclick="openCardPreviewModal()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs transition" title="کارت گرافیکی"><i class="fa-solid fa-image"></i></button>
                 <button onclick="shareCurrentNews()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs transition" title="اشتراک‌گذاری"><i class="fa-solid fa-share-nodes"></i></button>
-                <button onclick="bookmarkCurrentNewsCloud()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs transition" title="ذخیره ابری"><i class="fa-solid fa-bookmark"></i></button>
             </div>
         </div>
     </div>
@@ -219,7 +196,7 @@
         </div>
     </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-6 flex justify-between items-center z-50 shadow-lg">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-6 flex justify-around items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition">
             <i class="fa-solid fa-newspaper text-base"></i>
             <span class="text-[9px] mt-1 font-bold">اخبار</span>
@@ -231,10 +208,6 @@
         <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
             <i class="fa-solid fa-user-tie text-base"></i>
             <span class="text-[9px] mt-1">وکیل آنلاین</span>
-        </button>
-        <button onclick="switchTab('ai-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
-            <i class="fa-solid fa-robot text-base"></i>
-            <span class="text-[9px] mt-1">هوش مصنوعی</span>
         </button>
     </nav>
 
@@ -291,7 +264,6 @@
                 renderNews();
                 renderLegalSystems();
                 renderOfficialMessages();
-                loadCloudBookmarks();
             } catch (error) {
                 console.error("Error loading data:", error);
             }
@@ -467,7 +439,6 @@
             document.getElementById('modalCategory').innerText = news.category || 'عمومی';
             document.getElementById('modalImg').src = FIRST_NEWS_IMAGE;
             document.getElementById('modalLink').href = news.link;
-            document.getElementById('aiSummaryResult').classList.add('hidden');
 
             loadNewsComments(news.link);
             document.getElementById('newsModal').classList.remove('hidden');
@@ -475,17 +446,6 @@
 
         function closeNewsModal() { document.getElementById('newsModal').classList.add('hidden'); }
         function toggleReadingMode() { document.getElementById('modalCardContainer').classList.toggle('reading-mode-active'); }
-
-        async function generateRealAiSummary() {
-            const summaryBox = document.getElementById('aiSummaryResult');
-            summaryBox.classList.remove('hidden');
-            summaryBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال پردازش توسط هوش مصنوعی...`;
-            try {
-                const res = await fetch(API_URL + "?action=ai_summary&text=" + encodeURIComponent(currentSelectedNews.title + "\n" + currentSelectedNews.summary));
-                const r = await res.json();
-                summaryBox.innerHTML = r.summary || 'خطا در دریافت خلاصه.';
-            } catch (err) { summaryBox.innerHTML = 'خطا در ارتباط با هوش مصنوعی.'; }
-        }
 
         function openCardPreviewModal() {
             if (!currentSelectedNews) return;
@@ -561,28 +521,6 @@
             closeCardPreviewModal();
         }
 
-        async function bookmarkCurrentNewsCloud() {
-            if (!currentSelectedNews) return;
-            try {
-                const res = await fetch(API_URL + "?action=save_bookmark&userId=" + userId + "&title=" + encodeURIComponent(currentSelectedNews.title) + "&link=" + encodeURIComponent(currentSelectedNews.link) + "&summary=" + encodeURIComponent(currentSelectedNews.summary || '') + "&category=" + encodeURIComponent(currentSelectedNews.category || 'all'));
-                const r = await res.json();
-                if (r.status === 'success') {
-                    alert('خبر در فضای ابری ذخیره شد.');
-                    loadCloudBookmarks();
-                }
-            } catch (err) { alert('خطا در ذخیره ابری.'); }
-        }
-
-        async function loadCloudBookmarks() {
-            const container = document.getElementById('bookmarksContainer');
-            try {
-                const res = await fetch(API_URL + "?action=bookmarks&userId=" + userId);
-                const bookmarks = await res.json();
-                if (!bookmarks.length) { container.innerHTML = 'هیچ خبری ذخیره نشده است.'; return; }
-                container.innerHTML = bookmarks.map(b => `<a href="${b.link}" target="_blank" class="block p-2 bg-slate-50 dark:bg-slate-800 rounded-lg mb-1 line-clamp-1 hover:text-red-500 transition">${b.title}</a>`).join('');
-            } catch (e) { container.innerHTML = 'خطا در بارگذاری بوکمارک‌ها.'; }
-        }
-
         async function loadNewsComments(newsLink) {
             const container = document.getElementById('commentsListContainer');
             const badge = document.getElementById('pendingCommentsBadge');
@@ -653,31 +591,6 @@
                     initApp(true);
                 } else { alert(result.message || 'خطا در ثبت سوال.'); }
             } catch (err) { alert('خطا در ارتباط با سرور.'); }
-        }
-
-        async function sendAiMessage() {
-            const input = document.getElementById('aiChatInput');
-            const chatBox = document.getElementById('chatBox');
-            let rawQ = input.value.trim();
-            if (!rawQ) return;
-            chatBox.innerHTML += `<div class="bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-200 p-2.5 rounded-xl text-left border border-red-100 dark:border-red-900/30">شما: ${rawQ}</div>`;
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            const loadingId = 'loading_' + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl text-slate-600 dark:text-slate-300">در حال پردازش هوش مصنوعی...</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                const res = await fetch(API_URL + "?action=ai_chat&query=" + encodeURIComponent(rawQ));
-                const r = await res.json();
-                document.getElementById(loadingId).remove();
-                chatBox.innerHTML += `<div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-xl leading-relaxed whitespace-pre-line text-slate-800 dark:text-slate-200">${r.reply || 'پاسخی دریافت نشد.'}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (e) {
-                document.getElementById(loadingId).remove();
-                chatBox.innerHTML += `<div class="bg-red-50 text-red-600 p-2.5 rounded-xl">خطا در ارتباط با هوش مصنوعی.</div>`;
-            }
         }
 
         function handleSearchKey(event) { if (event.key === 'Enter') { document.getElementById('liveSuggestionsBox').classList.add('hidden'); triggerSearch(); } }

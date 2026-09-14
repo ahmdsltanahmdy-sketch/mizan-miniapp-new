@@ -249,7 +249,7 @@
                 const cached = localStorage.getItem('mizan_cache');
                 const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
-                const CACHE_TTL = 15 * 60 * 1000; // بهبود سرعت با افزایش مدت‌زمان کش به 15 دقیقه
+                const CACHE_TTL = 15 * 60 * 1000;
 
                 if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
                     appData = JSON.parse(cached);
@@ -736,6 +736,8 @@
             }
             if (sectionId === 'news-tab') {
                 renderNews();
+            } else if (sectionId === 'files-tab') {
+                renderFiles();
             }
             window.scrollTo(0, 0);
         }

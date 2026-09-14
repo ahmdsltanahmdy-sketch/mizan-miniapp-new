@@ -16,11 +16,19 @@
         body { font-family: var(--selected-font, Tahoma), Arial, sans-serif; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass-tab { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .dark .glass-tab { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-tab { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .dark .glass-tab { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); }
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
+        /* استایل پس‌زمینه هدر با تصویر مورد نظر و لایه تیره برای خوانایی بهتر متن‌ها */
+        .header-bg {
+            background: linear-gradient(rgba(197, 27, 36, 0.85), rgba(127, 29, 29, 0.9)), 
+                        url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
         #pullRefreshIndicator {
             position: absolute;
             top: -40px;
@@ -53,13 +61,9 @@
         }
     </script>
 
-    <header id="appHeader" class="sticky top-0 z-50 bg-[#c51b24] dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
-        <!-- تصویر بنر در بالای کادر قرمز -->
-        <div class="w-full">
-            <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" alt="بنر خبرگزاری میزان" class="w-full h-28 object-cover">
-        </div>
-
-        <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-t border-white/10">
+    <!-- هدر اصلی مینی‌اپ با پس‌زمینه تصویر مورد نظر شما -->
+    <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
                 <div>
                     <h1 class="font-bold text-sm">خبرگزاری میزان</h1>
@@ -73,7 +77,7 @@
         </div>
 
         <!-- منوی تنظیمات کشویی -->
-        <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-3 bg-red-950 dark:bg-slate-800 text-white space-y-3 text-xs shadow-lg border-t border-white/10">
+        <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-3 bg-red-950/95 dark:bg-slate-800/95 backdrop-blur-md text-white space-y-3 text-xs shadow-lg border-t border-white/10">
             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                 <span>نصب مینی‌اپ:</span>
                 <button onclick="showInstallGuide(); toggleSettingsMenu();" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
@@ -109,10 +113,10 @@
         <div class="max-w-md mx-auto px-4 pb-3 relative">
             <div class="flex space-x-2 space-x-reverse relative">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار، سامانه‌ها و پرونده‌ها..." class="w-full bg-white/15 dark:bg-slate-800 placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار، سامانه‌ها و پرونده‌ها..." class="w-full bg-black/30 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition border border-white/20">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs cursor-pointer" onclick="triggerSearch()"></i>
                 </div>
-                <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته" class="glass-tab px-3 rounded-xl text-xs flex items-center justify-center transition">
+                <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته" class="glass-tab px-3 rounded-xl text-xs flex items-center justify-center transition text-white">
                     <i class="fa-solid fa-earth-americas"></i>
                 </button>
             </div>
@@ -786,7 +790,7 @@
                 if (themeIcon) themeIcon.className = "fa-solid fa-sun";
             } else {
                 root.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm transition-colors duration-300 relative";
-                if(header) header.className = "sticky top-0 z-50 bg-[#c51b24] text-white shadow-md transition-colors duration-300";
+                if(header) header.className = "sticky top-0 z-50 header-bg text-white shadow-md transition-colors duration-300";
                 document.documentElement.classList.remove('dark');
                 if (themeIcon) themeIcon.className = "fa-solid fa-moon";
             }

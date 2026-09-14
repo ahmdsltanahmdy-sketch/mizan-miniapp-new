@@ -228,7 +228,8 @@
         let generatedCardBlob = null;
         let isSubmittingComment = false;
 
-        const FALLBACK_NEWS_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+        // لینک مستقیم و رسمی گیت‌هاب شما برای خبر اول
+        const DESIRED_FEATURED_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
         function updateDateTime() {
             const now = new Date();
@@ -239,10 +240,15 @@
 
         async function initApp(force = false) {
             try {
+                if (force) {
+                    localStorage.removeItem('mizan_cache');
+                    localStorage.removeItem('mizan_cache_time');
+                }
+
                 const cached = localStorage.getItem('mizan_cache');
                 const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
-                const CACHE_TTL = 5 * 60 * 1000;
+                const CACHE_TTL = 3 * 60 * 1000;
 
                 if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
                     appData = JSON.parse(cached);
@@ -279,11 +285,9 @@
         async function manualRefresh() {
             const icon = document.getElementById('refreshIcon');
             icon.classList.add('fa-spin');
-            localStorage.removeItem('mizan_cache');
-            localStorage.removeItem('mizan_cache_time');
             await initApp(true);
             setTimeout(() => icon.classList.remove('fa-spin'), 600);
-            alert('اطلاعات با موفقیت بروزرسانی شد.');
+            alert('اطلاعات با موفقیت بروزرسانی و کش پاک شد.');
         }
 
         function changeFontFamily(fontName) {
@@ -361,16 +365,13 @@
             });
 
             const firstNews = filteredNews[0];
-            let imgUrl = FALLBACK_NEWS_IMAGE;
-            if (firstNews.image && typeof firstNews.image === 'string' && firstNews.image.trim().startsWith('http')) {
-                imgUrl = firstNews.image.trim();
-            }
 
+            // تحمیل مستقیم عکس گیت‌هاب شما روی خبر اول هر تب
             featuredContainer.innerHTML = `
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
-                    <img src="${imgUrl}" class="w-full h-44 object-cover" alt="">
+                    <img src="${DESIRED_FEATURED_IMAGE}" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
-                        <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
+                        <span class="bg-red-100 text-red-600 dark:text-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
                         <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-normal">${firstNews.summary || ''}</p>
                     </div>
@@ -445,12 +446,7 @@
             document.getElementById('modalTitle').innerText = news.title;
             document.getElementById('modalSummary').innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
             document.getElementById('modalCategory').innerText = news.category || 'عمومی';
-            
-            let modalImgUrl = FALLBACK_NEWS_IMAGE;
-            if (news.image && typeof news.image === 'string' && news.image.trim().startsWith('http')) {
-                modalImgUrl = news.image.trim();
-            }
-            document.getElementById('modalImg').src = modalImgUrl;
+            document.getElementById('modalImg').src = DESIRED_FEATURED_IMAGE;
             document.getElementById('modalLink').href = news.link;
 
             loadNewsComments(news.link);
@@ -591,7 +587,7 @@
                 <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-3">
                     ${file.image && typeof file.image === 'string' && file.image.trim().startsWith('http') ? `<img src="${file.image.trim()}" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
                     <div>
-                        <h3 class="font-bold text-xs text-red-600 dark:text-red-400">${file.title}</h3>
+                        <h3 class="font-bold text-xs text-red-600 dark:text-red-400">${file.title || ''}</h3>
                         <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed whitespace-pre-line">${file.description || ''}</p>
                     </div>
                     ${file.url ? `<a href="${file.url}" target="_blank" class="block w-full text-center bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold transition">مشاهده مشروح پرونده</a>` : ''}

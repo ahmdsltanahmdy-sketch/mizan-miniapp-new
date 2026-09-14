@@ -223,8 +223,13 @@
     <script>
         let appData = { 
             news: [], 
-            tabs: [], 
-            legalSystems: [], 
+            tabs: [
+                { tab_id: 'all', tab_name: 'کل اخبار', is_active: true },
+                { tab_id: 'judicial', tab_name: 'قضایی', is_active: true }
+            ], 
+            legalSystems: [
+                { title: 'سامانه ثنا', description: 'سامانه خدمات الکترونیک قضایی', url: 'https://sana.adliran.ir' }
+            ], 
             files: [
                 {
                     title: "چای دبش",
@@ -246,7 +251,8 @@
 
         function updateDateTime() {
             const now = new Date();
-            document.getElementById('liveDateTime').innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const dtElem = document.getElementById('liveDateTime');
+            if(dtElem) dtElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
         setInterval(updateDateTime, 1000);
         updateDateTime();
@@ -277,11 +283,11 @@
                 appData = serverData;
 
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
-                localStorage.setItem('mizan_cache_time`, now.toString());
+                localStorage.setItem('mizan_cache_time', now.toString());
 
                 setupInitialView();
             } catch (error) {
-                console.error("Error loading data:", error);
+                console.error("Using backup data due to network error:", error);
                 setupInitialView();
             }
         }
@@ -303,9 +309,9 @@
 
         async function manualRefresh() {
             const icon = document.getElementById('refreshIcon');
-            icon.classList.add('fa-spin');
+            if(icon) icon.classList.add('fa-spin');
             await initApp(true);
-            setTimeout(() => icon.classList.remove('fa-spin'), 600);
+            setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
             alert('اطلاعات با موفقیت بروزرسانی شد.');
         }
 
@@ -327,7 +333,7 @@
 
         function renderTabs() {
             const container = document.getElementById('tabsContainer');
-            if (!appData.tabs || appData.tabs.length === 0) return;
+            if (!container || !appData.tabs || appData.tabs.length === 0) return;
 
             const activeTabs = appData.tabs.filter(t => {
                 let v = t.is_active;
@@ -355,6 +361,7 @@
             const container = document.getElementById('newsListContainer');
             const featuredContainer = document.getElementById('featuredNewsContainer');
             const loadMoreBtn = document.getElementById('loadMoreContainer');
+            if (!container || !featuredContainer) return;
 
             let uniqueNewsMap = new Map();
             (appData.news || []).forEach(item => {
@@ -373,7 +380,7 @@
             if (!filteredNews || filteredNews.length === 0) {
                 featuredContainer.innerHTML = '';
                 container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs font-medium">هیچ خبری در این دسته‌بندی ثبت نشده است.</p>';
-                loadMoreBtn.classList.add('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
                 return;
             }
 
@@ -405,9 +412,9 @@
             `).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                loadMoreBtn.classList.remove('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
             } else {
-                loadMoreBtn.classList.add('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }
         }
 
@@ -418,6 +425,7 @@
 
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
+            if(!box) return;
             const q = query.trim().toLowerCase();
             if (!q) { box.classList.add('hidden'); box.innerHTML = ''; return; }
 
@@ -455,7 +463,8 @@
 
         function closeSuggestionsOnClickOutside(event) {
             if (!event.target.closest('#searchInput') && !event.target.closest('#liveSuggestionsBox')) {
-                document.getElementById('liveSuggestionsBox').classList.add('hidden');
+                const box = document.getElementById('liveSuggestionsBox');
+                if(box) box.classList.add('hidden');
             }
         }
 
@@ -551,6 +560,7 @@
         async function loadNewsComments(newsLink) {
             const container = document.getElementById('commentsListContainer');
             const badge = document.getElementById('pendingCommentsBadge');
+            if(!container) return;
             container.innerHTML = 'در حال بارگذاری نظرات...';
             try {
                 const res = await fetch(API_URL + "?action=comments&newsLink=" + encodeURIComponent(newsLink));
@@ -569,8 +579,7 @@
             if (!text) return alert('لطفاً متن نظر خود را وارد کنید.');
 
             isSubmittingComment = true;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            if(submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
             try {
                 const res = await fetch(API_URL + "?action=add_comment&userId=" + userId + "&newsLink=" + encodeURIComponent(currentSelectedNews.link) + "&userName=" + encodeURIComponent(author || 'کاربر مهمان') + "&commentText=" + encodeURIComponent(text));
                 const r = await res.json();
@@ -580,7 +589,10 @@
                     loadNewsComments(currentSelectedNews.link);
                 } else { alert(r.message || 'خطا در ثبت نظر.'); }
             } catch (err) { alert('خطا در ارتباط با سرور.'); }
-            finally { isSubmittingComment = false; submitBtn.disabled = false; submitBtn.innerText = 'ثبت'; }
+            finally { 
+                isSubmittingComment = false; 
+                if(submitBtn) { submitBtn.disabled = false; submitBtn.innerText = 'ثبت'; }
+            }
         }
 
         function shareCurrentNews() {
@@ -591,12 +603,13 @@
 
         function renderLegalSystems() {
             const container = document.getElementById('legalSystemsContainer');
-            if (!appData.legalSystems || !appData.legalSystems.length) return;
+            if (!container || !appData.legalSystems || !appData.legalSystems.length) return;
             container.innerHTML = appData.legalSystems.map(sys => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between"><div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${sys.title}</h3><p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${sys.description}</p></div><a href="${sys.url}" target="_blank" class="bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 px-3.5 py-1.5 rounded-xl text-xs font-bold transition">ورود</a></div>`).join('');
         }
 
         function renderFiles() {
             const container = document.getElementById('filesContainer');
+            if (!container) return;
             const filesList = appData.files || [];
             
             if (!filesList.length) {
@@ -627,7 +640,7 @@
         function renderOfficialMessages() {
             const container = document.getElementById('officialMessagesContainer');
             const badge = document.getElementById('pendingBadge');
-            if (!appData.faq || !appData.faq.length) return;
+            if (!container || !appData.faq || !appData.faq.length) return;
             const officialFaq = appData.faq.filter(item => item.laws_ref && item.laws_ref.includes('mizanonline.ir/fa/message') && item.answer && !item.answer.includes('در صف بررسی'));
             const pendingQuestions = appData.faq.filter(item => !item.answer || item.answer.includes('در صف بررسی'));
             if (badge) badge.innerText = `${pendingQuestions.length} سوال در حال بررسی`;
@@ -657,6 +670,7 @@
             if (!query.trim()) { switchTab('news-tab'); return; }
             switchTab('search-tab');
             const container = document.getElementById('searchResultsContainer');
+            if(!container) return;
             const q = query.toLowerCase();
             let uniqueMap = new Map();
             (appData.news || []).forEach(i => uniqueMap.set(i.link, i));
@@ -682,7 +696,7 @@
         function executeAdvancedSearch() {
             const query = document.getElementById('advSearchInput').value.toLowerCase();
             const resultsBox = document.getElementById('advSearchResults');
-            if (!query.trim()) return;
+            if(!resultsBox || !query.trim()) return;
             let uniqueMap = new Map();
             (appData.news || []).forEach(i => uniqueMap.set(i.link, i));
             const matches = Array.from(uniqueMap.values()).filter(n => n.title.toLowerCase().includes(query) || (n.summary && n.summary.toLowerCase().includes(query)));
@@ -713,12 +727,12 @@
             const themeIcon = document.getElementById('theme-icon');
             if (isDarkTheme) {
                 root.className = "bg-slate-950 text-slate-100 dark min-h-screen flex flex-col text-sm transition-colors duration-300";
-                header.className = "sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800 transition-colors duration-300";
+                if(header) header.className = "sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800 transition-colors duration-300";
                 document.documentElement.classList.add('dark');
                 if (themeIcon) themeIcon.className = "fa-solid fa-sun text-xs";
             } else {
                 root.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm transition-colors duration-300";
-                header.className = "sticky top-0 z-50 bg-[#c51b24] text-white shadow-md transition-colors duration-300";
+                if(header) header.className = "sticky top-0 z-50 bg-[#c51b24] text-white shadow-md transition-colors duration-300";
                 document.documentElement.classList.remove('dark');
                 if (themeIcon) themeIcon.className = "fa-solid fa-moon text-xs";
             }

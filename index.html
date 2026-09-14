@@ -59,7 +59,7 @@
         <div class="max-w-md mx-auto px-4 pb-3 relative">
             <div class="flex space-x-2 space-x-reverse relative">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار و پرونده‌ها..." class="w-full bg-white/15 dark:bg-slate-800 placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار، سامانه‌ها و پرونده‌ها..." class="w-full bg-white/15 dark:bg-slate-800 placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs cursor-pointer" onclick="triggerSearch()"></i>
                 </div>
                 <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته" class="glass-tab px-3 rounded-xl text-xs flex items-center justify-center transition">
@@ -401,7 +401,6 @@
             renderNews();
         }
 
-        // جستجوی آنی شامل اخبار، سامانه‌ها و پرونده‌ها
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             if(!box) return;

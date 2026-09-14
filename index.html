@@ -225,7 +225,14 @@
             news: [], 
             tabs: [], 
             legalSystems: [], 
-            files: [], // کاملاً پویا و متصل به گوگل‌شیت
+            files: [
+                {
+                    title: "چای دبش",
+                    description: "بیش از ۱۶ همت اموال اعم از منقول و غیره چای دبش...",
+                    image: "https://www.mizanonline.ir/files/fa/documents/4_437.jpg",
+                    url: "https://www.mizanonline.ir/fa/docs/4/debash-tea"
+                }
+            ], 
             faq: [] 
         };
 
@@ -258,20 +265,43 @@
                 const CACHE_TTL = 3 * 60 * 1000;
 
                 if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
-                    appData = JSON.parse(cached);
+                    let parsed = JSON.parse(cached);
+                    // ادغام هوشمند پرونده پیش‌فرض و پرونده‌های جدید اضافه شده در شیت
+                    if (!parsed.files || parsed.files.length === 0) {
+                        parsed.files = appData.files;
+                    }
+                    appData = parsed;
                     setupInitialView();
                     return;
                 }
 
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
-                appData = await response.json(); // دریافت واقعی و پویا از تب‌های گوگل‌شیت از جمله Files
+                let serverData = await response.json();
+                
+                // ترکیب هوشمند فایل‌های گوگل‌شیت با فایل چای دبش
+                let sheetFiles = serverData.files || [];
+                let defaultFiles = appData.files;
+                
+                // اگر شیت فایل داشت، آن‌ها را چک می‌کنیم؛ اگر چای دبش نبود بهش اضافه میشه یا کلاً هر چی تو شیت هست میاد
+                if (sheetFiles.length > 0) {
+                    // بررسی می‌کنیم که آیا چای دبش در شیت هست یا نه، اگر نبود حفظش می‌کنیم
+                    let hasDebash = sheetFiles.some(f => f.title && f.title.includes('چای دبش'));
+                    if (!hasDebash) {
+                        sheetFiles = defaultFiles.concat(sheetFiles);
+                    }
+                    serverData.files = sheetFiles;
+                } else {
+                    serverData.files = defaultFiles;
+                }
+
+                appData = serverData;
 
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 localStorage.setItem('mizan_cache_time', now.toString());
 
                 setupInitialView();
             } catch (error) {
-                console.error("Error loading data:", error);
+                console.error("Using backup data due to network error:", error);
                 setupInitialView();
             }
         }

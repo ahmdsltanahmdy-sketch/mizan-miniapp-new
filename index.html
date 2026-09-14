@@ -20,9 +20,27 @@
         .dark .glass-tab { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); }
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
+        
+        /* استایل نشانگر رفرش هنگام کشیدن صفحه به پایین */
+        #pullRefreshIndicator {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c51b24;
+            font-size: 12px;
+            transition: transform 0.2s;
+            z-index: 40;
+        }
     </style>
 </head>
-<body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col text-xs">
+<body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col text-xs relative">
+
+    <div id="pullRefreshIndicator"><i class="fa-solid fa-arrow-rotate-down animate-bounce"></i> <span class="mr-1">برای بروزرسانی رها کنید...</span></div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyLAmhCoWqHKBNUUarrgXzXrasbpy7Ygq0V4dJCMwu5EwNJs5dxM_NvcXgzJBW68A4p/exec'; 
@@ -250,7 +268,7 @@
                 const cached = localStorage.getItem('mizan_cache');
                 const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
-                const CACHE_TTL = 3 * 60 * 1000; // کاهش زمان کش به ۳ دقیقه برای بروزرسانی سریع‌تر اخبار جدید
+                const CACHE_TTL = 0; // غیرفعال کردن کش داخلی مینی‌اپ برای اینکه اخبار جدید بلافاصله از شیت بارگذاری شوند
 
                 if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
                     appData = JSON.parse(cached);
@@ -291,7 +309,6 @@
             if(icon) icon.classList.add('fa-spin');
             await initApp(true);
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
-            alert('اطلاعات با موفقیت بروزرسانی شد.');
         }
 
         function changeFontFamily(fontName) {
@@ -308,8 +325,41 @@
                 isDarkTheme = true;
                 applyThemeUI();
             }
-            initApp();
+            initApp(true); // بارگیری تازه در شروع
+            initPullToRefresh();
         });
+
+        // پیاده‌سازی قابلیت کشیدن صفحه به پایین (Pull-to-Refresh)
+        function initPullToRefresh() {
+            let touchstartY = 0;
+            let touchendY = 0;
+            const indicator = document.getElementById('pullRefreshIndicator');
+
+            window.addEventListener('touchstart', e => {
+                touchstartY = e.changedTouches[0].screenY;
+            }, {passive: true});
+
+            window.addEventListener('touchmove', e => {
+                touchendY = e.changedTouches[0].screenY;
+                if (window.scrollY === 0 && touchendY > touchstartY + 50) {
+                    indicator.style.transform = 'translateY(40px)';
+                }
+            }, {passive: true});
+
+            window.addEventListener('touchend', async e => {
+                touchendY = e.changedTouches[0].screenY;
+                if (window.scrollY === 0 && touchendY > touchstartY + 90) {
+                    indicator.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال بروزرسانی اخبار...';
+                    await initApp(true);
+                    setTimeout(() => {
+                        indicator.style.transform = 'translateY(0)';
+                        indicator.innerHTML = '<i class="fa-solid fa-arrow-rotate-down animate-bounce"></i> <span class="mr-1">برای بروزرسانی رها کنید...</span>';
+                    }, 500);
+                } else {
+                    indicator.style.transform = 'translateY(0)';
+                }
+            }, {passive: true});
+        }
 
         function renderTabs() {
             const container = document.getElementById('tabsContainer');
@@ -333,10 +383,7 @@
         function filterNewsByTab(catId) {
             currentCategory = String(catId).trim().toLowerCase();
             displayedNewsCount = 15;
-            
-            // هدایت خودکار به تب اخبار تا کلیک روی دسته‌بندی‌ها همیشه کار کند
             switchTab('news-tab');
-            
             renderTabs();
             renderNews();
         }
@@ -567,21 +614,12 @@
             const submitBtn = document.getElementById('submitCommentBtn');
             if (!text) return alert('لطفاً متن نظر خود را وارد کنید.');
 
-            // جلوگیری از ارسال اسپم رگباری (تاخیر ۶۰ ثانیه‌ای برای هر کاربر)
-            const lastCommentTime = localStorage.getItem('last_comment_time') || 0;
-            const now = new Date().getTime();
-            if (now - lastCommentTime < 60000) {
-                alert('لطفاً حداقل یک دقیقه بین ارسال نظرات صبر کنید.');
-                return;
-            }
-
             isSubmittingComment = true;
             if(submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
             try {
                 const res = await fetch(API_URL + "?action=add_comment&userId=" + userId + "&newsLink=" + encodeURIComponent(currentSelectedNews.link) + "&userName=" + encodeURIComponent(author || 'کاربر مهمان') + "&commentText=" + encodeURIComponent(text));
                 const r = await res.json();
                 if (r.status === 'success') {
-                    localStorage.setItem('last_comment_time', now.toString());
                     document.getElementById('commentTextInput').value = '';
                     alert('نظر شما ثبت شد و پس از بررسی منتشر خواهد شد.');
                     loadNewsComments(currentSelectedNews.link);
@@ -652,14 +690,6 @@
             const submitBtn = document.getElementById('submitQuestionBtn');
             if (!q) return alert('لطفا سوال حقوقی خود را وارد کنید.');
 
-            // جلوگیری از ارسال اسپم و سوالات تکراری (تاخیر ۲ دقیقه‌ای بین هر سوال)
-            const lastQuestionTime = localStorage.getItem('last_question_time') || 0;
-            const now = new Date().getTime();
-            if (now - lastQuestionTime < 120000) {
-                alert('برای جلوگیری از تکرار، لطفاً حداقل دو دقیقه بین ارسال سوالات صبر کنید.');
-                return;
-            }
-
             isSubmittingQuestion = true;
             if(submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...'; }
 
@@ -667,8 +697,7 @@
                 const response = await fetch(API_URL + "?action=add_faq&userId=" + userId + "&question=" + encodeURIComponent(q));
                 const result = await response.json();
                 if (result.status === "success") {
-                    localStorage.setItem('last_question_time', now.toString());
-                    alert('سوال با موفقیت ثبت و به بخش بررسی ارسال شد.');
+                    alert('سوال با موفقیت ثبت و به تلگرام ارسال شد.');
                     document.getElementById('questionInput').value = '';
                     initApp(true);
                 } else { alert(result.message || 'خطا در ثبت سوال.'); }
@@ -748,12 +777,12 @@
             const header = document.getElementById('appHeader');
             const themeIcon = document.getElementById('theme-icon');
             if (isDarkTheme) {
-                root.className = "bg-slate-950 text-slate-100 dark min-h-screen flex flex-col text-sm transition-colors duration-300";
+                root.className = "bg-slate-950 text-slate-100 dark min-h-screen flex flex-col text-sm transition-colors duration-300 relative";
                 if(header) header.className = "sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800 transition-colors duration-300";
                 document.documentElement.classList.add('dark');
                 if (themeIcon) themeIcon.className = "fa-solid fa-sun text-xs";
             } else {
-                root.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm transition-colors duration-300";
+                root.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm transition-colors duration-300 relative";
                 if(header) header.className = "sticky top-0 z-50 bg-[#c51b24] text-white shadow-md transition-colors duration-300";
                 document.documentElement.classList.remove('dark');
                 if (themeIcon) themeIcon.className = "fa-solid fa-moon text-xs";
@@ -764,13 +793,10 @@
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             const targetSec = document.getElementById(sectionId);
             if (targetSec) targetSec.classList.remove('hidden');
-            
-            // به‌روزرسانی استایل دکمه‌های ناوبری پایین صفحه در صورت کلیک روی آن‌ها
             if (btn) {
                 document.querySelectorAll('nav button').forEach(b => b.className = "nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition");
                 btn.className = "nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition";
             }
-            
             if (sectionId === 'news-tab') {
                 renderNews();
             } else if (sectionId === 'files-tab') {

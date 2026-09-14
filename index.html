@@ -242,7 +242,7 @@
                 const cached = localStorage.getItem('mizan_cache');
                 const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
-                const CACHE_TTL = 10 * 60 * 1000; // کش معتبر تا ۱۰ دقیقه برای سرعت فوق‌العاده
+                const CACHE_TTL = 5 * 60 * 1000;
 
                 if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
                     appData = JSON.parse(cached);
@@ -250,7 +250,6 @@
                     return;
                 }
 
-                // لود سریع و مستقیم از سرور
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
                 appData = await response.json();
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
@@ -362,7 +361,6 @@
             });
 
             const firstNews = filteredNews[0];
-            // بررسی دقیق تصویر خبر اول (چه لینک شیت باشد چه فال‌بک)
             let imgUrl = FALLBACK_NEWS_IMAGE;
             if (firstNews.image && typeof firstNews.image === 'string' && firstNews.image.trim().startsWith('http')) {
                 imgUrl = firstNews.image.trim();

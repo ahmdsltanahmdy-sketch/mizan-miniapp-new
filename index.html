@@ -59,7 +59,7 @@
         <div class="max-w-md mx-auto px-4 pb-3 relative">
             <div class="flex space-x-2 space-x-reverse relative">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار..." class="w-full bg-white/15 dark:bg-slate-800 placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار و پرونده‌ها..." class="w-full bg-white/15 dark:bg-slate-800 placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs cursor-pointer" onclick="triggerSearch()"></i>
                 </div>
                 <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته" class="glass-tab px-3 rounded-xl text-xs flex items-center justify-center transition">
@@ -221,20 +221,7 @@
     </nav>
 
     <script>
-        let appData = { 
-            news: [], 
-            tabs: [], 
-            legalSystems: [], 
-            files: [
-                {
-                    title: "چای دبش",
-                    description: "بیش از ۱۶ همت اموال اعم از منقول و غیره چای دبش...",
-                    image: "https://www.mizanonline.ir/files/fa/documents/4_437.jpg",
-                    url: "https://www.mizanonline.ir/fa/docs/4/debash-tea"
-                }
-            ], 
-            faq: [] 
-        };
+        let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [] };
 
         let currentCategory = 'all';
         let currentSelectedNews = null;
@@ -265,43 +252,20 @@
                 const CACHE_TTL = 3 * 60 * 1000;
 
                 if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
-                    let parsed = JSON.parse(cached);
-                    // ادغام هوشمند پرونده پیش‌فرض و پرونده‌های جدید اضافه شده در شیت
-                    if (!parsed.files || parsed.files.length === 0) {
-                        parsed.files = appData.files;
-                    }
-                    appData = parsed;
+                    appData = JSON.parse(cached);
                     setupInitialView();
                     return;
                 }
 
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
-                let serverData = await response.json();
-                
-                // ترکیب هوشمند فایل‌های گوگل‌شیت با فایل چای دبش
-                let sheetFiles = serverData.files || [];
-                let defaultFiles = appData.files;
-                
-                // اگر شیت فایل داشت، آن‌ها را چک می‌کنیم؛ اگر چای دبش نبود بهش اضافه میشه یا کلاً هر چی تو شیت هست میاد
-                if (sheetFiles.length > 0) {
-                    // بررسی می‌کنیم که آیا چای دبش در شیت هست یا نه، اگر نبود حفظش می‌کنیم
-                    let hasDebash = sheetFiles.some(f => f.title && f.title.includes('چای دبش'));
-                    if (!hasDebash) {
-                        sheetFiles = defaultFiles.concat(sheetFiles);
-                    }
-                    serverData.files = sheetFiles;
-                } else {
-                    serverData.files = defaultFiles;
-                }
-
-                appData = serverData;
+                appData = await response.json();
 
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 localStorage.setItem('mizan_cache_time', now.toString());
 
                 setupInitialView();
             } catch (error) {
-                console.error("Using backup data due to network error:", error);
+                console.error("Error loading data:", error);
                 setupInitialView();
             }
         }
@@ -437,6 +401,7 @@
             renderNews();
         }
 
+        // جستجوی آنی شامل اخبار، سامانه‌ها و پرونده‌ها
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             if(!box) return;
@@ -447,10 +412,11 @@
             (appData.news || []).forEach(i => uniqueMap.set(i.link, i));
             let allNews = Array.from(uniqueMap.values());
 
-            const matchedNews = allNews.filter(n => n.title.toLowerCase().includes(q) || (n.summary && n.summary.toLowerCase().includes(q))).slice(0, 6);
+            const matchedNews = allNews.filter(n => n.title.toLowerCase().includes(q) || (n.summary && n.summary.toLowerCase().includes(q))).slice(0, 4);
             const matchedSystems = (appData.legalSystems || []).filter(s => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
+            const matchedFiles = (appData.files || []).filter(f => f.title.toLowerCase().includes(q) || f.description.toLowerCase().includes(q));
 
-            if (matchedNews.length === 0 && matchedSystems.length === 0) {
+            if (matchedNews.length === 0 && matchedSystems.length === 0 && matchedFiles.length === 0) {
                 box.innerHTML = '<div class="p-2 text-center text-slate-400">موردی یافت نشد</div>';
                 box.classList.remove('hidden');
                 return;
@@ -460,6 +426,10 @@
             if (matchedSystems.length > 0) {
                 html += '<div class="text-[10px] font-bold text-red-600 px-2 py-1">سامانه‌ها</div>';
                 html += matchedSystems.map(sys => `<a href="${sys.url}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold text-slate-800 dark:text-white">${sys.title}</div><div class="text-[10px] text-slate-500">${sys.description}</div></a>`).join('');
+            }
+            if (matchedFiles.length > 0) {
+                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-slate-100 dark:border-slate-700 mt-1">پرونده‌های ویژه</div>';
+                html += matchedFiles.map(file => `<a href="${file.url || '#'}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold text-slate-800 dark:text-white">${file.title}</div><div class="text-[10px] text-slate-500 line-clamp-1">${file.description}</div></a>`).join('');
             }
             if (matchedNews.length > 0) {
                 html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-slate-100 dark:border-slate-700 mt-1">اخبار مرتبط</div>';
@@ -637,7 +607,7 @@
                 let fImg = file.image || '';
                 let fUrl = file.url || '';
 
-                let imgTag = (fImg && fImg.startsWith('http')) ? `<img src="${fImg}" class="w-full h-40 object-cover rounded-xl shadow-inner mb-2" alt="">` : '';
+                let imgTag = (fImg && String(fImg).trim().startsWith('http')) ? `<img src="${fImg}" class="w-full h-40 object-cover rounded-xl shadow-inner mb-2" alt="">` : '';
                 let btnTag = fUrl ? `<a href="${fUrl}" target="_blank" class="block w-full text-center bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold transition mt-3">مشاهده مشروح پرونده</a>` : '';
 
                 return `
@@ -691,11 +661,16 @@
             const allNews = Array.from(uniqueMap.values());
             const matchedNews = allNews.filter(n => n.title.toLowerCase().includes(q) || (n.summary && n.summary.toLowerCase().includes(q)));
             const matchedSystems = (appData.legalSystems || []).filter(s => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
+            const matchedFiles = (appData.files || []).filter(f => f.title.toLowerCase().includes(q) || f.description.toLowerCase().includes(q));
 
             let html = '';
             if (matchedSystems.length > 0) {
                 html += `<h3 class="font-bold text-xs text-slate-500 mb-2">سامانه‌ها (${matchedSystems.length})</h3>`;
                 html += matchedSystems.map(sys => `<div class="p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm mb-2"><strong>${sys.title}</strong> - ${sys.description}</div>`).join('');
+            }
+            if (matchedFiles.length > 0) {
+                html += `<h3 class="font-bold text-xs text-slate-500 mt-3 mb-2">پرونده‌های ویژه (${matchedFiles.length})</h3>`;
+                html += matchedFiles.map(file => `<a href="${file.url || '#'}" target="_blank" class="block p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm mb-2 font-bold text-xs hover:text-red-600 transition"><strong>${file.title}</strong> - ${file.description}</a>`).join('');
             }
             if (matchedNews.length > 0) {
                 html += `<h3 class="font-bold text-xs text-slate-500 mt-3 mb-2">اخبار (${matchedNews.length})</h3>`;

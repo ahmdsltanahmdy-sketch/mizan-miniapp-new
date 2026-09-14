@@ -241,7 +241,7 @@
             try {
                 const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
-                const CACHE_TTL = 15 * 1000;
+                const CACHE_TTL = 30 * 1000;
 
                 if (!force) {
                     const cached = localStorage.getItem('mizan_cache');
@@ -370,6 +370,7 @@
             const firstNews = filteredNews[0];
             const firstImg = (firstNews.image && firstNews.image.startsWith('http')) ? firstNews.image : DEFAULT_NEWS_IMAGE;
 
+            // فقط خبر اول دارای تصویر بزرگ است
             featuredContainer.innerHTML = `
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
                     <img src="${firstImg}" class="w-full h-44 object-cover" alt="">
@@ -381,14 +382,12 @@
                 </div>
             `;
 
+            // اخبار بعدی کاملاً متنی و بدون تصویر هستند
             const currentBatch = filteredNews.slice(1, displayedNewsCount);
             container.innerHTML = currentBatch.map(item => `
-                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition flex space-x-3 space-x-reverse items-center">
-                    ${item.image && item.image.startsWith('http') ? `<img src="${item.image}" class="w-16 h-16 object-cover rounded-xl flex-shrink-0" alt="">` : ''}
-                    <div class="flex-grow">
-                        <h3 class="font-bold text-xs line-clamp-2 leading-snug">${item.title}</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 leading-normal">${item.summary || ''}</p>
-                    </div>
+                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
+                    <h3 class="font-bold text-xs line-clamp-2 leading-snug">${item.title}</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-normal">${item.summary || ''}</p>
                 </div>
             `).join('');
 
@@ -666,7 +665,7 @@
             resultsBox.innerHTML = matches.length ? matches.map(m => `<a href="${m.link}" target="_blank" class="block p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl hover:text-red-500 transition mb-1"><strong>${m.title}</strong></a>`).join('') : '<p class="text-center text-slate-400 py-4">موردی یافت نشد.</p>';
         }
 
-        function toggleFontMenu() { document.getElementById('fontMenu').classList.toggle('hidden');` }
+        function toggleFontMenu() { document.getElementById('fontMenu').classList.toggle('hidden'); }
         function changeFontSize(size) {
             const items = document.querySelectorAll('h2, h3, h4, p, span, a, input, textarea');
             items.forEach(el => {
@@ -697,7 +696,7 @@
                 root.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm transition-colors duration-300";
                 header.className = "sticky top-0 z-50 bg-[#c51b24] text-white shadow-md transition-colors duration-300";
                 document.documentElement.classList.remove('dark');
-                if (themeIcon) themeIcon.className, "fa-solid fa-moon text-xs";
+                if (themeIcon) themeIcon.className = "fa-solid fa-moon text-xs";
             }
         }
 

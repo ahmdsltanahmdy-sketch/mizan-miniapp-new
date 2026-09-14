@@ -21,7 +21,6 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* استایل نشانگر رفرش هنگام کشیدن صفحه به پایین */
         #pullRefreshIndicator {
             position: absolute;
             top: -40px;
@@ -57,20 +56,48 @@
     <header id="appHeader" class="sticky top-0 z-50 bg-[#c51b24] dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
         <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="bg-white text-[#c51b24] p-2 rounded-xl font-bold text-xs shadow">میزان</div>
                 <div>
-                    <h1 class="font-bold text-xs">خبرگزاری میزان</h1>
+                    <h1 class="font-bold text-sm">خبرگزاری میزان</h1>
                     <div id="liveDateTime" class="text-[9px] text-red-100 dark:text-slate-400 mt-0.5">بارگذاری...</div>
                 </div>
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">
-                <button onclick="showInstallGuide()" title="نصب مینی‌اپ" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
-                    <i class="fa-solid fa-cloud-arrow-down"></i>
-                    <span>نصب</span>
-                </button>
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-2 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
-                <button onclick="toggleFontMenu()" title="تنظیم فونت" class="p-2 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-text-height text-xs"></i></button>
-                <button onclick="toggleTheme()" title="تغییر تم" class="p-2 rounded-full hover:bg-white/10 transition"><i id="theme-icon" class="fa-solid fa-moon text-xs"></i></button>
+                <button onclick="toggleSettingsMenu()" title="تنظیمات" class="p-2 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
+            </div>
+        </div>
+
+        <!-- منوی تنظیمات کشویی جدید (جایگزین علامت ماه و دکمه‌های پراکنده) -->
+        <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-3 bg-red-950 dark:bg-slate-800 text-white space-y-3 text-xs shadow-lg border-t border-white/10">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span>نصب مینی‌اپ:</span>
+                <button onclick="showInstallGuide(); toggleSettingsMenu();" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                    <span>راهنمای نصب</span>
+                </button>
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span>حالت نمایش:</span>
+                <button onclick="toggleTheme()" class="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg font-medium transition flex items-center space-x-1 space-x-reverse">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                    <span id="themeText">تیره / روشن</span>
+                </button>
+            </div>
+            <div class="flex justify-between items-center pb-2 border-b border-white/10">
+                <span>اندازه فونت:</span>
+                <div class="space-x-1 space-x-reverse">
+                    <button onclick="changeFontSize('small')" class="px-2.5 py-1 bg-white/20 rounded">کوچک</button>
+                    <button onclick="changeFontSize('normal')" class="px-2.5 py-1 bg-white/20 rounded">متوسط</button>
+                    <button onclick="changeFontSize('large')" class="px-2.5 py-1 bg-white/20 rounded">بزرگ</button>
+                </div>
+            </div>
+            <div class="flex justify-between items-center">
+                <span>قلم مینی‌اپ:</span>
+                <div class="space-x-1 space-x-reverse">
+                    <button onclick="changeFontFamily('Tahoma')" class="px-2 py-1 bg-white/20 rounded">Tahoma</button>
+                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-1 bg-white/20 rounded">وزیر</button>
+                    <button onclick="changeFontFamily('Yekan Bakh')" class="px-2 py-1 bg-white/20 rounded">یکان</button>
+                </div>
             </div>
         </div>
 
@@ -100,21 +127,6 @@
                 <p class="border-t border-slate-200 dark:border-slate-700 pt-2"><strong>آیفون:</strong> در سافاری دکمه اشتراک‌گذاری را زده و <span class="text-red-600 font-bold">«Add to Home Screen»</span> را انتخاب کنید.</p>
             </div>
             <button onclick="closeInstallGuide()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold">متوجه شدم</button>
-        </div>
-    </div>
-
-    <div id="fontMenu" class="hidden max-w-md mx-auto w-full px-4 py-3 bg-red-900 text-white space-y-2 text-xs shadow-inner">
-        <div class="flex justify-between items-center">
-            <span>اندازه فونت:</span>
-            <button onclick="changeFontSize('small')" class="px-2.5 py-1 bg-white/20 rounded">کوچک</button>
-            <button onclick="changeFontSize('normal')" class="px-2.5 py-1 bg-white/20 rounded">متوسط</button>
-            <button onclick="changeFontSize('large')" class="px-2.5 py-1 bg-white/20 rounded">بزرگ</button>
-        </div>
-        <div class="flex justify-between items-center pt-2 border-t border-white/20">
-            <span>قلم مینی‌اپ:</span>
-            <button onclick="changeFontFamily('Tahoma')" class="px-2 py-1 bg-white/20 rounded">Tahoma</button>
-            <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-1 bg-white/20 rounded">وزیرمتن</button>
-            <button onclick="changeFontFamily('Yekan Bakh')" class="px-2 py-1 bg-white/20 rounded">یکان‌بخش</button>
         </div>
     </div>
 
@@ -260,32 +272,16 @@
 
         async function initApp(force = false) {
             try {
-                if (force) {
-                    localStorage.removeItem('mizan_cache');
-                    localStorage.removeItem('mizan_cache_time');
-                }
+                localStorage.removeItem('mizan_cache');
+                localStorage.removeItem('mizan_cache_time');
 
-                const cached = localStorage.getItem('mizan_cache');
-                const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
-                const CACHE_TTL = 0; // غیرفعال کردن کش داخلی مینی‌اپ برای اینکه اخبار جدید بلافاصله از شیت بارگذاری شوند
-
-                if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
-                    appData = JSON.parse(cached);
-                    setupInitialView();
-                    return;
-                }
-
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
                 appData = await response.json();
-
-                localStorage.setItem('mizan_cache', JSON.stringify(appData));
-                localStorage.setItem('mizan_cache_time', now.toString());
 
                 setupInitialView();
             } catch (error) {
                 console.error("Error loading data:", error);
-                setupInitialView();
             }
         }
 
@@ -311,11 +307,15 @@
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
         }
 
+        function toggleSettingsMenu() {
+            document.getElementById('settingsDropdown').classList.toggle('hidden');
+        }
+
         function changeFontFamily(fontName) {
             document.documentElement.style.setProperty('--selected-font', fontName);
             localStorage.setItem('mizan_font', fontName);
             alert('قلم مینی‌اپ به ' + fontName + ' تغییر یافت.');
-            toggleFontMenu();
+            toggleSettingsMenu();
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -325,11 +325,10 @@
                 isDarkTheme = true;
                 applyThemeUI();
             }
-            initApp(true); // بارگیری تازه در شروع
+            initApp(true);
             initPullToRefresh();
         });
 
-        // پیاده‌سازی قابلیت کشیدن صفحه به پایین (Pull-to-Refresh)
         function initPullToRefresh() {
             let touchstartY = 0;
             let touchendY = 0;
@@ -754,7 +753,6 @@
             resultsBox.innerHTML = matches.length ? matches.map(m => `<a href="${m.link}" target="_blank" class="block p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl hover:text-red-500 transition mb-1"><strong>${m.title}</strong></a>`).join('') : '<p class="text-center text-slate-400 py-4">موردی یافت نشد.</p>';
         }
 
-        function toggleFontMenu() { document.getElementById('fontMenu').classList.toggle('hidden'); }
         function changeFontSize(size) {
             const items = document.querySelectorAll('h2, h3, h4, p, span, a, input, textarea');
             items.forEach(el => {
@@ -762,7 +760,7 @@
                 if(size === 'normal') el.style.fontSize = '12.5px';
                 if(size === 'large') el.style.fontSize = '14.5px';
             });
-            document.getElementById('fontMenu').classList.add('hidden');
+            toggleSettingsMenu();
         }
 
         let isDarkTheme = false;
@@ -780,12 +778,12 @@
                 root.className = "bg-slate-950 text-slate-100 dark min-h-screen flex flex-col text-sm transition-colors duration-300 relative";
                 if(header) header.className = "sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800 transition-colors duration-300";
                 document.documentElement.classList.add('dark');
-                if (themeIcon) themeIcon.className = "fa-solid fa-sun text-xs";
+                if (themeIcon) themeIcon.className = "fa-solid fa-sun";
             } else {
                 root.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm transition-colors duration-300 relative";
                 if(header) header.className = "sticky top-0 z-50 bg-[#c51b24] text-white shadow-md transition-colors duration-300";
                 document.documentElement.classList.remove('dark');
-                if (themeIcon) themeIcon.className = "fa-solid fa-moon text-xs";
+                if (themeIcon) themeIcon.className = "fa-solid fa-moon";
             }
         }
 

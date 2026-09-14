@@ -126,7 +126,7 @@
                     <span id="pendingBadge" class="bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 text-[10px] px-2.5 py-1 rounded-full font-bold">۰ سوال در حال بررسی</span>
                 </div>
                 <textarea id="questionInput" placeholder="سوال حقوقی خود را بنویسید..." class="w-full bg-slate-50 dark:bg-slate-800 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-white h-24 mb-2 resize-none"></textarea>
-                <button onclick="submitQuestion()" class="w-full bg-[#c51b24] hover:bg-red-700 text-white py-2.5 rounded-xl text-xs font-bold transition">ارسال سوال</button>
+                <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-[#c51b24] hover:bg-red-700 text-white py-2.5 rounded-xl text-xs font-bold transition">ارسال سوال</button>
             </div>
             <div class="bg-gradient-to-r from-[#c51b24] to-red-950 text-white p-4 rounded-2xl shadow-md flex justify-between items-center">
                 <div>
@@ -228,6 +228,7 @@
         let displayedNewsCount = 15;
         let generatedCardBlob = null;
         let isSubmittingComment = false;
+        let isSubmittingQuestion = false;
 
         const DESIRED_FEATURED_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
@@ -249,7 +250,7 @@
                 const cached = localStorage.getItem('mizan_cache');
                 const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
-                const CACHE_TTL = 15 * 60 * 1000;
+                const CACHE_TTL = 3 * 60 * 1000; // کاهش زمان کش به ۳ دقیقه برای بروزرسانی سریع‌تر اخبار جدید
 
                 if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
                     appData = JSON.parse(cached);
@@ -307,6 +308,7 @@
                 isDarkTheme = true;
                 applyThemeUI();
             }
+            initApp();
         });
 
         function renderTabs() {
@@ -331,6 +333,10 @@
         function filterNewsByTab(catId) {
             currentCategory = String(catId).trim().toLowerCase();
             displayedNewsCount = 15;
+            
+            // هدایت خودکار به تب اخبار تا کلیک روی دسته‌بندی‌ها همیشه کار کند
+            switchTab('news-tab');
+            
             renderTabs();
             renderNews();
         }
@@ -561,12 +567,21 @@
             const submitBtn = document.getElementById('submitCommentBtn');
             if (!text) return alert('لطفاً متن نظر خود را وارد کنید.');
 
+            // جلوگیری از ارسال اسپم رگباری (تاخیر ۶۰ ثانیه‌ای برای هر کاربر)
+            const lastCommentTime = localStorage.getItem('last_comment_time') || 0;
+            const now = new Date().getTime();
+            if (now - lastCommentTime < 60000) {
+                alert('لطفاً حداقل یک دقیقه بین ارسال نظرات صبر کنید.');
+                return;
+            }
+
             isSubmittingComment = true;
             if(submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
             try {
                 const res = await fetch(API_URL + "?action=add_comment&userId=" + userId + "&newsLink=" + encodeURIComponent(currentSelectedNews.link) + "&userName=" + encodeURIComponent(author || 'کاربر مهمان') + "&commentText=" + encodeURIComponent(text));
                 const r = await res.json();
                 if (r.status === 'success') {
+                    localStorage.setItem('last_comment_time', now.toString());
                     document.getElementById('commentTextInput').value = '';
                     alert('نظر شما ثبت شد و پس از بررسی منتشر خواهد شد.');
                     loadNewsComments(currentSelectedNews.link);
@@ -632,17 +647,36 @@
         }
 
         async function submitQuestion() {
-            const q = document.getElementById('questionInput').value;
-            if (!q.trim()) return alert('لطفا سوال حقوقی خود را وارد کنید.');
+            if (isSubmittingQuestion) return;
+            const q = document.getElementById('questionInput').value.trim();
+            const submitBtn = document.getElementById('submitQuestionBtn');
+            if (!q) return alert('لطفا سوال حقوقی خود را وارد کنید.');
+
+            // جلوگیری از ارسال اسپم و سوالات تکراری (تاخیر ۲ دقیقه‌ای بین هر سوال)
+            const lastQuestionTime = localStorage.getItem('last_question_time') || 0;
+            const now = new Date().getTime();
+            if (now - lastQuestionTime < 120000) {
+                alert('برای جلوگیری از تکرار، لطفاً حداقل دو دقیقه بین ارسال سوالات صبر کنید.');
+                return;
+            }
+
+            isSubmittingQuestion = true;
+            if(submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...'; }
+
             try {
                 const response = await fetch(API_URL + "?action=add_faq&userId=" + userId + "&question=" + encodeURIComponent(q));
                 const result = await response.json();
                 if (result.status === "success") {
-                    alert('سوال با موفقیت ثبت شد.');
+                    localStorage.setItem('last_question_time', now.toString());
+                    alert('سوال با موفقیت ثبت و به بخش بررسی ارسال شد.');
                     document.getElementById('questionInput').value = '';
                     initApp(true);
                 } else { alert(result.message || 'خطا در ثبت سوال.'); }
             } catch (err) { alert('خطا در ارتباط با سرور.'); }
+            finally {
+                isSubmittingQuestion = false;
+                if(submitBtn) { submitBtn.disabled = false; submitBtn.innerText = 'ارسال سوال'; }
+            }
         }
 
         function handleSearchKey(event) { if (event.key === 'Enter') { document.getElementById('liveSuggestionsBox').classList.add('hidden'); triggerSearch(); } }
@@ -730,10 +764,13 @@
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             const targetSec = document.getElementById(sectionId);
             if (targetSec) targetSec.classList.remove('hidden');
+            
+            // به‌روزرسانی استایل دکمه‌های ناوبری پایین صفحه در صورت کلیک روی آن‌ها
             if (btn) {
                 document.querySelectorAll('nav button').forEach(b => b.className = "nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition");
                 btn.className = "nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition";
             }
+            
             if (sectionId === 'news-tab') {
                 renderNews();
             } else if (sectionId === 'files-tab') {
@@ -741,8 +778,6 @@
             }
             window.scrollTo(0, 0);
         }
-
-        window.onload = () => initApp();
     </script>
 </body>
 </html>

@@ -21,7 +21,7 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* استایل پس‌زمینه هدر با تصویر مورد نظر و لایه تیره برای خوانایی بهتر متن‌ها */
+        /* استایل پس‌زمینه هدر با تصویر مورد نظر و لایه تیره برای خوانایی بهتر */
         .header-bg {
             background: linear-gradient(rgba(197, 27, 36, 0.85), rgba(127, 29, 29, 0.9)), 
                         url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg');
@@ -61,13 +61,12 @@
         }
     </script>
 
-    <!-- هدر اصلی مینی‌اپ با پس‌زمینه تصویر مورد نظر شما -->
+    <!-- هدر مینی‌اپ (بدون عنوان خبرگزاری میزان، فقط تاریخ و ساعت و دکمه‌ها) -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
         <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
                 <div>
-                    <h1 class="font-bold text-sm">خبرگزاری میزان</h1>
-                    <div id="liveDateTime" class="text-[9px] text-red-100 dark:text-slate-400 mt-0.5">بارگذاری...</div>
+                    <div id="liveDateTime" class="text-[10px] text-red-100 dark:text-slate-400 font-medium">بارگذاری...</div>
                 </div>
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">

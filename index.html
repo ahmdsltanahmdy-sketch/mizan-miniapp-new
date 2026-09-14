@@ -228,7 +228,6 @@
         let generatedCardBlob = null;
         let isSubmittingComment = false;
 
-        // لینک مستقیم و رسمی گیت‌هاب شما برای خبر اول
         const DESIRED_FEATURED_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
         function updateDateTime() {
@@ -287,7 +286,7 @@
             icon.classList.add('fa-spin');
             await initApp(true);
             setTimeout(() => icon.classList.remove('fa-spin'), 600);
-            alert('اطلاعات با موفقیت بروزرسانی و کش پاک شد.');
+            alert('اطلاعات با موفقیت بروزرسانی شد.');
         }
 
         function changeFontFamily(fontName) {
@@ -366,12 +365,11 @@
 
             const firstNews = filteredNews[0];
 
-            // تحمیل مستقیم عکس گیت‌هاب شما روی خبر اول هر تب
             featuredContainer.innerHTML = `
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
                     <img src="${DESIRED_FEATURED_IMAGE}" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
-                        <span class="bg-red-100 text-red-600 dark:text-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
+                        <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
                         <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-normal">${firstNews.summary || ''}</p>
                     </div>
@@ -579,20 +577,31 @@
 
         function renderFiles() {
             const container = document.getElementById('filesContainer');
-            if (!appData.files || !appData.files.length) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پرونده‌ای ثبت نشده است.</p>';
+            const filesList = appData.files || [];
+            
+            if (!filesList.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>';
                 return;
             }
-            container.innerHTML = appData.files.map(file => `
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-3">
-                    ${file.image && typeof file.image === 'string' && file.image.trim().startsWith('http') ? `<img src="${file.image.trim()}" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
-                    <div>
-                        <h3 class="font-bold text-xs text-red-600 dark:text-red-400">${file.title || ''}</h3>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed whitespace-pre-line">${file.description || ''}</p>
+
+            container.innerHTML = filesList.map(file => {
+                let fTitle = file.title || '';
+                let fDesc = file.description || '';
+                let fImg = file.image || '';
+                let fUrl = file.url || '';
+
+                let imgTag = (fImg && fImg.startsWith('http')) ? `<img src="${fImg}" class="w-full h-40 object-cover rounded-xl shadow-inner mb-2" alt="">` : '';
+                let btnTag = fUrl ? `<a href="${fUrl}" target="_blank" class="block w-full text-center bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold transition mt-3">مشاهده مشروح پرونده</a>` : '';
+
+                return `
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 mb-3">
+                        ${imgTag}
+                        <h3 class="font-bold text-sm text-red-600 dark:text-red-400 mb-1">${fTitle}</h3>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">${fDesc}</p>
+                        ${btnTag}
                     </div>
-                    ${file.url ? `<a href="${file.url}" target="_blank" class="block w-full text-center bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold transition">مشاهده مشروح پرونده</a>` : ''}
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function renderOfficialMessages() {
@@ -668,7 +677,7 @@
                 if(size === 'normal') el.style.fontSize = '12.5px';
                 if(size === 'large') el.style.fontSize = '14.5px';
             });
-            document.getElementById('fontMenu').classList.add('hidden');
+            document.getElementById('fontMenu'].classList.add('hidden');
         }
 
         let isDarkTheme = false;

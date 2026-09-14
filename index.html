@@ -114,6 +114,11 @@
             <div id="legalSystemsContainer" class="space-y-3"></div>
         </section>
 
+        <section id="files-tab" class="page-section hidden">
+            <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300"><i class="fa-solid fa-folder-open ml-1"></i> پرونده‌های ویژه و مستندات</h2>
+            <div id="filesContainer" class="space-y-3"></div>
+        </section>
+
         <section id="lawyer-tab" class="page-section hidden space-y-4">
             <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <div class="flex justify-between items-center mb-2">
@@ -196,7 +201,7 @@
         </div>
     </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-6 flex justify-around items-center z-50 shadow-lg">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-4 flex justify-between items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition">
             <i class="fa-solid fa-newspaper text-base"></i>
             <span class="text-[9px] mt-1 font-bold">اخبار</span>
@@ -205,6 +210,10 @@
             <i class="fa-solid fa-scale-balanced text-base"></i>
             <span class="text-[9px] mt-1">سامانه‌ها</span>
         </button>
+        <button onclick="switchTab('files-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+            <i class="fa-solid fa-folder-open text-base"></i>
+            <span class="text-[9px] mt-1">پرونده‌ها</span>
+        </button>
         <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
             <i class="fa-solid fa-user-tie text-base"></i>
             <span class="text-[9px] mt-1">وکیل آنلاین</span>
@@ -212,14 +221,14 @@
     </nav>
 
     <script>
-        let appData = { news: [], tabs: [], legalSystems: [], faq: [] };
+        let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [] };
         let currentCategory = 'all';
         let currentSelectedNews = null;
         let displayedNewsCount = 15;
         let generatedCardBlob = null;
         let isSubmittingComment = false;
 
-        const FIRST_NEWS_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+        const DEFAULT_NEWS_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
         function updateDateTime() {
             const now = new Date();
@@ -245,6 +254,7 @@
                         renderTabs();
                         renderNews();
                         renderLegalSystems();
+                        renderFiles();
                         renderOfficialMessages();
                         return;
                     }
@@ -263,6 +273,7 @@
                 renderTabs();
                 renderNews();
                 renderLegalSystems();
+                renderFiles();
                 renderOfficialMessages();
             } catch (error) {
                 console.error("Error loading data:", error);
@@ -279,7 +290,7 @@
             localStorage.removeItem('mizan_cache_time');
             await initApp(true);
             setTimeout(() => icon.classList.remove('fa-spin'), 600);
-            alert('اخبار با موفقیت بروزرسانی شد.');
+            alert('اطلاعات با موفقیت بروزرسانی شد.');
         }
 
         function changeFontFamily(fontName) {
@@ -357,10 +368,11 @@
             });
 
             const firstNews = filteredNews[0];
+            const firstImg = (firstNews.image && firstNews.image.startsWith('http')) ? firstNews.image : DEFAULT_NEWS_IMAGE;
 
             featuredContainer.innerHTML = `
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
-                    <img src="${FIRST_NEWS_IMAGE}" class="w-full h-44 object-cover" alt="">
+                    <img src="${firstImg}" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
                         <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
                         <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
@@ -371,9 +383,12 @@
 
             const currentBatch = filteredNews.slice(1, displayedNewsCount);
             container.innerHTML = currentBatch.map(item => `
-                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
-                    <h3 class="font-bold text-xs line-clamp-2 leading-snug">${item.title}</h3>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-normal">${item.summary || ''}</p>
+                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition flex space-x-3 space-x-reverse items-center">
+                    ${item.image && item.image.startsWith('http') ? `<img src="${item.image}" class="w-16 h-16 object-cover rounded-xl flex-shrink-0" alt="">` : ''}
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-xs line-clamp-2 leading-snug">${item.title}</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 leading-normal">${item.summary || ''}</p>
+                    </div>
                 </div>
             `).join('');
 
@@ -437,7 +452,7 @@
             document.getElementById('modalTitle').innerText = news.title;
             document.getElementById('modalSummary').innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
             document.getElementById('modalCategory').innerText = news.category || 'عمومی';
-            document.getElementById('modalImg').src = FIRST_NEWS_IMAGE;
+            document.getElementById('modalImg').src = (news.image && news.image.startsWith('http')) ? news.image : DEFAULT_NEWS_IMAGE;
             document.getElementById('modalLink').href = news.link;
 
             loadNewsComments(news.link);
@@ -568,6 +583,24 @@
             container.innerHTML = appData.legalSystems.map(sys => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between"><div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${sys.title}</h3><p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${sys.description}</p></div><a href="${sys.url}" target="_blank" class="bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 px-3.5 py-1.5 rounded-xl text-xs font-bold transition">ورود</a></div>`).join('');
         }
 
+        function renderFiles() {
+            const container = document.getElementById('filesContainer');
+            if (!appData.files || !appData.files.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پرونده‌ای ثبت نشده است.</p>';
+                return;
+            }
+            container.innerHTML = appData.files.map(file => `
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-3">
+                    ${file.image && file.image.startsWith('http') ? `<img src="${file.image}" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
+                    <div>
+                        <h3 class="font-bold text-xs text-red-600 dark:text-red-400">${file.title}</h3>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed whitespace-pre-line">${file.description || ''}</p>
+                    </div>
+                    ${file.url ? `<a href="${file.url}" target="_blank" class="block w-full text-center bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold transition">مشاهده مشروح پرونده</a>` : ''}
+                </div>
+            `).join('');
+        }
+
         function renderOfficialMessages() {
             const container = document.getElementById('officialMessagesContainer');
             const badge = document.getElementById('pendingBadge');
@@ -633,7 +666,7 @@
             resultsBox.innerHTML = matches.length ? matches.map(m => `<a href="${m.link}" target="_blank" class="block p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl hover:text-red-500 transition mb-1"><strong>${m.title}</strong></a>`).join('') : '<p class="text-center text-slate-400 py-4">موردی یافت نشد.</p>';
         }
 
-        function toggleFontMenu() { document.getElementById('fontMenu').classList.toggle('hidden'); }
+        function toggleFontMenu() { document.getElementById('fontMenu').classList.toggle('hidden');` }
         function changeFontSize(size) {
             const items = document.querySelectorAll('h2, h3, h4, p, span, a, input, textarea');
             items.forEach(el => {
@@ -664,7 +697,7 @@
                 root.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm transition-colors duration-300";
                 header.className = "sticky top-0 z-50 bg-[#c51b24] text-white shadow-md transition-colors duration-300";
                 document.documentElement.classList.remove('dark');
-                if (themeIcon) themeIcon.className = "fa-solid fa-moon text-xs";
+                if (themeIcon) themeIcon.className, "fa-solid fa-moon text-xs";
             }
         }
 

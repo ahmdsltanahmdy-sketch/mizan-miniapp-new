@@ -223,21 +223,9 @@
     <script>
         let appData = { 
             news: [], 
-            tabs: [
-                { tab_id: 'all', tab_name: 'کل اخبار', is_active: true },
-                { tab_id: 'judicial', tab_name: 'قضایی', is_active: true }
-            ], 
-            legalSystems: [
-                { title: 'سامانه ثنا', description: 'سامانه خدمات الکترونیک قضایی', url: 'https://sana.adliran.ir' }
-            ], 
-            files: [
-                {
-                    title: "چای دبش",
-                    description: "بیش از ۱۶ همت اموال اعم از منقول و غیره چای دبش...",
-                    image: "https://www.mizanonline.ir/files/fa/documents/4_437.jpg",
-                    url: "https://www.mizanonline.ir/fa/docs/4/debash-tea"
-                }
-            ], 
+            tabs: [], 
+            legalSystems: [], 
+            files: [], // کاملاً پویا و متصل به گوگل‌شیت
             faq: [] 
         };
 
@@ -270,24 +258,20 @@
                 const CACHE_TTL = 3 * 60 * 1000;
 
                 if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
-                    let parsed = JSON.parse(cached);
-                    parsed.files = appData.files;
-                    appData = parsed;
+                    appData = JSON.parse(cached);
                     setupInitialView();
                     return;
                 }
 
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
-                let serverData = await response.json();
-                serverData.files = appData.files;
-                appData = serverData;
+                appData = await response.json(); // دریافت واقعی و پویا از تب‌های گوگل‌شیت از جمله Files
 
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 localStorage.setItem('mizan_cache_time', now.toString());
 
                 setupInitialView();
             } catch (error) {
-                console.error("Using backup data due to network error:", error);
+                console.error("Error loading data:", error);
                 setupInitialView();
             }
         }

@@ -239,45 +239,39 @@
 
         async function initApp(force = false) {
             try {
+                const cached = localStorage.getItem('mizan_cache');
                 const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
-                const CACHE_TTL = 30 * 1000;
+                const CACHE_TTL = 10 * 60 * 1000; // کش معتبر تا ۱۰ دقیقه برای سرعت فوق‌العاده
 
-                if (!force) {
-                    const cached = localStorage.getItem('mizan_cache');
-                    if (cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
-                        appData = JSON.parse(cached);
-                        if (!currentCategory || currentCategory === '') {
-                            const firstActive = (appData.tabs || []).find(t => String(t.is_active).toLowerCase() === 'true' || t.is_active === 1);
-                            currentCategory = firstActive ? String(firstActive.tab_id || firstActive.category).trim().toLowerCase() : 'all';
-                        }
-                        renderTabs();
-                        renderNews();
-                        renderLegalSystems();
-                        renderFiles();
-                        renderOfficialMessages();
-                        return;
-                    }
+                if (!force && cached && cacheTime && (now - parseInt(cacheTime) < CACHE_TTL)) {
+                    appData = JSON.parse(cached);
+                    setupInitialView();
+                    return;
                 }
 
+                // لود سریع و مستقیم از سرور
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
                 appData = await response.json();
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 localStorage.setItem('mizan_cache_time', now.toString());
 
-                if (!currentCategory || currentCategory === '') {
-                    const firstActive = (appData.tabs || []).find(t => String(t.is_active).toLowerCase() === 'true' || t.is_active === 1);
-                    currentCategory = firstActive ? String(firstActive.tab_id || firstActive.category).trim().toLowerCase() : 'all';
-                }
-
-                renderTabs();
-                renderNews();
-                renderLegalSystems();
-                renderFiles();
-                renderOfficialMessages();
+                setupInitialView();
             } catch (error) {
                 console.error("Error loading data:", error);
             }
+        }
+
+        function setupInitialView() {
+            if (!currentCategory || currentCategory === '') {
+                const firstActive = (appData.tabs || []).find(t => String(t.is_active).toLowerCase() === 'true' || t.is_active === 1);
+                currentCategory = firstActive ? String(firstActive.tab_id || firstActive.category).trim().toLowerCase() : 'all';
+            }
+            renderTabs();
+            renderNews();
+            renderLegalSystems();
+            renderFiles();
+            renderOfficialMessages();
         }
 
         function showInstallGuide() { document.getElementById('installGuideModal').classList.remove('hidden'); }
@@ -368,13 +362,15 @@
             });
 
             const firstNews = filteredNews[0];
-            // استفاده از عکس موجود در شیت یا فال‌بک پیش‌فرض
-            const firstImg = (firstNews.image && firstNews.image.trim() !== '' && firstNews.image.startsWith('http')) ? firstNews.image.trim() : FALLBACK_NEWS_IMAGE;
+            // بررسی دقیق تصویر خبر اول (چه لینک شیت باشد چه فال‌بک)
+            let imgUrl = FALLBACK_NEWS_IMAGE;
+            if (firstNews.image && typeof firstNews.image === 'string' && firstNews.image.trim().startsWith('http')) {
+                imgUrl = firstNews.image.trim();
+            }
 
-            // نمایش خبر اول با تصویر اختصاصی شیت
             featuredContainer.innerHTML = `
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
-                    <img src="${firstImg}" class="w-full h-44 object-cover" alt="">
+                    <img src="${imgUrl}" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
                         <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
                         <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
@@ -383,7 +379,6 @@
                 </div>
             `;
 
-            // اخبار بعدی بدون تصویر و به صورت لیستی
             const currentBatch = filteredNews.slice(1, displayedNewsCount);
             container.innerHTML = currentBatch.map(item => `
                 <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
@@ -452,7 +447,12 @@
             document.getElementById('modalTitle').innerText = news.title;
             document.getElementById('modalSummary').innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
             document.getElementById('modalCategory').innerText = news.category || 'عمومی';
-            document.getElementById('modalImg').src = (news.image && news.image.trim() !== '' && news.image.startsWith('http')) ? news.image.trim() : FALLBACK_NEWS_IMAGE;
+            
+            let modalImgUrl = FALLBACK_NEWS_IMAGE;
+            if (news.image && typeof news.image === 'string' && news.image.trim().startsWith('http')) {
+                modalImgUrl = news.image.trim();
+            }
+            document.getElementById('modalImg').src = modalImgUrl;
             document.getElementById('modalLink').href = news.link;
 
             loadNewsComments(news.link);
@@ -591,7 +591,7 @@
             }
             container.innerHTML = appData.files.map(file => `
                 <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-3">
-                    ${file.image && file.image.trim() !== '' && file.image.startsWith('http') ? `<img src="${file.image.trim()}" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
+                    ${file.image && typeof file.image === 'string' && file.image.trim().startsWith('http') ? `<img src="${file.image.trim()}" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
                     <div>
                         <h3 class="font-bold text-xs text-red-600 dark:text-red-400">${file.title}</h3>
                         <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed whitespace-pre-line">${file.description || ''}</p>

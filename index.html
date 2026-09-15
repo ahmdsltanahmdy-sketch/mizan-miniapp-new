@@ -21,7 +21,6 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* پس‌زمینه هدر با عکس جدید گیت‌هاب و لایه گرادینت برای خوانایی متون */
         .header-bg {
             background: linear-gradient(rgba(197, 27, 36, 0.82), rgba(127, 29, 29, 0.88)), 
                         url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
@@ -150,6 +149,7 @@
             </div>
         </section>
 
+        <!-- بخش توییتر با کارت‌های کاملاً لینک‌شده -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-3">
                 <div class="flex items-center space-x-2 space-x-reverse">
@@ -500,6 +500,7 @@
             }
         }
 
+        // رندر کامل توییت‌ها با قابلیت کلیک روی کل کارت برای ورود به توییت اصلی
         function renderTwitterFeed() {
             const container = document.getElementById('twitterFeedContainer');
             if (!container) return;
@@ -510,7 +511,7 @@
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl text-center space-y-2 border border-slate-200 dark:border-slate-800">
                         <i class="fa-brands fa-x-twitter text-2xl text-slate-400"></i>
                         <p class="text-xs text-slate-500">هنوز پستی از توییتر دریافت نشده است.</p>
-                        <p class="text-[10px] text-slate-400">اطلاعات این بخش از تب TwitterFeed در گوگل‌شیت خوانده می‌شود.</p>
+                        <p class="text-[10px] text-slate-400">لطفاً مطمئن شوید که در تب TwitterFeed گوگل‌شیت اطلاعات وجود دارد.</p>
                     </div>
                 `;
                 return;
@@ -524,7 +525,7 @@
                 let url = t.tweet_url || 'https://x.com/MizanNewsAgency';
 
                 return `
-                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5">
+                    <a href="${url}" target="_blank" class="block bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5 hover:border-red-500 transition cursor-pointer">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2 space-x-reverse">
                                 <div class="w-9 h-9 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-full flex items-center justify-center font-bold text-xs">م</div>
@@ -536,18 +537,18 @@
                                     <span class="text-[10px] text-slate-400">${handle}</span>
                                 </div>
                             </div>
-                            <a href="${url}" target="_blank" class="text-slate-400 hover:text-blue-500 transition" title="مشاهده توییت اصلی در X"><i class="fa-brands fa-x-twitter text-sm"></i></a>
+                            <i class="fa-brands fa-x-twitter text-sm text-slate-400 hover:text-blue-500 transition"></i>
                         </div>
                         <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">${text}</p>
                         <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
                             <span>${date}</span>
-                            <div class="flex space-x-4 space-x-reverse">
-                                <a href="${url}" target="_blank" class="hover:text-blue-500"><i class="fa-regular fa-comment ml-1"></i></a>
-                                <a href="${url}" target="_blank" class="hover:text-green-500"><i class="fa-solid fa-retweet ml-1"></i></a>
-                                <a href="${url}" target="_blank" class="hover:text-red-500"><i class="fa-regular fa-heart ml-1"></i></a>
+                            <div class="flex space-x-4 space-x-reverse text-slate-400">
+                                <span><i class="fa-regular fa-comment ml-1"></i></span>
+                                <span><i class="fa-solid fa-retweet ml-1"></i></span>
+                                <span><i class="fa-regular fa-heart ml-1"></i></span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 `;
             }).join('');
         }

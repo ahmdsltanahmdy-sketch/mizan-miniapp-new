@@ -21,6 +21,7 @@
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
+        /* هدر در حالت عادی با حداکثر وضوح */
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
@@ -28,9 +29,10 @@
             background-repeat: no-repeat;
         }
 
+        /* هدر در حالت تیره کاملاً واضح، شفاف و بدون لایه تاریک‌کننده اضافه */
         .dark .header-bg {
-            background-image: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.6)), 
-                              url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
+            background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
+            filter: brightness(1.1) contrast(1.1);
         }
 
         @keyframes ticker {
@@ -79,9 +81,8 @@
     </script>
 
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
-        <!-- نوار بالایی هدر با جداسازی کامل ویجت آب‌وهوا و دکمه تنظیمات -->
+        <!-- نوار بالایی شامل ویجت آب‌وهوا، سیستم اعلان فوری (Notification Badge) و دکمه تنظیمات -->
         <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
-            <!-- ویجت آب‌وهوا و تقویم که به صورت مستقل مخفی/نمایش داده می‌شود -->
             <div id="weatherWidgetContainer" class="flex items-center space-x-3 space-x-reverse">
                 <div class="flex items-center space-x-1 space-x-reverse">
                     <i class="fa-regular fa-calendar-days text-amber-400"></i>
@@ -92,8 +93,13 @@
                     <span>تهران ۲۴°C</span>
                 </div>
             </div>
-            <!-- دکمه‌های کنترلی سمت چپ که همیشه ثابت و نمایان هستند -->
-            <div class="flex items-center space-x-1.5 space-x-reverse mr-auto">
+            
+            <div class="flex items-center space-x-2 space-x-reverse mr-auto">
+                <!-- سیستم اعلان فوری (Notification Badge) با بج انیمیشنی -->
+                <button onclick="openNotificationsModal()" title="اعلان‌های فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
+                    <i class="fa-solid fa-bell text-xs text-amber-300"></i>
+                    <span id="globalNotificationBadge" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>
+                </button>
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
                     <i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i>
                     <span id="newsBadge" class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full hidden animate-ping"></span>
@@ -156,6 +162,17 @@
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar border-t border-white/10 py-2"></div>
     </header>
 
+    <!-- مودال اعلان‌های فوری جدید -->
+    <div id="notificationsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl max-h-[80vh] overflow-y-auto space-y-3">
+            <button onclick="closeNotificationsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-xs text-[#c51b24] flex items-center"><i class="fa-solid fa-bell ml-1.5"></i> آخرین اخبار و اعلان‌های فوری</h3>
+            <div id="notificationsListContainer" class="space-y-2 text-xs">
+                <p class="text-center text-slate-400 py-4">در حال دریافت اعلان‌ها...</p>
+            </div>
+        </div>
+    </div>
+
     <div id="installGuideModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
             <button onclick="closeInstallGuide()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -169,13 +186,13 @@
         </div>
     </div>
 
-    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28" onclick="closeSuggestionsOnClickOutside(event)">
+    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
         <section id="news-tab" class="page-section">
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
                 <div class="text-center py-10 text-slate-400">
                     <i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i>
-                    <p>در حال بارگذاری اخبار...</p>
+                    <p>در حال بارگذاری اخبار جدید...</p>
                 </div>
             </div>
             <div id="loadMoreContainer" class="text-center py-4 hidden">
@@ -183,6 +200,7 @@
             </div>
         </section>
 
+        <!-- بخش چندرسانه‌ای کاملاً به‌روزرسانی‌شده برای نمایش اخبار و ویدیوهای جدید -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -402,12 +420,9 @@
 
         function updateDateTime() {
             const now = new Date();
-            const dtElem = document.getElementById('liveDateTime');
             const calElem = document.getElementById('headerCalendarWidget');
-            
             const persianDate = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
             if(calElem) calElem.innerText = persianDate + " | " + now.toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
-            if(dtElem) dtElem.innerText = persianDate;
         }
         setInterval(updateDateTime, 1000);
         updateDateTime();
@@ -489,6 +504,12 @@
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
                 appData = await response.json();
 
+                // فیلتر اخبار برای حذف موارد آزمایشی احتمالی و مرتب‌سازی بر اساس جدیدترین
+                if (appData.news && Array.isArray(appData.news)) {
+                    appData.news = appData.news.filter(n => n.title && !n.title.includes('خبر آزمایشی سامانه میزان'));
+                    appData.news.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+                }
+
                 fetchMultimediaFeed();
                 checkForNewNews(appData.news);
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
@@ -521,29 +542,33 @@
                     let mediaList = [];
                     
                     items.forEach(item => {
+                        let title = item.querySelector("title") ? item.querySelector("title").textContent : "";
+                        if (title.includes('خبر آزمایشی')) return; // فیلتر موارد آزمایشی
+
                         let desc = item.querySelector("description") ? item.querySelector("description").textContent : "";
                         let imgMatch = desc.match(/src="([^"]+)"/);
                         let imgUrl = imgMatch ? imgMatch[1] : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
                         let cleanDesc = desc.replace(/<[^>]*>/g, "").trim();
 
                         mediaList.push({
-                            title: item.querySelector("title") ? item.querySelector("title").textContent : "",
+                            title: title,
                             link: item.querySelector("link") ? item.querySelector("link").textContent : "",
                             description: cleanDesc,
                             image: imgUrl,
-                            pubDate: item.querySelector("pubDate") ? item.querySelector("pubDate").textContent : ""
+                            pubDate: item.querySelector("pubDate") ? item.querySelector("pubDate").textContent : new Date().toISOString()
                         });
                     });
+
+                    // مرتب‌سازی چندرسانه‌ای بر اساس جدیدترین تاریخ
+                    mediaList.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
                     appData.multimedia = mediaList;
                     renderMultimediaFeed();
                 }
             } catch(e) {
                 console.error("Multimedia RSS error:", e);
                 if (appData.news && appData.news.length > 0) {
-                    appData.multimedia = appData.news.slice(0, 10);
+                    appData.multimedia = appData.news.filter(n => !n.title.includes('خبر آزمایشی')).slice(0, 15);
                     renderMultimediaFeed();
-                } else {
-                    document.getElementById('multimediaFeedContainer').innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">محتوای چندرسانه‌ای یافت نشد.</p>';
                 }
             }
         }
@@ -576,6 +601,7 @@
             const lastSavedLink = localStorage.getItem('mizan_last_news_link');
             const latestLink = newsList[0].link;
             const badge = document.getElementById('newsBadge');
+            const globalBadge = document.getElementById('globalNotificationBadge');
             const ticker = document.getElementById('breakingNewsTicker');
 
             if (ticker) {
@@ -584,8 +610,35 @@
 
             if (lastSavedLink && lastSavedLink !== latestLink) {
                 if (badge) badge.classList.remove('hidden');
+                if (globalBadge) globalBadge.classList.remove('hidden');
             }
             localStorage.setItem('mizan_last_news_link', latestLink);
+        }
+
+        function openNotificationsModal() {
+            const container = document.getElementById('notificationsListContainer');
+            const globalBadge = document.getElementById('globalNotificationBadge');
+            if(globalBadge) globalBadge.classList.add('hidden');
+            
+            const latestNews = (appData.news || []).slice(0, 10);
+            if(!latestNews.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-4">هیچ اعلان جدیدی وجود ندارد.</p>';
+            } else {
+                container.innerHTML = latestNews.map(n => `
+                    <a href="${n.link}" target="_blank" class="block p-3 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition space-y-1">
+                        <div class="flex items-center justify-between text-[9px] text-red-600 font-bold">
+                            <span><i class="fa-solid fa-bolt ml-1"></i> خبر جدید</span>
+                            <span class="text-slate-400">${n.category || 'عمومی'}</span>
+                        </div>
+                        <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-snug">${n.title}</h4>
+                    </a>
+                `).join('');
+            }
+            document.getElementById('notificationsModal').classList.remove('hidden');
+        }
+
+        function closeNotificationsModal() {
+            document.getElementById('notificationsModal').classList.add('hidden');
         }
 
         function setupInitialView() {
@@ -767,7 +820,7 @@
             }).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             } else {
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }

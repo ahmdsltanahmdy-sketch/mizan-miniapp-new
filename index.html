@@ -17,20 +17,20 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* افکت شیشه‌ای بسیار تیره و مات برای حالت تیره (بدون تداخل با نوشته‌های زیرین) */
+        /* افکت شیشه‌ای بسیار تیره، مات و خیره‌کننده (Ultra Glassmorphism) بدون تداخل با متن */
         .ultra-glass {
-            background: rgba(10, 15, 30, 0.88);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(10, 15, 30, 0.90);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
             color: #ffffff !important;
         }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
-            background: rgba(255, 255, 255, 0.90);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
             color: #0f172a !important;
         }
@@ -124,7 +124,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای متمرکز و بدون تداخل با متن زیرین -->
+        <!-- منوی تنظیمات شیشه‌ای متمرکز (بدون تداخل با متن زیرین) -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
@@ -229,7 +229,7 @@
             </div>
         </section>
 
-        <!-- بخش جدید: پخش زنده و استریم (Live Stream Player) با قابلیت ادیت لینک از گوگل شیت -->
+        <!-- بخش پخش زنده و استریم (متصل به گوگل‌شیت) -->
         <section id="multimedia-tab" class="page-section hidden space-y-4">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-tower-broadcast ml-1.5 text-red-600 animate-pulse"></i> پخش زنده تلویزیون و استریم میزان
@@ -239,8 +239,8 @@
                     <iframe id="liveStreamIframe" src="" class="w-full h-full border-0" allowfullscreen></iframe>
                 </div>
                 <div class="p-2 space-y-1 text-center">
-                    <h3 id="liveStreamTitle" class="font-bold text-xs text-red-500">پخش زنده سراسری و جلسات دادگاه</h3>
-                    <p class="text-[10px] opacity-80">شما می‌توانید از طریق گوگل‌شیت لینک این استریم را به‌روزرسانی کنید.</p>
+                    <h3 id="liveStreamTitle" class="font-bold text-xs text-red-500">در حال دریافت اطلاعات پخش زنده...</h3>
+                    <p class="text-[10px] opacity-80">شما می‌توانید از طریق تب LiveStream در گوگل‌شیت این لینک را مدیریت کنید.</p>
                 </div>
             </div>
         </section>
@@ -591,21 +591,15 @@
             }
         }
 
-        // بارگذاری پلیر پخش زنده با لینک دریافتی از گوگل شیت
         function setupLiveStreamPlayer() {
             const iframe = document.getElementById('liveStreamIframe');
             const titleElem = document.getElementById('liveStreamTitle');
             
-            // پیش‌فرض یا لینک دریافتی از API گوگل‌شیت
-            let streamUrl = (appData.livestream && appData.livestream.url) ? appData.livestream.url : "https://www. آپارات .com/embed/xxx (یا لینک استریم نماشا/آپارات/پخش زنده)";
-            // لینک پیش‌فرض نمونه تست آپارات یا یوتیوب ایمبد در صورت خالی بودن
-            if (!appData.livestream || !appData.livestream.url) {
-                streamUrl = "https://www.aparat.com/video/video/embed/videohash/123456/vt/frame"; // قابل تنظیم از گوگل‌شیت
-                titleElem.innerText = (appData.livestream && appData.livestream.title) ? appData.livestream.title : "پخش زنده اخبار و برنامه‌های ویژه میزان";
-            } else {
-                titleElem.innerText = appData.livestream.title || "پخش زنده سراسری";
-            }
+            let streamUrl = (appData.livestream && appData.livestream.url) ? appData.livestream.url : "https://www.aparat.com/video/video/embed/videohash/123456/vt/frame";
+            let streamTitle = (appData.livestream && appData.livestream.title) ? appData.livestream.title : "پخش زنده سراسری و جلسات دادگاه";
+
             if(iframe) iframe.src = streamUrl;
+            if(titleElem) titleElem.innerText = streamTitle;
         }
 
         function checkForNewNews(newsList) {
@@ -637,7 +631,7 @@
                 container.innerHTML = '<p class="text-center text-slate-400 py-4">هیچ اعلان جدیدی وجود ندارد.</p>';
             } else {
                 container.innerHTML = latestNews.map(n => `
-                    <a href="${n.link}" target="_blank" class="block p-3 bg-black/30 rounded-xl hover:bg-white/20 transition space-y-1 border border-white/10 shadow-sm">
+                    <a href="${n.link}" target="_blank" class="block p-3 bg-black/40 rounded-xl hover:bg-white/20 transition space-y-1 border border-white/15 shadow-sm">
                         <div class="flex items-center justify-between text-[9px] text-red-500 font-bold">
                             <span><i class="fa-solid fa-bolt ml-1"></i> خبر جدید</span>
                             <span class="opacity-80">${n.category || 'عمومی'}</span>

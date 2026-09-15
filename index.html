@@ -21,9 +21,9 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* پس‌زمینه هدر با عکس اختصاصی هدر */
+        /* تنظیم ترکیب رنگ قرمز سازمانی و وضوح بالاتر تصویر پس‌زمینه هدر */
         .header-bg {
-            background: linear-gradient(rgba(197, 27, 36, 0.82), rgba(127, 29, 29, 0.88)), 
+            background: linear-gradient(rgba(197, 27, 36, 0.78), rgba(127, 29, 29, 0.85)), 
                         url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
@@ -261,14 +261,14 @@
         </div>
     </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-3 flex justify-between items-center z-50 shadow-lg">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-2 flex justify-between items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition">
             <i class="fa-solid fa-newspaper text-sm"></i>
             <span class="text-[9px] mt-1 font-bold">اخبار</span>
         </button>
         <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
             <i class="fa-brands fa-x-twitter text-sm"></i>
-            <span class="text-[9px] mt-1">توییتر (X)</span>
+            <span class="text-[9px] mt-1">توییتر</span>
         </button>
         <button onclick="switchTab('bookmarks-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
             <i class="fa-solid fa-bookmark text-sm"></i>
@@ -471,7 +471,6 @@
             });
 
             const firstNews = filteredNews[0];
-            // استفاده از تصویر اصلی خود خبر (اگر در شیت بود) یا تصویر پیش‌فرض مناسب
             const featuredImg = (firstNews.image && firstNews.image.startsWith('http')) ? firstNews.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
             featuredContainer.innerHTML = `
@@ -662,7 +661,6 @@
             document.getElementById('modalSummary').innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
             document.getElementById('modalCategory').innerText = news.category || 'عمومی';
             
-            // تصویر مدال خبر
             const modalImgUrl = (news.image && news.image.startsWith('http')) ? news.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
             document.getElementById('modalImg').src = modalImgUrl;
             document.getElementById('modalLink').href = news.link;

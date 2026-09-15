@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خبرگزاری میزان | مینی‌اپ خبری</title>
+    <title>خبرگزاری میزان | مینی‌اپ خبری پیشرفته</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -149,7 +149,7 @@
             </div>
         </section>
 
-        <!-- بخش جدید توییتر (X) با استایل اختصاصی -->
+        <!-- بخش توییتر (X) با قابلیت اتصال به پست اصلی -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-3">
                 <div class="flex items-center space-x-2 space-x-reverse">
@@ -159,6 +159,12 @@
                 <a href="https://x.com/MizanNewsAgency" target="_blank" class="text-[10px] text-blue-500 hover:underline">مشاهده در X</a>
             </div>
             <div id="twitterFeedContainer" class="space-y-3"></div>
+        </section>
+
+        <!-- بخش نشان‌شده‌ها (Bookmarks) -->
+        <section id="bookmarks-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300"><i class="fa-solid fa-bookmark ml-1 text-red-600"></i> اخبار ذخیره‌شده شما</h2>
+            <div id="bookmarksListContainer" class="space-y-3"></div>
         </section>
 
         <section id="legal-tab" class="page-section hidden">
@@ -204,9 +210,12 @@
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-bold">دسته‌بندی</span>
-                <button onclick="toggleReadingMode()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1 rounded-lg font-medium transition"><i class="fa-solid fa-book-open ml-1"></i> حالت مطالعه</button>
+                <div class="flex space-x-1 space-x-reverse">
+                    <button onclick="toggleBookmarkCurrentNews()" id="modalBookmarkBtn" class="text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg transition" title="ذخیره خبر"><i class="fa-regular fa-bookmark"></i></button>
+                    <button onclick="toggleReadingMode()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1 rounded-lg font-medium transition"><i class="fa-solid fa-book-open ml-1"></i> حالت مطالعه</button>
+                </div>
             </div>
-            <img id="modalImg" src="" class="w-full h-36 object-cover rounded-xl mb-3 shadow" alt="">
+            <img id="modalImg" src="" loading="lazy" class="w-full h-36 object-cover rounded-xl mb-3 shadow" alt="">
             <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
             <p id="modalSummary" class="text-[11px] text-slate-600 dark:text-slate-300 mt-2 leading-relaxed whitespace-pre-line">خلاصه کامل...</p>
 
@@ -253,7 +262,7 @@
         </div>
     </div>
 
-    <!-- منوی ناوبری پایین صفحه (با اضافه شدن تب توییتر) -->
+    <!-- منوی ناوبری پایین صفحه (با تب بوکمارک و توییتر) -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-3 flex justify-between items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition">
             <i class="fa-solid fa-newspaper text-sm"></i>
@@ -263,13 +272,13 @@
             <i class="fa-brands fa-x-twitter text-sm"></i>
             <span class="text-[9px] mt-1">توییتر (X)</span>
         </button>
+        <button onclick="switchTab('bookmarks-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+            <i class="fa-solid fa-bookmark text-sm"></i>
+            <span class="text-[9px] mt-1">ذخیره‌شده‌ها</span>
+        </button>
         <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
             <i class="fa-solid fa-scale-balanced text-sm"></i>
             <span class="text-[9px] mt-1">سامانه‌ها</span>
-        </button>
-        <button onclick="switchTab('files-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
-            <i class="fa-solid fa-folder-open text-sm"></i>
-            <span class="text-[9px] mt-1">پرونده‌ها</span>
         </button>
         <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
             <i class="fa-solid fa-user-tie text-sm"></i>
@@ -297,19 +306,35 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
+        // سیستم کش‌گذاری هوشمند فرانت‌اند (Client-Side Caching) با اعتبار ۵ دقیقه‌ای
         async function initApp(force = false) {
             try {
-                localStorage.removeItem('mizan_cache');
-                localStorage.removeItem('mizan_cache_time');
-
+                const cachedData = localStorage.getItem('mizan_cache');
+                const cacheTime = localStorage.getItem('mizan_cache_time');
                 const now = new Date().getTime();
+
+                if (!force && cachedData && cacheTime && (now - cacheTime < 300000)) {
+                    appData = JSON.parse(cachedData);
+                    setupInitialView();
+                    return;
+                }
+
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
                 appData = await response.json();
+
+                localStorage.setItem('mizan_cache', JSON.stringify(appData));
+                localStorage.setItem('mizan_cache_time', now);
 
                 setupInitialView();
             } catch (error) {
                 console.error("Error loading data:", error);
-                document.getElementById('newsListContainer').innerHTML = '<p class="text-center text-red-500 py-8 text-xs">خطا در بارگذاری اطلاعات. لطفا دوباره تلاش کنید.</p>';
+                const cachedData = localStorage.getItem('mizan_cache');
+                if (cachedData) {
+                    appData = JSON.parse(cachedData);
+                    setupInitialView();
+                } else {
+                    document.getElementById('newsListContainer').innerHTML = '<p class="text-center text-red-500 py-8 text-xs">خطا در بارگذاری اطلاعات. لطفا دوباره تلاش کنید.</p>';
+                }
             }
         }
 
@@ -321,6 +346,7 @@
             renderTabs();
             renderNews();
             renderTwitterFeed();
+            renderBookmarks();
             renderLegalSystems();
             renderFiles();
             renderOfficialMessages();
@@ -354,7 +380,7 @@
                 isDarkTheme = true;
                 applyThemeUI();
             }
-            initApp(true);
+            initApp(false);
             initPullToRefresh();
         });
 
@@ -453,7 +479,7 @@
 
             featuredContainer.innerHTML = `
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
-                    <img src="${DESIRED_FEATURED_IMAGE}" class="w-full h-44 object-cover" alt="">
+                    <img src="${DESIRED_FEATURED_IMAGE}" loading="lazy" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
                         <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
                         <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
@@ -471,13 +497,13 @@
             `).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
             } else {
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }
         }
 
-        // رندر کردن پست‌های توییتر با استایل کارت‌های X
+        // رندر پست‌های توییتر متصل به توییت اصلی
         function renderTwitterFeed() {
             const container = document.getElementById('twitterFeedContainer');
             if (!container) return;
@@ -514,20 +540,69 @@
                                     <span class="text-[10px] text-slate-400">${handle}</span>
                                 </div>
                             </div>
-                            <a href="${url}" target="_blank" class="text-slate-400 hover:text-blue-500 transition"><i class="fa-brands fa-x-twitter text-sm"></i></a>
+                            <a href="${url}" target="_blank" class="text-slate-400 hover:text-blue-500 transition" title="مشاهده توییت اصلی در X"><i class="fa-brands fa-x-twitter text-sm"></i></a>
                         </div>
                         <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">${text}</p>
                         <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
                             <span>${date}</span>
                             <div class="flex space-x-4 space-x-reverse">
-                                <span><i class="fa-regular fa-comment ml-1"></i></span>
-                                <span><i class="fa-solid fa-retweet ml-1"></i></span>
-                                <span><i class="fa-regular fa-heart ml-1"></i></span>
+                                <a href="${url}" target="_blank" class="hover:text-blue-500"><i class="fa-regular fa-comment ml-1"></i></a>
+                                <a href="${url}" target="_blank" class="hover:text-green-500"><i class="fa-solid fa-retweet ml-1"></i></a>
+                                <a href="${url}" target="_blank" class="hover:text-red-500"><i class="fa-regular fa-heart ml-1"></i></a>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // مدیریت سیستم نشان‌گذاری (Bookmarks)
+        function getLocalBookmarks() {
+            try {
+                return JSON.parse(localStorage.getItem('mizan_bookmarks') || '[]');
+            } catch(e) { return []; }
+        }
+
+        function toggleBookmarkCurrentNews() {
+            if (!currentSelectedNews) return;
+            let bookmarks = getLocalBookmarks();
+            const index = bookmarks.findIndex(b => b.link === currentSelectedNews.link);
+            const btnIcon = document.querySelector('#modalBookmarkBtn i');
+
+            if (index > -1) {
+                bookmarks.splice(index, 1);
+                if(btnIcon) btnIcon.className = "fa-regular fa-bookmark";
+                alert('خبر از لیست ذخیره‌شده‌ها حذف شد.');
+            } else {
+                bookmarks.push({
+                    title: currentSelectedNews.title,
+                    link: currentSelectedNews.link,
+                    summary: currentSelectedNews.summary,
+                    category: currentSelectedNews.category
+                });
+                if(btnIcon) btnIcon.className = "fa-solid fa-bookmark text-red-600";
+                alert('خبر با موفقیت ذخیره شد.');
+            }
+            localStorage.setItem('mizan_bookmarks', JSON.stringify(bookmarks));
+            renderBookmarks();
+        }
+
+        function renderBookmarks() {
+            const container = document.getElementById('bookmarksListContainer');
+            if(!container) return;
+            const bookmarks = getLocalBookmarks();
+
+            if (!bookmarks.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری ذخیره نشده است.</p>';
+                return;
+            }
+
+            container.innerHTML = bookmarks.map(item => `
+                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
+                    <h3 class="font-bold text-xs line-clamp-2 leading-snug">${item.title}</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-normal">${item.summary || ''}</p>
+                </div>
+            `).join('');
         }
 
         function loadMoreNews() {
@@ -592,6 +667,13 @@
             document.getElementById('modalCategory').innerText = news.category || 'عمومی';
             document.getElementById('modalImg').src = DESIRED_FEATURED_IMAGE;
             document.getElementById('modalLink').href = news.link;
+
+            const bookmarks = getLocalBookmarks();
+            const isBookmarked = bookmarks.some(b => b.link === news.link);
+            const btnIcon = document.querySelector('#modalBookmarkBtn i');
+            if(btnIcon) {
+                btnIcon.className = isBookmarked ? "fa-solid fa-bookmark text-red-600" : "fa-regular fa-bookmark";
+            }
 
             loadNewsComments(news.link);
             document.getElementById('newsModal').classList.remove('hidden');
@@ -740,7 +822,7 @@
                 let fImg = file.image || '';
                 let fUrl = file.url || '';
 
-                let imgTag = (fImg && String(fImg).trim().startsWith('http')) ? `<img src="${fImg}" class="w-full h-40 object-cover rounded-xl shadow-inner mb-2" alt="">` : '';
+                let imgTag = (fImg && String(fImg).trim().startsWith('http')) ? `<img src="${fImg}" loading="lazy" class="w-full h-40 object-cover rounded-xl shadow-inner mb-2" alt="">` : '';
                 let btnTag = fUrl ? `<a href="${fUrl}" target="_blank" class="block w-full text-center bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold transition mt-3">مشاهده مشروح پرونده</a>` : '';
 
                 return `
@@ -881,6 +963,8 @@
                 renderNews();
             } else if (sectionId === 'twitter-tab') {
                 renderTwitterFeed();
+            } else if (sectionId === 'bookmarks-tab') {
+                renderBookmarks();
             } else if (sectionId === 'files-tab') {
                 renderFiles();
             }

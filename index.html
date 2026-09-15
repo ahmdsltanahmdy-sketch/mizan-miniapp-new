@@ -17,24 +17,26 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* افکت شیشه‌ای بسیار شفاف، عمیق و جذاب (Ultra Glassmorphism) */
+        /* افکت فوق‌العاده شیشه‌ای (Ultra-Glassmorphism) با خوانایی بی‌نقص متون */
         .ultra-glass {
-            background: rgba(15, 23, 42, 0.35);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            color: #f8fafc !important;
         }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+            color: #0f172a !important;
         }
 
-        .glass-tab { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.35); }
-        .dark .glass-tab { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.15); }
+        .glass-tab { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.35); color: #ffffff !important; }
+        .dark .glass-tab { background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(255, 255, 255, 0.2); }
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
@@ -110,9 +112,10 @@
             </div>
             
             <div class="flex items-center space-x-2 space-x-reverse mr-auto">
-                <button onclick="openNotificationsModal()" title="اعلان‌های فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
+                <!-- زنگ اعلان فوری که به صورت پیش‌فرض غیرفعال است (بر اساس تنظیمات) -->
+                <button id="notificationBellBtn" onclick="openNotificationsModal()" title="اعلان‌های فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative hidden">
                     <i class="fa-solid fa-bell text-xs text-amber-300"></i>
-                    <span id="globalNotificationBadge" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>
+                    <span id="globalNotificationBadge" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full animate-ping hidden"></span>
                 </button>
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
                     <i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i>
@@ -122,36 +125,41 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات بسیار شیشه‌ای و فوق‌العاده جذاب -->
-        <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-4 ultra-glass text-slate-800 dark:text-white space-y-3.5 text-xs shadow-2xl border-t border-white/30">
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/40 dark:border-white/15">
+        <!-- منوی تنظیمات فوق‌العاده شیشه‌ای با خوانایی کامل متن -->
+        <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-4 ultra-glass space-y-3.5 text-xs shadow-2xl border-t border-white/30">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
                 <span class="font-bold">نصب مینی‌اپ:</span>
                 <button onclick="showInstallGuide(); document.getElementById('settingsDropdown').classList.add('hidden');" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
                     <span>راهنمای نصب</span>
                 </button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/40 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
                 <span class="font-bold">حالت نمایش:</span>
-                <button onclick="toggleTheme()" class="bg-white/30 dark:bg-white/15 hover:bg-white/40 px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/30 shadow-sm">
+                <button onclick="toggleTheme()" class="bg-white/25 dark:bg-white/15 hover:bg-white/35 px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/30 shadow-sm">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                     <span id="themeText">تیره / روشن</span>
                 </button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/40 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
                 <span class="font-bold">ویجت آب‌وهوا و تقویم:</span>
                 <button onclick="toggleSetting('weather')" id="btnSettingWeather" class="px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/40 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
                 <span class="font-bold">نوار خبر فوری:</span>
                 <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/40 dark:border-white/15">
+            <!-- تنظیمات فعال‌سازی زنگ اعلان بالای صفحه -->
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
+                <span class="font-bold">زنگ اعلان فوری (هدر):</span>
+                <button onclick="toggleSetting('bell')" id="btnSettingBell" class="px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow">مخفی</button>
+            </div>
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
                 <span class="font-bold">قلم مینی‌اپ:</span>
                 <div class="space-x-1 space-x-reverse">
-                    <button onclick="changeFontFamily('Tahoma')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">Tahoma</button>
-                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">وزیر</button>
-                    <button onclick="changeFontFamily('Yekan Bakh')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">یکان</button>
+                    <button onclick="changeFontFamily('Tahoma')" class="px-2.5 py-1 bg-white/25 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">Tahoma</button>
+                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2.5 py-1 bg-white/25 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">وزیر</button>
+                    <button onclick="changeFontFamily('Yekan Bakh')" class="px-2.5 py-1 bg-white/25 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">یکان</button>
                 </div>
             </div>
             <div class="pt-1">
@@ -171,7 +179,7 @@
                     <i class="fa-solid fa-earth-americas"></i>
                 </button>
             </div>
-            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass text-slate-800 dark:text-slate-100 rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
+            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
 
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar border-t border-white/10 py-2"></div>
@@ -179,7 +187,7 @@
 
     <!-- مودال اعلان‌های شیشه‌ای -->
     <div id="notificationsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl max-h-[80vh] overflow-y-auto space-y-3 text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl max-h-[80vh] overflow-y-auto space-y-3">
             <button onclick="closeNotificationsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-[#c51b24] flex items-center"><i class="fa-solid fa-bell ml-1.5"></i> آخرین اخبار و اعلان‌های فوری</h3>
             <div id="notificationsListContainer" class="space-y-2 text-xs">
@@ -190,11 +198,11 @@
 
     <!-- مودال راهنمای نصب شیشه‌ای -->
     <div id="installGuideModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
             <button onclick="closeInstallGuide()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-sm text-[#c51b24]"><i class="fa-solid fa-cloud-arrow-down ml-1"></i> نصب مینی‌اپ میزان</h3>
             <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">برای استفاده مثل یک اپلیکیشن واقعی:</p>
-            <div class="bg-white/40 dark:bg-slate-800/40 p-3 rounded-2xl space-y-2 text-[11px] text-slate-700 dark:text-slate-200 border border-white/20">
+            <div class="bg-white/40 dark:bg-slate-800/40 p-3 rounded-2xl space-y-2 text-[11px] border border-white/20">
                 <p><strong>اندروید:</strong> منوی مرورگر را باز کرده و گزینه <span class="text-red-600 font-bold">«افزودن به صفحه اصلی»</span> را انتخاب کنید.</p>
                 <p class="border-t border-slate-200/50 dark:border-slate-700/50 pt-2"><strong>آیفون:</strong> در سافاری دکمه اشتراک‌گذاری را زده و <span class="text-red-600 font-bold">«Add to Home Screen»</span> را انتخاب کنید.</p>
             </div>
@@ -212,11 +220,11 @@
                 </div>
             </div>
             <div id="loadMoreContainer" class="text-center py-4 hidden">
-                <button onclick="loadMoreNews()" class="ultra-glass text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">مشاهده اخبار بیشتر</button>
+                <button onclick="loadMoreNews()" class="ultra-glass px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">مشاهده اخبار بیشتر</button>
             </div>
         </section>
 
-        <!-- بخش چندرسانه‌ای کاملاً اختصاصی (ویدیوها و گزارش‌های تصویری) -->
+        <!-- بخش چندرسانه‌ای با اتصال به اخبار داخلی و تصاویر معتبر (بدون خطای Timeout) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -304,17 +312,17 @@
         </section>
     </main>
 
-    <!-- نوار خبر فوری شیشه‌ای -->
+    <!-- نوار خبر فوری شیشه‌ای با تم تیره و متن کاملاً خوانا -->
     <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto ultra-glass text-white px-3 py-1.5 overflow-hidden flex items-center border-t border-white/20 z-40 shadow-2xl text-[11px]">
         <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse shadow">خبر فوری</span>
-        <div class="overflow-hidden whitespace-nowrap relative w-full">
+        <div class="overflow-hidden whitespace-nowrap relative w-full text-slate-100 dark:text-slate-100 font-medium">
             <div id="breakingNewsTicker" class="animate-ticker">در حال دریافت آخرین اخبار مهم و قضایی کشور...</div>
         </div>
     </div>
 
     <!-- مودال خبر شیشه‌ای -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all text-slate-800 dark:text-white">
+        <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded font-bold shadow-sm">دسته‌بندی</span>
@@ -329,7 +337,7 @@
             </div>
             <img id="modalImg" src="" loading="lazy" class="w-full h-36 object-cover rounded-2xl mb-3 shadow-md" alt="">
             <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
-            <p id="modalSummary" class="text-[11px] text-slate-600 dark:text-slate-300 mt-2 leading-relaxed whitespace-pre-line">خلاصه کامل...</p>
+            <p id="modalSummary" class="text-[11px] mt-2 leading-relaxed whitespace-pre-line opacity-90">خلاصه کامل...</p>
 
             <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 space-y-2">
                 <div class="flex justify-between items-center">
@@ -338,8 +346,8 @@
                 </div>
                 <div id="commentsListContainer" class="max-h-32 overflow-y-auto space-y-1.5 text-[11px]"></div>
                 <div class="flex space-x-1 space-x-reverse pt-1">
-                    <input type="text" id="commentAuthorInput" placeholder="نام شما..." class="w-1/3 bg-white/40 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl text-[10px] dark:text-white border border-white/20">
-                    <input type="text" id="commentTextInput" placeholder="نظر خود را بنویسید..." class="flex-grow bg-white/40 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl text-[10px] dark:text-white border border-white/20" onkeydown="if(event.key==='Enter') submitComment()">
+                    <input type="text" id="commentAuthorInput" placeholder="نام شما..." class="w-1/3 bg-white/40 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl text-[10px] border border-white/20">
+                    <input type="text" id="commentTextInput" placeholder="نظر خود را بنویسید..." class="flex-grow bg-white/40 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl text-[10px] border border-white/20" onkeydown="if(event.key==='Enter') submitComment()">
                     <button id="submitCommentBtn" onclick="submitComment()" class="bg-[#c51b24] hover:bg-red-700 text-white px-3 py-1 rounded-xl text-[10px] font-bold transition shadow">ثبت</button>
                 </div>
             </div>
@@ -354,7 +362,7 @@
 
     <!-- مودال اشتراک‌گذاری شیشه‌ای -->
     <div id="shareModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3 text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3">
             <button onclick="closeShareModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-[#c51b24]">اشتراک‌گذاری سریع خبر</h3>
             <div class="grid grid-cols-2 gap-2 pt-2">
@@ -363,13 +371,13 @@
                 <a id="shareRubika" href="#" target="_blank" class="p-2.5 bg-amber-50 dark:bg-slate-800/60 text-amber-600 rounded-2xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm border border-white/10"><i class="fa-solid fa-shield-halved"></i> <span>روبیکا</span></a>
                 <a id="shareEitaa" href="#" target="_blank" class="p-2.5 bg-orange-50 dark:bg-slate-800/60 text-orange-600 rounded-2xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm border border-white/10"><i class="fa-solid fa-comment-dots"></i> <span>ایتا</span></a>
             </div>
-            <button onclick="copyNewsLink()" class="w-full bg-white/40 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 py-2.5 rounded-2xl text-xs font-bold transition shadow-sm border border-white/20"><i class="fa-solid fa-copy ml-1"></i> کپی لینک خبر</button>
+            <button onclick="copyNewsLink()" class="w-full bg-white/40 dark:bg-slate-800/60 py-2.5 rounded-2xl text-xs font-bold transition shadow-sm border border-white/20"><i class="fa-solid fa-copy ml-1"></i> کپی لینک خبر</button>
         </div>
     </div>
 
     <!-- مودال کارت گرافیکی شیشه‌ای -->
     <div id="cardPreviewModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3 text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3">
             <button onclick="closeCardPreviewModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-[#c51b24]">کارت گرافیکی و استوری خبر</h3>
             <div id="cardCanvasPreviewContainer" class="border dark:border-slate-800 rounded-2xl overflow-hidden shadow-inner flex justify-center bg-white p-2"></div>
@@ -382,10 +390,10 @@
 
     <!-- مودال جستجوی پیشرفته شیشه‌ای -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl">
             <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-sm text-[#c51b24] mb-3"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته کل سایت</h3>
-            <input type="text" id="advSearchInput" placeholder="جستجو در آرشیو..." class="w-full bg-white/40 dark:bg-slate-800/60 rounded-xl px-3 py-2.5 text-xs mb-3 focus:outline-none dark:text-white border border-white/20 shadow-inner" onkeydown="if(event.key==='Enter') executeAdvancedSearch()">
+            <input type="text" id="advSearchInput" placeholder="جستجو در آرشیو..." class="w-full bg-white/40 dark:bg-slate-800/60 rounded-xl px-3 py-2.5 text-xs mb-3 focus:outline-none border border-white/20 shadow-inner" onkeydown="if(event.key==='Enter') executeAdvancedSearch()">
             <button onclick="executeAdvancedSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold mb-3 shadow">جستجوی جامع</button>
             <div id="advSearchResults" class="max-h-60 overflow-y-auto space-y-2 text-xs"></div>
         </div>
@@ -437,7 +445,8 @@
 
         let settingsState = {
             showWeather: localStorage.getItem('mizan_set_weather') !== 'false',
-            showTicker: localStorage.getItem('mizan_set_ticker') !== 'false'
+            showTicker: localStorage.getItem('mizan_set_ticker') !== 'false',
+            showBell: localStorage.getItem('mizan_set_bell') === 'true' // به طور پیش‌فرض در حالت اولیه غیرفعال است
         };
 
         function updateDateTime() {
@@ -475,6 +484,9 @@
             } else if(type === 'ticker') {
                 settingsState.showTicker = !settingsState.showTicker;
                 localStorage.setItem('mizan_set_ticker', settingsState.showTicker);
+            } else if(type === 'bell') {
+                settingsState.showBell = !settingsState.showBell;
+                localStorage.setItem('mizan_set_bell', settingsState.showBell);
             }
             applySettingsUI();
         }
@@ -482,11 +494,15 @@
         function applySettingsUI() {
             const wElem = document.getElementById('weatherWidgetContainer');
             const tElem = document.getElementById('tickerContainer');
+            const bElem = document.getElementById('notificationBellBtn');
+
             const btnW = document.getElementById('btnSettingWeather');
             const btnT = document.getElementById('btnSettingTicker');
+            const btnB = document.getElementById('btnSettingBell');
 
             if(wElem) wElem.style.display = settingsState.showWeather ? 'flex' : 'none';
             if(tElem) tElem.style.display = settingsState.showTicker ? 'flex' : 'none';
+            if(bElem) bElem.style.display = settingsState.showBell ? 'inline-block' : 'none';
 
             if(btnW) {
                 btnW.innerText = settingsState.showWeather ? 'نمایش' : 'مخفی';
@@ -496,6 +512,10 @@
                 btnT.innerText = settingsState.showTicker ? 'نمایش' : 'مخفی';
                 btnT.className = settingsState.showTicker ? "px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
             }
+            if(btnB) {
+                btnB.innerText = settingsState.showBell ? 'نمایش' : 'مخفی';
+                btnB.className = settingsState.showBell ? "px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
+            }
         }
 
         function resetToDefaultSettings() {
@@ -503,9 +523,11 @@
             localStorage.removeItem('mizan_font');
             localStorage.removeItem('mizan_set_weather');
             localStorage.removeItem('mizan_set_ticker');
+            localStorage.removeItem('mizan_set_bell');
             
             settingsState.showWeather = true;
             settingsState.showTicker = true;
+            settingsState.showBell = false;
             document.documentElement.style.removeProperty('--selected-font');
             
             applyThemeUI(false);
@@ -549,51 +571,19 @@
             }
         }
 
+        // بارگذاری ایمن بخش چندرسانه‌ای با استفاده از داده‌های معتبر و بدون ارور Timeout
         async function fetchMultimediaFeed() {
             try {
-                const rssUrl = "https://www.mizanonline.ir/fa/rss/2";
-                const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(rssUrl);
-                const res = await fetch(proxyUrl);
-                const data = await res.json();
-                
-                if (data && data.contents) {
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(data.contents, "text/xml");
-                    const items = xmlDoc.querySelectorAll("item");
-                    let mediaList = [];
-                    
-                    items.forEach(item => {
-                        let title = item.querySelector("title") ? item.querySelector("title").textContent : "";
-                        if (title.includes('خبر آزمایشی')) return;
-
-                        let desc = item.querySelector("description") ? item.querySelector("description").textContent : "";
-                        let imgMatch = desc.match(/src="([^"]+)"/);
-                        let imgUrl = imgMatch ? imgMatch[1] : '';
-                        
-                        // فیلتر دقیق: فقط مواردی که تصویر واقعی و مرتبط با چندرسانه‌ای/گزارش تصویری دارند
-                        if (!imgUrl) return;
-
-                        let cleanDesc = desc.replace(/<[^>]*>/g, "").trim();
-
-                        mediaList.push({
-                            title: title,
-                            link: item.querySelector("link") ? item.querySelector("link").textContent : "",
-                            description: cleanDesc,
-                            image: imgUrl,
-                            pubDate: item.querySelector("pubDate") ? item.querySelector("pubDate").textContent : new Date().toISOString()
-                        });
-                    });
-
-                    mediaList.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-                    appData.multimedia = mediaList;
+                // استفاده از داده‌های اخبار اصلی به عنوان منبع پایدار گالری چندرسانه‌ای برای جلوگیری از قطعی و Timeout
+                if (appData.news && appData.news.length > 0) {
+                    let mediaList = appData.news.filter(n => n.image && n.image.startsWith('http') && !n.title.includes('خبر آزمایشی'));
+                    mediaList.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+                    appData.multimedia = mediaList.slice(0, 15);
                     renderMultimediaFeed();
                 }
             } catch(e) {
-                console.error("Multimedia RSS error:", e);
-                if (appData.news && appData.news.length > 0) {
-                    appData.multimedia = appData.news.filter(n => !n.title.includes('خبر آزمایشی') && n.image && n.image.startsWith('http')).slice(0, 15);
-                    renderMultimediaFeed();
-                }
+                console.error("Multimedia feed error:", e);
+                document.getElementById('multimediaFeedContainer').innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">محتوای چندرسانه‌ای یافت نشد.</p>';
             }
         }
 
@@ -602,9 +592,6 @@
             if(!container) return;
             let items = appData.multimedia || [];
             
-            // فیلتر نهایی برای اطمینان از نمایش فقط اخبار دارای تصویر
-            items = items.filter(m => m.image && m.image.startsWith('http') && !m.title.includes('خبر آزمایشی'));
-
             if(!items.length) {
                 container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">محتوای چندرسانه‌ای یافت نشد.</p>';
                 return;
@@ -618,7 +605,7 @@
                             <span class="text-[9px] text-slate-400">${m.pubDate ? new Date(m.pubDate).toLocaleDateString('fa-IR') : ''}</span>
                         </div>
                         <h3 class="font-bold text-xs line-clamp-2 leading-snug mt-1">${m.title}</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${m.description || ''}</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${m.summary || m.description || ''}</p>
                     </div>
                 </a>
             `).join('');
@@ -681,11 +668,7 @@
             renderLegalSystems();
             renderFiles();
             renderOfficialMessages();
-            if(appData.multimedia && appData.multimedia.length) {
-                renderMultimediaFeed();
-            } else {
-                fetchMultimediaFeed();
-            }
+            fetchMultimediaFeed();
         }
 
         function showInstallGuide() { document.getElementById('installGuideModal').classList.remove('hidden'); }
@@ -864,7 +847,6 @@
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl text-center space-y-2 border border-slate-200 dark:border-slate-800">
                         <i class="fa-solid fa-hashtag text-2xl text-slate-400"></i>
                         <p class="text-xs text-slate-500">هنوز پستی از توییتر دریافت نشده است.</p>
-                        <p class="text-[10px] text-slate-400">لطفاً مطمئن شوید که در تب TwitterFeed گوگل‌شیت اطلاعات وجود دارد.</p>
                     </div>
                 `;
                 return;
@@ -890,16 +872,11 @@
                                     <span class="text-[10px] text-slate-400">${handle}</span>
                                 </div>
                             </div>
-                            <i class="fa-brands fa-x-twitter text-sm text-slate-400 hover:text-blue-500 transition"></i>
+                            <i class="fa-brands fa-x-twitter text-sm text-slate-400"></i>
                         </div>
                         <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">${text}</p>
                         <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
                             <span>${date}</span>
-                            <div class="flex space-x-4 space-x-reverse text-slate-400">
-                                <span><i class="fa-regular fa-comment ml-1"></i></span>
-                                <span><i class="fa-solid fa-retweet ml-1"></i></span>
-                                <span><i class="fa-regular fa-heart ml-1"></i></span>
-                            </div>
                         </div>
                     </a>
                 `;
@@ -1001,15 +978,15 @@
             let html = '';
             if (matchedSystems.length > 0) {
                 html += '<div class="text-[10px] font-bold text-red-600 px-2 py-1">سامانه‌ها</div>';
-                html += matchedSystems.map(sys => `<a href="${sys.url}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold text-slate-800 dark:text-white">${sys.title}</div><div class="text-[10px] text-slate-500">${sys.description}</div></a>`).join('');
+                html += matchedSystems.map(sys => `<a href="${sys.url}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold">${sys.title}</div><div class="text-[10px] opacity-80">${sys.description}</div></a>`).join('');
             }
             if (matchedFiles.length > 0) {
-                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-slate-100 dark:border-slate-700 mt-1">پرونده‌های ویژه</div>';
-                html += matchedFiles.map(file => `<a href="${file.url || '#'}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold text-slate-800 dark:text-white">${file.title}</div><div class="text-[10px] text-slate-500 line-clamp-1">${file.description}</div></a>`).join('');
+                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-white/10 mt-1">پرونده‌های ویژه</div>';
+                html += matchedFiles.map(file => `<a href="${file.url || '#'}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold">${file.title}</div><div class="text-[10px] opacity-80 line-clamp-1">${file.description}</div></a>`).join('');
             }
             if (matchedNews.length > 0) {
-                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-slate-100 dark:border-slate-700 mt-1">اخبار مرتبط</div>';
-                html += matchedNews.map(item => `<div onclick='selectLiveSuggestion(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer transition"><div class="font-bold line-clamp-1 text-slate-800 dark:text-white">${item.title}</div><div class="text-[10px] text-slate-500 line-clamp-1 mt-0.5">${item.summary || ''}</div></div>`).join('');
+                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-white/10 mt-1">اخبار مرتبط</div>';
+                html += matchedNews.map(item => `<div onclick='selectLiveSuggestion(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer transition"><div class="font-bold line-clamp-1">${item.title}</div><div class="text-[10px] opacity-80 line-clamp-1 mt-0.5">${item.summary || ''}</div></div>`).join('');
             }
             box.innerHTML = html;
             box.classList.remove('hidden');
@@ -1163,7 +1140,7 @@
                 const data = await res.json();
                 if (badge) badge.innerText = `${data.pendingCount} نظر در صف انتشار`;
                 if (!data.comments || !data.comments.length) { container.innerHTML = 'هنوز نظری تایید نشده است. اولین نفر باشید!'; return; }
-                container.innerHTML = data.comments.map(c => `<div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg space-y-0.5"><div class="font-bold text-red-600 dark:text-red-400">${c.userName}</div><div class="text-slate-700 dark:text-slate-300 leading-relaxed">${c.commentText}</div></div>`).join('');
+                container.innerHTML = data.comments.map(c => `<div class="p-2 bg-white/40 dark:bg-slate-800/60 rounded-xl space-y-0.5 border border-white/10"><div class="font-bold text-red-600 dark:text-red-400">${c.userName}</div><div class="leading-relaxed opacity-90">${c.commentText}</div></div>`).join('');
             } catch (e) { container.innerHTML = 'خطا در بارگذاری نظرات.'; }
         }
 
@@ -1215,7 +1192,7 @@
         function renderLegalSystems() {
             const container = document.getElementById('legalSystemsContainer');
             if (!container || !appData.legalSystems || !appData.legalSystems.length) return;
-            container.innerHTML = appData.legalSystems.map(sys => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between"><div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${sys.title}</h3><p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${sys.description}</p></div><a href="${sys.url}" target="_blank" class="bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 px-3.5 py-1.5 rounded-xl text-xs font-bold transition">ورود</a></div>`).join('');
+            container.innerHTML = appData.legalSystems.map(sys => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between"><div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${sys.title}</h3><p class="text-[11px] opacity-80 mt-0.5">${sys.description}</p></div><a href="${sys.url}" target="_blank" class="bg-red-50 dark:bg-slate-800 text-red-600 dark:text-red-400 px-3.5 py-1.5 rounded-xl text-xs font-bold transition">ورود</a></div>`).join('');
         }
 
         function renderFiles() {
@@ -1241,7 +1218,7 @@
                     <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 mb-3">
                         ${imgTag}
                         <h3 class="font-bold text-sm text-red-600 dark:text-red-400 mb-1">${fTitle}</h3>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">${fDesc}</p>
+                        <p class="text-[11px] opacity-90 leading-relaxed whitespace-pre-line">${fDesc}</p>
                         ${btnTag}
                     </div>
                 `;
@@ -1256,7 +1233,7 @@
             const pendingQuestions = appData.faq.filter(item => !item.answer || item.answer.includes('در صف بررسی'));
             if (badge) badge.innerText = `${pendingQuestions.length} سوال در حال بررسی`;
             if (!officialFaq.length) { container.innerHTML = '<p class="text-[11px] text-slate-500">مطلبی یافت نشد.</p>'; return; }
-            container.innerHTML = officialFaq.map(msg => `<div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2"><h4 class="font-bold text-xs text-red-600 dark:text-red-400 leading-snug whitespace-pre-line">${msg.question}</h4><p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">${msg.answer}</p></div>`).join('');
+            container.innerHTML = officialFaq.map(msg => `<div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2"><h4 class="font-bold text-xs text-red-600 dark:text-red-400 leading-snug whitespace-pre-line">${msg.question}</h4><p class="text-[11px] opacity-90 leading-relaxed whitespace-pre-line">${msg.answer}</p></div>`).join('');
         }
 
         async function submitQuestion() {

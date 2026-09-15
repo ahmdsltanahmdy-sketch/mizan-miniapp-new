@@ -21,13 +21,18 @@
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* هدر با تصویر کاملاً واضح و کادر تیره استاندارد برای خوانایی */
+        /* هدر با تصویر کاملاً واضح در حالت عادی */
         .header-bg {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(197, 27, 36, 0.75)), 
-                              url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
+            background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+        }
+
+        /* هدر در حالت تیره با لایه تیره ملایم برای مشخص بودن تصویر */
+        .dark .header-bg {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+                              url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
         }
 
         #pullRefreshIndicator {
@@ -58,7 +63,6 @@
             localStorage.setItem('mizan_user_id', userId);
         }
         
-        // مدیریت حالت تاریک و روشن خودکار (Auto Night Mode) بر اساس ساعت سیستم
         const savedTheme = localStorage.getItem('mizan_theme');
         const currentHour = new Date().getHours();
         if (savedTheme === 'dark' || (!savedTheme && (currentHour >= 20 || currentHour < 6))) {
@@ -120,7 +124,6 @@
             <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto border border-slate-200 dark:border-slate-700 p-2 space-y-1"></div>
         </div>
 
-        <!-- تب‌ها و تگ‌های فیلتر موضوعی هوشمند -->
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar border-t border-white/10 py-2"></div>
     </header>
 
@@ -166,7 +169,6 @@
             <div id="twitterFeedContainer" class="space-y-3"></div>
         </section>
 
-        <!-- بخش نشان‌گذاری‌شده‌ها با دسته‌بندی موضوعی هوشمند -->
         <section id="bookmarks-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between mb-2">
                 <h2 class="font-bold text-xs text-slate-700 dark:text-slate-300 flex items-center">
@@ -227,14 +229,12 @@
         </section>
     </main>
 
-    <!-- مودال نمایش خبر با قابلیت تغییر اندازه فونت داینامیک -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div id="modalCardContainer" class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-bold">دسته‌بندی</span>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
-                    <!-- کنترل اندازه فونت داخل مودال -->
                     <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-[10px]">
                         <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold" title="بزرگنمایی متن">A+</button>
                         <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold" title="کوچک‌نمایی متن">A-</button>
@@ -268,7 +268,6 @@
         </div>
     </div>
 
-    <!-- مودال اشتراک‌گذاری پیشرفته (تلگرام، بله، روبیکا، ایتا) -->
     <div id="shareModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3">
             <button onclick="closeShareModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -305,7 +304,6 @@
         </div>
     </div>
 
-    <!-- منوی ناوبری پایین صفحه با حضور کامل آیکون توییتر و پرونده‌ها -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1">
             <i class="fa-solid fa-newspaper text-sm"></i>
@@ -386,7 +384,6 @@
             }
         }
 
-        // سیستم اعلان فوری برای بررسی اخبار جدید
         function checkForNewNews(newsList) {
             if (!newsList || !newsList.length) return;
             const lastSavedLink = localStorage.getItem('mizan_last_news_link');
@@ -489,8 +486,9 @@
             container.innerHTML = activeTabs.map(tab => {
                 const tabCat = String(tab.tab_id || tab.category || '').trim().toLowerCase();
                 const isSelected = (String(currentCategory).trim().toLowerCase() === tabCat);
+                // تب انتخاب‌شده با گرادینت قرمز متمایز می‌شود و سفید ساده نیست
                 const btnClass = isSelected 
-                    ? "px-4 py-1.5 rounded-full text-xs font-bold bg-white text-[#c51b24] shadow-md whitespace-nowrap transition" 
+                    ? "px-4 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-red-600 to-red-800 text-white shadow-md whitespace-nowrap transition border border-red-400/30" 
                     : "px-4 py-1.5 rounded-full text-xs font-medium glass-tab text-white hover:bg-white/25 whitespace-nowrap transition";
                 return `<button onclick="filterNewsByTab('${tabCat}')" class="${btnClass}">${tab.tab_name}</button>`;
             }).join('');
@@ -770,7 +768,6 @@
             document.getElementById('newsModal').classList.remove('hidden');
         }
 
-        // تغییر اندازه فونت داینامیک داخل مودال
         function adjustModalFontSize(direction) {
             modalFontMultiplier += direction;
             if(modalFontMultiplier < -2) modalFontMultiplier = -2;
@@ -901,7 +898,6 @@
             }
         }
 
-        // اشتراک‌گذاری سریع در شبکه‌های اجتماعی ایرانی و جهانی
         function shareCurrentNews() {
             if (!currentSelectedNews) return;
             const text = encodeURIComponent(currentSelectedNews.title + "\n\n" + currentSelectedNews.link);
@@ -1054,7 +1050,7 @@
             const themeIcon = document.getElementById('theme-icon');
             if (dark) {
                 root.className = "bg-slate-950 text-slate-100 dark min-h-screen flex flex-col text-sm transition-colors duration-300 relative";
-                if(header) header.className = "sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800 transition-colors duration-300";
+                if(header) header.className = "sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md border-b border-slate-800 transition-colors duration-300";
                 document.documentElement.classList.add('dark');
                 if (themeIcon) themeIcon.className = "fa-solid fa-sun";
             } else {

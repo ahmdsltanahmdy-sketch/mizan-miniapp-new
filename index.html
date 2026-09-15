@@ -21,9 +21,10 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
+        /* پس‌زمینه هدر با عکس جدید گیت‌هاب و لایه گرادینت برای خوانایی متون */
         .header-bg {
-            background: linear-gradient(rgba(197, 27, 36, 0.85), rgba(127, 29, 29, 0.9)), 
-                        url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg');
+            background: linear-gradient(rgba(197, 27, 36, 0.82), rgba(127, 29, 29, 0.88)), 
+                        url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
         }
@@ -149,7 +150,6 @@
             </div>
         </section>
 
-        <!-- بخش توییتر (X) با قابلیت اتصال به پست اصلی -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-3">
                 <div class="flex items-center space-x-2 space-x-reverse">
@@ -161,7 +161,6 @@
             <div id="twitterFeedContainer" class="space-y-3"></div>
         </section>
 
-        <!-- بخش نشان‌شده‌ها (Bookmarks) -->
         <section id="bookmarks-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300"><i class="fa-solid fa-bookmark ml-1 text-red-600"></i> اخبار ذخیره‌شده شما</h2>
             <div id="bookmarksListContainer" class="space-y-3"></div>
@@ -262,7 +261,6 @@
         </div>
     </div>
 
-    <!-- منوی ناوبری پایین صفحه (با تب بوکمارک و توییتر) -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-3 flex justify-between items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition">
             <i class="fa-solid fa-newspaper text-sm"></i>
@@ -296,7 +294,7 @@
         let isSubmittingComment = false;
         let isSubmittingQuestion = false;
 
-        const DESIRED_FEATURED_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+        const DESIRED_FEATURED_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg';
 
         function updateDateTime() {
             const now = new Date();
@@ -306,7 +304,6 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // سیستم کش‌گذاری هوشمند فرانت‌اند (Client-Side Caching) با اعتبار ۵ دقیقه‌ای
         async function initApp(force = false) {
             try {
                 const cachedData = localStorage.getItem('mizan_cache');
@@ -503,7 +500,6 @@
             }
         }
 
-        // رندر پست‌های توییتر متصل به توییت اصلی
         function renderTwitterFeed() {
             const container = document.getElementById('twitterFeedContainer');
             if (!container) return;
@@ -556,7 +552,6 @@
             }).join('');
         }
 
-        // مدیریت سیستم نشان‌گذاری (Bookmarks)
         function getLocalBookmarks() {
             try {
                 return JSON.parse(localStorage.getItem('mizan_bookmarks') || '[]');

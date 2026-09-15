@@ -17,22 +17,24 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* استایل شیشه‌ای پیشرفته و مدرن (Glassmorphism) */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        /* افکت شیشه‌ای بسیار شفاف و جذاب (Ultra Glassmorphism) */
+        .ultra-glass {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
         }
-        .light .glass-panel, body:not(.dark) .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        .light .ultra-glass, body:not(.dark) .ultra-glass {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1, inset 0 1px 1px rgba(255, 255, 255, 0.8));
         }
 
-        .glass-tab { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .dark .glass-tab { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-tab { background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.35); }
+        .dark .glass-tab { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); }
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
@@ -45,7 +47,7 @@
 
         .dark .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
-            filter: brightness(1.1) contrast(1.1);
+            filter: brightness(1.15) contrast(1.1);
         }
 
         @keyframes ticker {
@@ -120,36 +122,36 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات کاملاً شیشه‌ای، مدرن و جذاب -->
-        <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-3.5 glass-panel text-slate-800 dark:text-white space-y-3.5 text-xs shadow-2xl border-t border-white/20">
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-white/10">
+        <!-- منوی تنظیمات با افکت شیشه‌ای فوق‌العاده جذاب و شفاف -->
+        <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-4 ultra-glass text-slate-800 dark:text-white space-y-3.5 text-xs shadow-2xl border-t border-white/30">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/50 dark:border-white/15">
                 <span class="font-bold">نصب مینی‌اپ:</span>
-                <button onclick="showInstallGuide(); document.getElementById('settingsDropdown').classList.add('hidden');" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
+                <button onclick="showInstallGuide(); document.getElementById('settingsDropdown').classList.add('hidden');" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
                     <span>راهنمای نصب</span>
                 </button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-white/10">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/50 dark:border-white/15">
                 <span class="font-bold">حالت نمایش:</span>
-                <button onclick="toggleTheme()" class="bg-white/20 dark:bg-white/10 hover:bg-white/30 px-3 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/20">
+                <button onclick="toggleTheme()" class="bg-white/30 dark:bg-white/15 hover:bg-white/40 px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/30 shadow-sm">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                     <span id="themeText">تیره / روشن</span>
                 </button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-white/10">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/50 dark:border-white/15">
                 <span class="font-bold">ویجت آب‌وهوا و تقویم:</span>
-                <button onclick="toggleSetting('weather')" id="btnSettingWeather" class="px-3 py-1 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
+                <button onclick="toggleSetting('weather')" id="btnSettingWeather" class="px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-white/10">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/50 dark:border-white/15">
                 <span class="font-bold">نوار خبر فوری:</span>
-                <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-3 py-1 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
+                <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-white/10">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/50 dark:border-white/15">
                 <span class="font-bold">قلم مینی‌اپ:</span>
                 <div class="space-x-1 space-x-reverse">
-                    <button onclick="changeFontFamily('Tahoma')" class="px-2.5 py-1 bg-white/20 dark:bg-white/10 rounded-lg border border-white/20">Tahoma</button>
-                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2.5 py-1 bg-white/20 dark:bg-white/10 rounded-lg border border-white/20">وزیر</button>
-                    <button onclick="changeFontFamily('Yekan Bakh')" class="px-2.5 py-1 bg-white/20 dark:bg-white/10 rounded-lg border border-white/20">یکان</button>
+                    <button onclick="changeFontFamily('Tahoma')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">Tahoma</button>
+                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">وزیر</button>
+                    <button onclick="changeFontFamily('Yekan Bakh')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">یکان</button>
                 </div>
             </div>
             <div class="pt-1">
@@ -169,7 +171,7 @@
                     <i class="fa-solid fa-earth-americas"></i>
                 </button>
             </div>
-            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 glass-panel text-slate-800 dark:text-slate-100 rounded-2xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2 space-y-1"></div>
+            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass text-slate-800 dark:text-slate-100 rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
 
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar border-t border-white/10 py-2"></div>
@@ -177,7 +179,7 @@
 
     <!-- مودال اعلان‌های شیشه‌ای -->
     <div id="notificationsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="glass-panel rounded-3xl max-w-sm w-full p-5 relative shadow-2xl max-h-[80vh] overflow-y-auto space-y-3 text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl max-h-[80vh] overflow-y-auto space-y-3 text-slate-800 dark:text-white">
             <button onclick="closeNotificationsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-[#c51b24] flex items-center"><i class="fa-solid fa-bell ml-1.5"></i> آخرین اخبار و اعلان‌های فوری</h3>
             <div id="notificationsListContainer" class="space-y-2 text-xs">
@@ -186,14 +188,15 @@
         </div>
     </div>
 
+    <!-- مودال راهنمای نصب شیشه‌ای -->
     <div id="installGuideModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="glass-panel rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right text-slate-800 dark:text-white">
             <button onclick="closeInstallGuide()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-sm text-[#c51b24]"><i class="fa-solid fa-cloud-arrow-down ml-1"></i> نصب مینی‌اپ میزان</h3>
             <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">برای استفاده مثل یک اپلیکیشن واقعی:</p>
-            <div class="bg-slate-100/50 dark:bg-slate-800/50 p-3 rounded-xl space-y-2 text-[11px] text-slate-700 dark:text-slate-200 border border-white/10">
+            <div class="bg-white/40 dark:bg-slate-800/40 p-3 rounded-2xl space-y-2 text-[11px] text-slate-700 dark:text-slate-200 border border-white/20">
                 <p><strong>اندروید:</strong> منوی مرورگر را باز کرده و گزینه <span class="text-red-600 font-bold">«افزودن به صفحه اصلی»</span> را انتخاب کنید.</p>
-                <p class="border-t border-slate-200 dark:border-slate-700 pt-2"><strong>آیفون:</strong> در سافاری دکمه اشتراک‌گذاری را زده و <span class="text-red-600 font-bold">«Add to Home Screen»</span> را انتخاب کنید.</p>
+                <p class="border-t border-slate-200/50 dark:border-slate-700/50 pt-2"><strong>آیفون:</strong> در سافاری دکمه اشتراک‌گذاری را زده و <span class="text-red-600 font-bold">«Add to Home Screen»</span> را انتخاب کنید.</p>
             </div>
             <button onclick="closeInstallGuide()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">متوجه شدم</button>
         </div>
@@ -209,10 +212,11 @@
                 </div>
             </div>
             <div id="loadMoreContainer" class="text-center py-4 hidden">
-                <button onclick="loadMoreNews()" class="glass-panel text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-50 transition">مشاهده اخبار بیشتر</button>
+                <button onclick="loadMoreNews()" class="ultra-glass text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">مشاهده اخبار بیشتر</button>
             </div>
         </section>
 
+        <!-- بخش چندرسانه‌ای فیلتر شده (فقط ویدیوها و گزارش‌های صوتی/تصویری) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -301,7 +305,7 @@
     </main>
 
     <!-- نوار خبر فوری شیشه‌ای -->
-    <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto glass-panel text-white px-3 py-1.5 overflow-hidden flex items-center border-t border-white/20 z-40 shadow-2xl text-[11px]">
+    <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto ultra-glass text-white px-3 py-1.5 overflow-hidden flex items-center border-t border-white/20 z-40 shadow-2xl text-[11px]">
         <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse shadow">خبر فوری</span>
         <div class="overflow-hidden whitespace-nowrap relative w-full">
             <div id="breakingNewsTicker" class="animate-ticker">در حال دریافت آخرین اخبار مهم و قضایی کشور...</div>
@@ -310,62 +314,62 @@
 
     <!-- مودال خبر شیشه‌ای -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div id="modalCardContainer" class="glass-panel rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all text-slate-800 dark:text-white">
+        <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all text-slate-800 dark:text-white">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded font-bold shadow-sm">دسته‌بندی</span>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
-                    <div class="flex bg-slate-100/80 dark:bg-slate-800/80 rounded-lg p-0.5 text-[10px] border border-white/10">
-                        <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A+</button>
-                        <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A-</button>
+                    <div class="flex bg-white/40 dark:bg-slate-800/60 rounded-xl p-0.5 text-[10px] border border-white/20">
+                        <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white/50 rounded-lg font-bold">A+</button>
+                        <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white/50 rounded-lg font-bold">A-</button>
                     </div>
-                    <button onclick="toggleBookmarkCurrentNews()" id="modalBookmarkBtn" class="text-xs bg-slate-100/80 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg transition border border-white/10 shadow-sm" title="ذخیره خبر"><i class="fa-regular fa-bookmark"></i></button>
-                    <button onclick="toggleReadingMode()" class="text-xs bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1 rounded-lg font-medium transition border border-white/10 shadow-sm" title="حالت مطالعه"><i class="fa-solid fa-book-open"></i></button>
+                    <button onclick="toggleBookmarkCurrentNews()" id="modalBookmarkBtn" class="text-xs bg-white/40 dark:bg-slate-800/60 px-2.5 py-1 rounded-xl transition border border-white/20 shadow-sm" title="ذخیره خبر"><i class="fa-regular fa-bookmark"></i></button>
+                    <button onclick="toggleReadingMode()" class="text-xs bg-white/40 dark:bg-slate-800/60 hover:bg-white/60 px-2.5 py-1 rounded-xl font-medium transition border border-white/20 shadow-sm" title="حالت مطالعه"><i class="fa-solid fa-book-open"></i></button>
                 </div>
             </div>
             <img id="modalImg" src="" loading="lazy" class="w-full h-36 object-cover rounded-2xl mb-3 shadow-md" alt="">
             <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
             <p id="modalSummary" class="text-[11px] text-slate-600 dark:text-slate-300 mt-2 leading-relaxed whitespace-pre-line">خلاصه کامل...</p>
 
-            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+            <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 space-y-2">
                 <div class="flex justify-between items-center">
                     <h4 class="font-bold text-xs text-red-600">نظرات کاربران</h4>
                     <span id="pendingCommentsBadge" class="text-[9px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2.5 py-0.5 rounded-full font-medium">۰ نظر در صف انتشار</span>
                 </div>
                 <div id="commentsListContainer" class="max-h-32 overflow-y-auto space-y-1.5 text-[11px]"></div>
                 <div class="flex space-x-1 space-x-reverse pt-1">
-                    <input type="text" id="commentAuthorInput" placeholder="نام شما..." class="w-1/3 bg-slate-100 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg text-[10px] dark:text-white border border-white/10">
-                    <input type="text" id="commentTextInput" placeholder="نظر خود را بنویسید..." class="flex-grow bg-slate-100 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg text-[10px] dark:text-white border border-white/10" onkeydown="if(event.key==='Enter') submitComment()">
-                    <button id="submitCommentBtn" onclick="submitComment()" class="bg-[#c51b24] hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[10px] font-bold transition shadow">ثبت</button>
+                    <input type="text" id="commentAuthorInput" placeholder="نام شما..." class="w-1/3 bg-white/40 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl text-[10px] dark:text-white border border-white/20">
+                    <input type="text" id="commentTextInput" placeholder="نظر خود را بنویسید..." class="flex-grow bg-white/40 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl text-[10px] dark:text-white border border-white/20" onkeydown="if(event.key==='Enter') submitComment()">
+                    <button id="submitCommentBtn" onclick="submitComment()" class="bg-[#c51b24] hover:bg-red-700 text-white px-3 py-1 rounded-xl text-[10px] font-bold transition shadow">ثبت</button>
                 </div>
             </div>
 
             <div class="flex space-x-2 space-x-reverse mt-4">
                 <a id="modalLink" href="#" target="_blank" class="flex-grow bg-[#c51b24] hover:bg-red-700 text-white text-center py-2.5 rounded-xl text-xs font-bold transition shadow">سایت میزان</a>
-                <button onclick="openCardPreviewModal()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs transition shadow border border-white/10" title="کارت گرافیکی / استوری"><i class="fa-solid fa-image"></i></button>
-                <button onclick="shareCurrentNews()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs transition shadow border border-white/10" title="اشتراک‌گذاری"><i class="fa-solid fa-share-nodes"></i></button>
+                <button onclick="openCardPreviewModal()" class="bg-white/40 dark:bg-slate-800/60 hover:bg-white/60 px-3 py-2.5 rounded-xl text-xs transition shadow border border-white/20" title="کارت گرافیکی / استوری"><i class="fa-solid fa-image"></i></button>
+                <button onclick="shareCurrentNews()" class="bg-white/40 dark:bg-slate-800/60 hover:bg-white/60 px-3 py-2.5 rounded-xl text-xs transition shadow border border-white/20" title="اشتراک‌گذاری"><i class="fa-solid fa-share-nodes"></i></button>
             </div>
         </div>
     </div>
 
     <!-- مودال اشتراک‌گذاری شیشه‌ای -->
     <div id="shareModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="glass-panel rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3 text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3 text-slate-800 dark:text-white">
             <button onclick="closeShareModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-[#c51b24]">اشتراک‌گذاری سریع خبر</h3>
             <div class="grid grid-cols-2 gap-2 pt-2">
-                <a id="shareTelegram" href="#" target="_blank" class="p-2.5 bg-blue-50 dark:bg-slate-800 text-blue-600 rounded-xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm"><i class="fa-brands fa-telegram"></i> <span>تلگرام</span></a>
-                <a id="shareBale" href="#" target="_blank" class="p-2.5 bg-purple-50 dark:bg-slate-800 text-purple-600 rounded-xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm"><i class="fa-solid fa-bullhorn"></i> <span>بله</span></a>
-                <a id="shareRubika" href="#" target="_blank" class="p-2.5 bg-amber-50 dark:bg-slate-800 text-amber-600 rounded-xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm"><i class="fa-solid fa-shield-halved"></i> <span>روبیکا</span></a>
-                <a id="shareEitaa" href="#" target="_blank" class="p-2.5 bg-orange-50 dark:bg-slate-800 text-orange-600 rounded-xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm"><i class="fa-solid fa-comment-dots"></i> <span>ایتا</span></a>
+                <a id="shareTelegram" href="#" target="_blank" class="p-2.5 bg-blue-50 dark:bg-slate-800/60 text-blue-600 rounded-2xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm border border-white/10"><i class="fa-brands fa-telegram"></i> <span>تلگرام</span></a>
+                <a id="shareBale" href="#" target="_blank" class="p-2.5 bg-purple-50 dark:bg-slate-800/60 text-purple-600 rounded-2xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm border border-white/10"><i class="fa-solid fa-bullhorn"></i> <span>بله</span></a>
+                <a id="shareRubika" href="#" target="_blank" class="p-2.5 bg-amber-50 dark:bg-slate-800/60 text-amber-600 rounded-2xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm border border-white/10"><i class="fa-solid fa-shield-halved"></i> <span>روبیکا</span></a>
+                <a id="shareEitaa" href="#" target="_blank" class="p-2.5 bg-orange-50 dark:bg-slate-800/60 text-orange-600 rounded-2xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs shadow-sm border border-white/10"><i class="fa-solid fa-comment-dots"></i> <span>ایتا</span></a>
             </div>
-            <button onclick="copyNewsLink()" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2.5 rounded-xl text-xs font-bold transition shadow-sm"><i class="fa-solid fa-copy ml-1"></i> کپی لینک خبر</button>
+            <button onclick="copyNewsLink()" class="w-full bg-white/40 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 py-2.5 rounded-2xl text-xs font-bold transition shadow-sm border border-white/20"><i class="fa-solid fa-copy ml-1"></i> کپی لینک خبر</button>
         </div>
     </div>
 
     <!-- مودال کارت گرافیکی شیشه‌ای -->
     <div id="cardPreviewModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="glass-panel rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3 text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3 text-slate-800 dark:text-white">
             <button onclick="closeCardPreviewModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-[#c51b24]">کارت گرافیکی و استوری خبر</h3>
             <div id="cardCanvasPreviewContainer" class="border dark:border-slate-800 rounded-2xl overflow-hidden shadow-inner flex justify-center bg-white p-2"></div>
@@ -378,17 +382,17 @@
 
     <!-- مودال جستجوی پیشرفته شیشه‌ای -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="glass-panel rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-slate-800 dark:text-white">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-slate-800 dark:text-white">
             <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-sm text-[#c51b24] mb-3"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته کل سایت</h3>
-            <input type="text" id="advSearchInput" placeholder="جستجو در آرشیو..." class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-2.5 text-xs mb-3 focus:outline-none dark:text-white border border-white/10 shadow-inner" onkeydown="if(event.key==='Enter') executeAdvancedSearch()">
+            <input type="text" id="advSearchInput" placeholder="جستجو در آرشیو..." class="w-full bg-white/40 dark:bg-slate-800/60 rounded-xl px-3 py-2.5 text-xs mb-3 focus:outline-none dark:text-white border border-white/20 shadow-inner" onkeydown="if(event.key==='Enter') executeAdvancedSearch()">
             <button onclick="executeAdvancedSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold mb-3 shadow">جستجوی جامع</button>
             <div id="advSearchResults" class="max-h-60 overflow-y-auto space-y-2 text-xs"></div>
         </div>
     </div>
 
-    <!-- ناوبری پایین صفحه کاملاً شیشه‌ای و جذاب -->
-    <nav class="fixed bottom-0 left-0 right-0 glass-panel border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
+    <!-- ناوبری پایین صفحه کاملاً شیشه‌ای -->
+    <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1">
             <i class="fa-solid fa-newspaper text-sm"></i>
             <span class="text-[8px] mt-1 font-bold">اخبار</span>
@@ -486,11 +490,11 @@
 
             if(btnW) {
                 btnW.innerText = settingsState.showWeather ? 'نمایش' : 'مخفی';
-                btnW.className = settingsState.showWeather ? "px-3 py-1 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
+                btnW.className = settingsState.showWeather ? "px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
             }
             if(btnT) {
                 btnT.innerText = settingsState.showTicker ? 'نمایش' : 'مخفی';
-                btnT.className = settingsState.showTicker ? "px-3 py-1 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
+                btnT.className = settingsState.showTicker ? "px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
             }
         }
 
@@ -564,7 +568,11 @@
 
                         let desc = item.querySelector("description") ? item.querySelector("description").textContent : "";
                         let imgMatch = desc.match(/src="([^"]+)"/);
-                        let imgUrl = imgMatch ? imgMatch[1] : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+                        let imgUrl = imgMatch ? imgMatch[1] : '';
+                        
+                        // فقط اخباری که تصویر یا ویدیو/چندرسانه‌ای واقعی دارند اضافه شوند
+                        if (!imgUrl) return;
+
                         let cleanDesc = desc.replace(/<[^>]*>/g, "").trim();
 
                         mediaList.push({
@@ -583,7 +591,7 @@
             } catch(e) {
                 console.error("Multimedia RSS error:", e);
                 if (appData.news && appData.news.length > 0) {
-                    appData.multimedia = appData.news.filter(n => !n.title.includes('خبر آزمایشی')).slice(0, 15);
+                    appData.multimedia = appData.news.filter(n => !n.title.includes('خبر آزمایشی') && n.image && n.image.startsWith('http')).slice(0, 15);
                     renderMultimediaFeed();
                 }
             }
@@ -592,14 +600,18 @@
         function renderMultimediaFeed() {
             const container = document.getElementById('multimediaFeedContainer');
             if(!container) return;
-            const items = appData.multimedia || [];
+            let items = appData.multimedia || [];
+            
+            // فیلتر مضاعف برای اطمینان از اینکه فقط اخبار دارای رسانه/عکس در چندرسانه‌ای باشند
+            items = items.filter(m => m.image && m.image.startsWith('http') && !m.title.includes('خبر آزمایشی'));
+
             if(!items.length) {
                 container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">محتوای چندرسانه‌ای یافت نشد.</p>';
                 return;
             }
             container.innerHTML = items.map(m => `
                 <a href="${m.link}" target="_blank" class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 hover:border-red-500 transition">
-                    <img src="${m.image || 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg'}" loading="lazy" class="w-full h-36 object-cover" alt="">
+                    <img src="${m.image}" loading="lazy" class="w-full h-36 object-cover" alt="">
                     <div class="p-3.5">
                         <div class="flex items-center justify-between mb-1">
                             <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[9px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-video ml-1"></i> چندرسانه‌ای</span>
@@ -641,7 +653,7 @@
                 container.innerHTML = '<p class="text-center text-slate-400 py-4">هیچ اعلان جدیدی وجود ندارد.</p>';
             } else {
                 container.innerHTML = latestNews.map(n => `
-                    <a href="${n.link}" target="_blank" class="block p-3 bg-slate-100/50 dark:bg-slate-800/50 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition space-y-1 border border-white/10">
+                    <a href="${n.link}" target="_blank" class="block p-3 bg-white/40 dark:bg-slate-800/60 rounded-xl hover:bg-white/60 transition space-y-1 border border-white/20 shadow-sm">
                         <div class="flex items-center justify-between text-[9px] text-red-600 font-bold">
                             <span><i class="fa-solid fa-bolt ml-1"></i> خبر جدید</span>
                             <span class="text-slate-400">${n.category || 'عمومی'}</span>
@@ -929,7 +941,7 @@
             if(container) {
                 Array.from(container.children).forEach(btn => {
                     if(btn.innerText.includes(cat === 'all' ? 'همه' : cat)) {
-                        btn.className = "px-2 py-0.5 bg-red-600 text-white rounded-lg font-bold";
+                        btn.className = "px-2 py-0.5 bg-red-600 text-white rounded-lg font-bold shadow";
                     } else {
                         btn.className = "px-2 py-0.5 bg-slate-200 dark:bg-slate-800 rounded-lg";
                     }

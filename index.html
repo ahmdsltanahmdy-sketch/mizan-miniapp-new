@@ -21,19 +21,18 @@
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* هدر با تصویر باکیفیت و وضوح بالا */
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
+
         .dark .header-bg {
-            background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), 
+            background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
                               url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
         }
 
-        /* انیمیشن خبر فوری */
         @keyframes ticker {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
@@ -81,7 +80,6 @@
 
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
         <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10">
-            <!-- ویجت تقویم و ساعت -->
             <div class="flex items-center space-x-2 space-x-reverse text-[10px] text-red-100 dark:text-slate-300">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
                 <span id="headerCalendarWidget">بارگذاری تقویم...</span>
@@ -95,7 +93,6 @@
             </div>
         </div>
 
-        <!-- نوار خبر فوری (Breaking News Ticker) -->
         <div class="bg-red-950/80 dark:bg-slate-900/90 text-white px-3 py-1.5 overflow-hidden flex items-center border-b border-white/10 text-[11px]">
             <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse">فوری</span>
             <div class="overflow-hidden whitespace-nowrap relative w-full">
@@ -118,7 +115,7 @@
                     <span id="themeText">تیره / روشن</span>
                 </button>
             </div>
-            <div class="flex justify-between items-center pb-2 border-b border-white/10">
+            <div class="flex justify-between items-center">
                 <span>قلم مینی‌اپ:</span>
                 <div class="space-x-1 space-x-reverse">
                     <button onclick="changeFontFamily('Tahoma')" class="px-2 py-1 bg-white/20 rounded">Tahoma</button>
@@ -171,7 +168,7 @@
             </div>
         </section>
 
-        <!-- بخش گالری چندرسانه‌ای و ویدیوهای حقوقی -->
+        <!-- بخش گالری چندرسانه‌ای همراه با تصویر اختصاصی برای هر خبر -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -259,16 +256,13 @@
         </section>
     </main>
 
-    <!-- مودال نمایش خبر همراه با خوانش صوتی و کنترل فونت داینامیک -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div id="modalCardContainer" class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-bold">دسته‌بندی</span>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
-                    <!-- دکمه خوانش صوتی فارسی (فقط تیتر و لید) -->
                     <button onclick="speakNewsAudio()" id="audioReadBtn" class="text-xs bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 px-2.5 py-1 rounded-lg font-bold transition flex items-center space-x-1 space-x-reverse" title="پخش صوتی خبر"><i class="fa-solid fa-volume-high"></i> <span class="text-[9px]">صدا</span></button>
-                    <!-- دکمه کنترل اندازه فونت -->
                     <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-[10px]">
                         <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A+</button>
                         <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A-</button>
@@ -302,7 +296,6 @@
         </div>
     </div>
 
-    <!-- مودال اشتراک‌گذاری پیشرفته (تلگرام، بله، روبیکا، ایتا) -->
     <div id="shareModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3">
             <button onclick="closeShareModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -317,7 +310,6 @@
         </div>
     </div>
 
-    <!-- پیش‌نمایش کارت گرافیکی و استوری -->
     <div id="cardPreviewModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3">
             <button onclick="closeCardPreviewModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -340,7 +332,6 @@
         </div>
     </div>
 
-    <!-- منوی ناوبری پایین صفحه (با تب چندرسانه‌ای جدید) -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1">
             <i class="fa-solid fa-newspaper text-sm"></i>
@@ -384,7 +375,6 @@
         let bookmarkFilterCategory = 'all';
         let modalFontMultiplier = 0;
 
-        // ویجت تاریخ و تقویم رسمی
         function updateDateTime() {
             const now = new Date();
             const dtElem = document.getElementById('liveDateTime');
@@ -413,7 +403,6 @@
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
                 appData = await response.json();
 
-                // دریافت اخبار چندرسانه‌ای از RSS
                 fetchMultimediaFeed();
 
                 checkForNewNews(appData.news);
@@ -433,11 +422,10 @@
             }
         }
 
-        // دریافت فید ویدیوها و چندرسانه‌ای از RSS ميزان
+        // رندر کامل بخش چندرسانه‌ای همراه با تصویر اختصاصی برای هر خبر
         async function fetchMultimediaFeed() {
             try {
                 const rssUrl = "https://www.mizanonline.ir/fa/rss/2";
-                // استفاده از پروکسی یا فچ مستقیم در صورت پشتیبانی
                 const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(rssUrl));
                 const data = await res.json();
                 if (data && data.contents) {
@@ -446,10 +434,16 @@
                     const items = xmlDoc.querySelectorAll("item");
                     let mediaList = [];
                     items.forEach(item => {
+                        let desc = item.querySelector("description") ? item.querySelector("description").textContent : "";
+                        let imgMatch = desc.match(/src="([^"]+)"/);
+                        let imgUrl = imgMatch ? imgMatch[1] : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+                        let cleanDesc = desc.replace(/<[^>]*>/g, "").trim();
+
                         mediaList.push({
                             title: item.querySelector("title") ? item.querySelector("title").textContent : "",
                             link: item.querySelector("link") ? item.querySelector("link").textContent : "",
-                            description: item.querySelector("description") ? item.querySelector("description").textContent.replace(/<[^>]*>/g, "") : "",
+                            description: cleanDesc,
+                            image: imgUrl,
                             pubDate: item.querySelector("pubDate") ? item.querySelector("pubDate").textContent : ""
                         });
                     });
@@ -470,13 +464,16 @@
                 return;
             }
             container.innerHTML = items.map(m => `
-                <a href="${m.link}" target="_blank" class="block bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:border-red-500 transition">
-                    <div class="flex items-center space-x-2 space-x-reverse mb-1.5">
-                        <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[9px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-video ml-1"></i> ویدیو / گزارش</span>
-                        <span class="text-[9px] text-slate-400">${m.pubDate ? new Date(m.pubDate).toLocaleDateString('fa-IR') : ''}</span>
+                <a href="${m.link}" target="_blank" class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 hover:border-red-500 transition">
+                    <img src="${m.image}" loading="lazy" class="w-full h-36 object-cover" alt="">
+                    <div class="p-3.5">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[9px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-video ml-1"></i> چندرسانه‌ای</span>
+                            <span class="text-[9px] text-slate-400">${m.pubDate ? new Date(m.pubDate).toLocaleDateString('fa-IR') : ''}</span>
+                        </div>
+                        <h3 class="font-bold text-xs line-clamp-2 leading-snug mt-1">${m.title}</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${m.description}</p>
                     </div>
-                    <h3 class="font-bold text-xs line-clamp-2 leading-snug">${m.title}</h3>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${m.description}</p>
                 </a>
             `).join('');
         }
@@ -604,7 +601,6 @@
             renderNews();
         }
 
-        // پایش اخبار خوانده‌شده و ثبت تاریخچه
         function getReadHistory() {
             try { return JSON.parse(localStorage.getItem('mizan_read_history') || '[]'); } catch(e) { return []; }
         }
@@ -682,7 +678,7 @@
             }).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             } else {
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }
@@ -891,7 +887,6 @@
             document.getElementById('newsModal').classList.remove('hidden');
         }
 
-        // خوانش صوتی اخبار به زبان فارسی (فقط تیتر و لید)
         function speakNewsAudio() {
             if (!currentSelectedNews) return;
             if ('speechSynthesis' in window) {
@@ -930,11 +925,10 @@
 
         function toggleReadingMode() { document.getElementById('modalCardContainer').classList.toggle('reading-mode-active'); }
 
-        // کارت گرافیکی و استوری پیشرفته
         function openCardPreviewModal() {
             if (!currentSelectedNews) return;
             const canvas = document.createElement('canvas');
-            canvas.width = 600; canvas.height = 800; // فرمت استوری عمودی
+            canvas.width = 600; canvas.height = 800;
             const ctx = canvas.getContext('2d');
 
             ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, 600, 800);

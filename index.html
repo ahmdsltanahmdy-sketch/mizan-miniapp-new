@@ -18,12 +18,13 @@
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .glass-tab { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
         .dark .glass-tab { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
+        .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* هدر با تصویر کاملاً خالص، شفاف و بدون هیچ‌گونه فیلتر کدرکننده */
+        /* هدر با تصویر کاملاً واضح و کادر تیره استاندارد برای خوانایی */
         .header-bg {
-            background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(197, 27, 36, 0.75)), 
+                              url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -56,7 +57,11 @@
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('mizan_user_id', userId);
         }
-        if (localStorage.getItem('mizan_theme') === 'dark') {
+        
+        // مدیریت حالت تاریک و روشن خودکار (Auto Night Mode) بر اساس ساعت سیستم
+        const savedTheme = localStorage.getItem('mizan_theme');
+        const currentHour = new Date().getHours();
+        if (savedTheme === 'dark' || (!savedTheme && (currentHour >= 20 || currentHour < 6))) {
             document.documentElement.classList.add('dark');
         }
     </script>
@@ -69,7 +74,10 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">
-                <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-2 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
+                <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-2 rounded-full hover:bg-white/10 transition relative">
+                    <i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i>
+                    <span id="newsBadge" class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full hidden animate-ping"></span>
+                </button>
                 <button onclick="toggleSettingsMenu()" title="تنظیمات" class="p-2 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
@@ -90,14 +98,6 @@
                 </button>
             </div>
             <div class="flex justify-between items-center pb-2 border-b border-white/10">
-                <span>اندازه فونت:</span>
-                <div class="space-x-1 space-x-reverse">
-                    <button onclick="changeFontSize('small')" class="px-2.5 py-1 bg-white/20 rounded">کوچک</button>
-                    <button onclick="changeFontSize('normal')" class="px-2.5 py-1 bg-white/20 rounded">متوسط</button>
-                    <button onclick="changeFontSize('large')" class="px-2.5 py-1 bg-white/20 rounded">بزرگ</button>
-                </div>
-            </div>
-            <div class="flex justify-between items-center">
                 <span>قلم مینی‌اپ:</span>
                 <div class="space-x-1 space-x-reverse">
                     <button onclick="changeFontFamily('Tahoma')" class="px-2 py-1 bg-white/20 rounded">Tahoma</button>
@@ -110,7 +110,7 @@
         <div class="max-w-md mx-auto px-4 pb-3 relative">
             <div class="flex space-x-2 space-x-reverse relative">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار، سامانه‌ها و پرونده‌ها..." class="w-full bg-black/30 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition border border-white/20">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار، سامانه‌ها و پرونده‌ها..." class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition border border-white/20">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs cursor-pointer" onclick="triggerSearch()"></i>
                 </div>
                 <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته" class="glass-tab px-3 rounded-xl text-xs flex items-center justify-center transition text-white">
@@ -120,6 +120,7 @@
             <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto border border-slate-200 dark:border-slate-700 p-2 space-y-1"></div>
         </div>
 
+        <!-- تب‌ها و تگ‌های فیلتر موضوعی هوشمند -->
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar border-t border-white/10 py-2"></div>
     </header>
 
@@ -165,11 +166,18 @@
             <div id="twitterFeedContainer" class="space-y-3"></div>
         </section>
 
+        <!-- بخش نشان‌گذاری‌شده‌ها با دسته‌بندی موضوعی هوشمند -->
         <section id="bookmarks-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
-                <i class="fa-solid fa-bookmark ml-1.5 text-red-600"></i>
-                اخبار ذخیره‌شده شما
-            </h2>
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="font-bold text-xs text-slate-700 dark:text-slate-300 flex items-center">
+                    <i class="fa-solid fa-bookmark ml-1.5 text-red-600"></i> اخبار ذخیره‌شده
+                </h2>
+                <div id="bookmarkFilterTags" class="flex space-x-1 space-x-reverse text-[10px]">
+                    <button onclick="filterBookmarks('all')" class="px-2 py-0.5 bg-red-600 text-white rounded-lg font-bold">همه</button>
+                    <button onclick="filterBookmarks('حقوقی')" class="px-2 py-0.5 bg-slate-200 dark:bg-slate-800 rounded-lg">حقوقی</button>
+                    <button onclick="filterBookmarks('قضایی')" class="px-2 py-0.5 bg-slate-200 dark:bg-slate-800 rounded-lg">قضایی</button>
+                </div>
+            </div>
             <div id="bookmarksListContainer" class="space-y-3"></div>
         </section>
 
@@ -219,14 +227,20 @@
         </section>
     </main>
 
+    <!-- مودال نمایش خبر با قابلیت تغییر اندازه فونت داینامیک -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div id="modalCardContainer" class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-bold">دسته‌بندی</span>
-                <div class="flex space-x-1 space-x-reverse">
+                <div class="flex items-center space-x-1.5 space-x-reverse">
+                    <!-- کنترل اندازه فونت داخل مودال -->
+                    <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-[10px]">
+                        <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold" title="بزرگنمایی متن">A+</button>
+                        <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold" title="کوچک‌نمایی متن">A-</button>
+                    </div>
                     <button onclick="toggleBookmarkCurrentNews()" id="modalBookmarkBtn" class="text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg transition" title="ذخیره خبر"><i class="fa-regular fa-bookmark"></i></button>
-                    <button onclick="toggleReadingMode()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1 rounded-lg font-medium transition"><i class="fa-solid fa-book-open ml-1"></i> حالت مطالعه</button>
+                    <button onclick="toggleReadingMode()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1 rounded-lg font-medium transition" title="حالت مطالعه"><i class="fa-solid fa-book-open"></i></button>
                 </div>
             </div>
             <img id="modalImg" src="" loading="lazy" class="w-full h-36 object-cover rounded-xl mb-3 shadow" alt="">
@@ -254,6 +268,21 @@
         </div>
     </div>
 
+    <!-- مودال اشتراک‌گذاری پیشرفته (تلگرام، بله، روبیکا، ایتا) -->
+    <div id="shareModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3">
+            <button onclick="closeShareModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-xs text-[#c51b24]">اشتراک‌گذاری سریع خبر</h3>
+            <div class="grid grid-cols-2 gap-2 pt-2">
+                <a id="shareTelegram" href="#" target="_blank" class="p-2.5 bg-blue-50 dark:bg-slate-800 text-blue-600 rounded-xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs"><i class="fa-brands fa-telegram"></i> <span>تلگرام</span></a>
+                <a id="shareBale" href="#" target="_blank" class="p-2.5 bg-purple-50 dark:bg-slate-800 text-purple-600 rounded-xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs"><i class="fa-solid fa-bullhorn"></i> <span>بله</span></a>
+                <a id="shareRubika" href="#" target="_blank" class="p-2.5 bg-amber-50 dark:bg-slate-800 text-amber-600 rounded-xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs"><i class="fa-solid fa-shield-halved"></i> <span>روبیکا</span></a>
+                <a id="shareEitaa" href="#" target="_blank" class="p-2.5 bg-orange-50 dark:bg-slate-800 text-orange-600 rounded-xl font-bold flex items-center justify-center space-x-1.5 space-x-reverse text-xs"><i class="fa-solid fa-comment-dots"></i> <span>ایتا</span></a>
+            </div>
+            <button onclick="copyNewsLink()" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2.5 rounded-xl text-xs font-bold transition"><i class="fa-solid fa-copy ml-1"></i> کپی لینک خبر</button>
+        </div>
+    </div>
+
     <div id="cardPreviewModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3">
             <button onclick="closeCardPreviewModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -276,6 +305,7 @@
         </div>
     </div>
 
+    <!-- منوی ناوبری پایین صفحه با حضور کامل آیکون توییتر و پرونده‌ها -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1">
             <i class="fa-solid fa-newspaper text-sm"></i>
@@ -312,6 +342,8 @@
         let generatedCardBlob = null;
         let isSubmittingComment = false;
         let isSubmittingQuestion = false;
+        let bookmarkFilterCategory = 'all';
+        let modalFontMultiplier = 0;
 
         function updateDateTime() {
             const now = new Date();
@@ -330,12 +362,14 @@
                 if (!force && cachedData && cacheTime && (now - cacheTime < 300000)) {
                     appData = JSON.parse(cachedData);
                     setupInitialView();
+                    checkForNewNews(appData.news);
                     return;
                 }
 
                 const response = await fetch(API_URL + "?action=get_all&t=" + now);
                 appData = await response.json();
 
+                checkForNewNews(appData.news);
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 localStorage.setItem('mizan_cache_time', now);
 
@@ -350,6 +384,19 @@
                     document.getElementById('newsListContainer').innerHTML = '<p class="text-center text-red-500 py-8 text-xs">خطا در بارگذاری اطلاعات. لطفا دوباره تلاش کنید.</p>';
                 }
             }
+        }
+
+        // سیستم اعلان فوری برای بررسی اخبار جدید
+        function checkForNewNews(newsList) {
+            if (!newsList || !newsList.length) return;
+            const lastSavedLink = localStorage.getItem('mizan_last_news_link');
+            const latestLink = newsList[0].link;
+            const badge = document.getElementById('newsBadge');
+
+            if (lastSavedLink && lastSavedLink !== latestLink) {
+                if (badge) badge.classList.remove('hidden');
+            }
+            localStorage.setItem('mizan_last_news_link', latestLink);
         }
 
         function setupInitialView() {
@@ -371,7 +418,9 @@
 
         async function manualRefresh() {
             const icon = document.getElementById('refreshIcon');
+            const badge = document.getElementById('newsBadge');
             if(icon) icon.classList.add('fa-spin');
+            if(badge) badge.classList.add('hidden');
             await initApp(true);
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
         }
@@ -391,8 +440,7 @@
             const savedFont = localStorage.getItem('mizan_font');
             if (savedFont) document.documentElement.style.setProperty('--selected-font', savedFont);
             if (localStorage.getItem('mizan_theme') === 'dark') {
-                isDarkTheme = true;
-                applyThemeUI();
+                applyThemeUI(true);
             }
             initApp(false);
             initPullToRefresh();
@@ -591,7 +639,7 @@
                     title: currentSelectedNews.title,
                     link: currentSelectedNews.link,
                     summary: currentSelectedNews.summary,
-                    category: currentSelectedNews.category,
+                    category: currentSelectedNews.category || 'عمومی',
                     image: currentSelectedNews.image || ''
                 });
                 if(btnIcon) btnIcon.className = "fa-solid fa-bookmark text-red-600";
@@ -601,20 +649,40 @@
             renderBookmarks();
         }
 
+        function filterBookmarks(cat) {
+            bookmarkFilterCategory = cat;
+            const container = document.getElementById('bookmarkFilterTags');
+            if(container) {
+                Array.from(container.children).forEach(btn => {
+                    if(btn.innerText.includes(cat === 'all' ? 'همه' : cat)) {
+                        btn.className = "px-2 py-0.5 bg-red-600 text-white rounded-lg font-bold";
+                    } else {
+                        btn.className = "px-2 py-0.5 bg-slate-200 dark:bg-slate-800 rounded-lg";
+                    }
+                });
+            }
+            renderBookmarks();
+        }
+
         function renderBookmarks() {
             const container = document.getElementById('bookmarksListContainer');
             if(!container) return;
-            const bookmarks = getLocalBookmarks();
+            let bookmarks = getLocalBookmarks();
+
+            if (bookmarkFilterCategory !== 'all') {
+                bookmarks = bookmarks.filter(b => String(b.category).trim().toLowerCase() === bookmarkFilterCategory.toLowerCase());
+            }
 
             if (!bookmarks.length) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری ذخیره نشده است.</p>';
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری در این دسته‌بندی ذخیره نشده است.</p>';
                 return;
             }
 
             container.innerHTML = bookmarks.map(item => `
                 <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
-                    <h3 class="font-bold text-xs line-clamp-2 leading-snug">${item.title}</h3>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-normal">${item.summary || ''}</p>
+                    <span class="text-[9px] text-red-600 font-bold bg-red-50 dark:bg-red-950 px-2 py-0.5 rounded">${item.category || 'عمومی'}</span>
+                    <h3 class="font-bold text-xs line-clamp-2 leading-snug mt-1">${item.title}</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-normal">${item.summary || ''}</p>
                 </div>
             `).join('');
         }
@@ -676,8 +744,15 @@
 
         function openNewsModal(news) {
             currentSelectedNews = news;
-            document.getElementById('modalTitle').innerText = news.title;
-            document.getElementById('modalSummary').innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
+            modalFontMultiplier = 0;
+            const titleElem = document.getElementById('modalTitle');
+            const summaryElem = document.getElementById('modalSummary');
+            
+            titleElem.innerText = news.title;
+            titleElem.style.fontSize = '12px';
+            summaryElem.innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
+            summaryElem.style.fontSize = '11px';
+
             document.getElementById('modalCategory').innerText = news.category || 'عمومی';
             
             const modalImgUrl = (news.image && news.image.startsWith('http')) ? news.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
@@ -693,6 +768,22 @@
 
             loadNewsComments(news.link);
             document.getElementById('newsModal').classList.remove('hidden');
+        }
+
+        // تغییر اندازه فونت داینامیک داخل مودال
+        function adjustModalFontSize(direction) {
+            modalFontMultiplier += direction;
+            if(modalFontMultiplier < -2) modalFontMultiplier = -2;
+            if(modalFontMultiplier > 4) modalFontMultiplier = 4;
+
+            const titleElem = document.getElementById('modalTitle');
+            const summaryElem = document.getElementById('modalSummary');
+
+            let baseTitleSize = 12 + (modalFontMultiplier * 1.5);
+            let baseSummarySize = 11 + (modalFontMultiplier * 1.5);
+
+            titleElem.style.fontSize = baseTitleSize + 'px';
+            summaryElem.style.fontSize = baseSummarySize + 'px';
         }
 
         function closeNewsModal() { document.getElementById('newsModal').classList.add('hidden'); }
@@ -810,10 +901,26 @@
             }
         }
 
+        // اشتراک‌گذاری سریع در شبکه‌های اجتماعی ایرانی و جهانی
         function shareCurrentNews() {
             if (!currentSelectedNews) return;
-            if (navigator.share) navigator.share({ title: currentSelectedNews.title, url: currentSelectedNews.link });
-            else { navigator.clipboard.writeText(currentSelectedNews.link); alert('لینک خبر کپی شد.'); }
+            const text = encodeURIComponent(currentSelectedNews.title + "\n\n" + currentSelectedNews.link);
+            
+            document.getElementById('shareTelegram').href = `https://t.me/share/url?url=${encodeURIComponent(currentSelectedNews.link)}&text=${text}`;
+            document.getElementById('shareBale').href = `https://ble.im/share/url?url=${encodeURIComponent(currentSelectedNews.link)}&text=${text}`;
+            document.getElementById('shareRubika').href = `https://rubika.ir/share?text=${text}`;
+            document.getElementById('shareEitaa').href = `https://eitaa.com/share/url?url=${encodeURIComponent(currentSelectedNews.link)}&text=${text}`;
+
+            document.getElementById('shareModal').classList.remove('hidden');
+        }
+
+        function closeShareModal() { document.getElementById('shareModal').classList.add('hidden'); }
+
+        function copyNewsLink() {
+            if(!currentSelectedNews) return;
+            navigator.clipboard.writeText(currentSelectedNews.link);
+            alert('لینک خبر با موفقیت کپی شد.');
+            closeShareModal();
         }
 
         function renderLegalSystems() {
@@ -933,28 +1040,19 @@
             resultsBox.innerHTML = matches.length ? matches.map(m => `<a href="${m.link}" target="_blank" class="block p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl hover:text-red-500 transition mb-1"><strong>${m.title}</strong></a>`).join('') : '<p class="text-center text-slate-400 py-4">موردی یافت نشد.</p>';
         }
 
-        function changeFontSize(size) {
-            const items = document.querySelectorAll('h2, h3, h4, p, span, a, input, textarea');
-            items.forEach(el => {
-                if(size === 'small') el.style.fontSize = '11px';
-                if(size === 'normal') el.style.fontSize = '12.5px';
-                if(size === 'large') el.style.fontSize = '14.5px';
-            });
-            toggleSettingsMenu();
-        }
-
         let isDarkTheme = false;
         function toggleTheme() {
             isDarkTheme = !isDarkTheme;
             localStorage.setItem('mizan_theme', isDarkTheme ? 'dark' : 'light');
-            applyThemeUI();
+            applyThemeUI(isDarkTheme);
         }
 
-        function applyThemeUI() {
+        function applyThemeUI(dark) {
+            isDarkTheme = dark;
             const root = document.body;
             const header = document.getElementById('appHeader');
             const themeIcon = document.getElementById('theme-icon');
-            if (isDarkTheme) {
+            if (dark) {
                 root.className = "bg-slate-950 text-slate-100 dark min-h-screen flex flex-col text-sm transition-colors duration-300 relative";
                 if(header) header.className = "sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800 transition-colors duration-300";
                 document.documentElement.classList.add('dark');

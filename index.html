@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>خبرگزاری میزان | مینی‌اپ خبری پیشرفته</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -17,17 +18,17 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* افکت شیشه‌ای بسیار تیره، مات و خیره‌کننده (Ultra Glassmorphism) بدون تداخل با متن */
+        /* افکت شیشه‌ای بسیار تیره، مات و بدون تداخل با متون زیرین */
         .ultra-glass {
-            background: rgba(10, 15, 30, 0.90);
+            background: rgba(10, 15, 30, 0.92);
             backdrop-filter: blur(35px);
             -webkit-backdrop-filter: blur(35px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.75);
             color: #ffffff !important;
         }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(35px);
             -webkit-backdrop-filter: blur(35px);
             border: 1px solid rgba(255, 255, 255, 0.8);
@@ -114,7 +115,7 @@
             <div class="flex items-center space-x-2 space-x-reverse mr-auto">
                 <button id="notificationBellBtn" onclick="openNotificationsModal()" title="اعلان‌های فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative hidden">
                     <i class="fa-solid fa-bell text-xs text-amber-300"></i>
-                    <span id="globalNotificationBadge" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full hidden"></span>
+                    <span id="globalNotificationBadge" class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-600 rounded-full hidden"></span>
                 </button>
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
                     <i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i>
@@ -124,6 +125,7 @@
             </div>
         </div>
 
+        <!-- منوی تنظیمات شیشه‌ای متمرکز و جمع‌وجور -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
@@ -226,19 +228,19 @@
             </div>
         </section>
 
-        <!-- بخش پخش زنده پایدار (ایمبد و پلیر امن متصل به گوگل شیت) -->
+        <!-- بخش پخش زنده مجهز به پلیر HLS -->
         <section id="multimedia-tab" class="page-section hidden space-y-4">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-tower-broadcast ml-1.5 text-red-600 animate-pulse"></i> پخش زنده تلویزیون و استریم میزان
             </h2>
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
-                    <iframe id="liveStreamIframe" src="" class="w-full h-full border-0" allowfullscreen></iframe>
+                    <video id="liveStreamVideo" class="w-full h-full object-contain" controls autoplay playsinline></video>
                 </div>
                 <div class="p-2 space-y-2 text-center">
                     <h3 id="liveStreamTitle" class="font-bold text-xs text-red-500">پخش زنده سراسری</h3>
-                    <p class="text-[10px] opacity-80">لینک پخش از طریق تب LiveStream در گوگل‌شیت مدیریت می‌شود.</p>
-                    <a id="externalStreamBtn" href="#" target="_blank" class="inline-block bg-[#c51b24] text-white px-4 py-2 rounded-xl text-[10px] font-bold shadow transition hover:bg-red-700">باز کردن پخش زنده در پلیر اختصاصی</a>
+                    <p class="text-[10px] opacity-80">دریافت مستقیم از طریق لینک تنظیم‌شده در تب LiveStream گوگل‌شیت</p>
+                    <a id="externalStreamBtn" href="#" target="_blank" class="inline-block bg-[#c51b24] text-white px-4 py-2 rounded-xl text-[10px] font-bold shadow transition hover:bg-red-700">تماشای مستقیم در پلیر خارجی</a>
                 </div>
             </div>
         </section>
@@ -590,16 +592,34 @@
         }
 
         function setupLiveStreamPlayer() {
-            const iframeElem = document.getElementById('liveStreamIframe');
+            const videoElem = document.getElementById('liveStreamVideo');
             const titleElem = document.getElementById('liveStreamTitle');
             const extBtn = document.getElementById('externalStreamBtn');
             
-            let streamUrl = (appData.livestream && appData.livestream.url) ? appData.livestream.url : "https://www.aparat.com/video/video/embed/videohash/123456/vt/frame";
+            let rawStreamUrl = (appData.livestream && appData.livestream.url) ? appData.livestream.url : "https://live-aburayhan1104.telewebion.net/ek/irinn/live/240p/index.m3u8";
             let streamTitle = (appData.livestream && appData.livestream.title) ? appData.livestream.title : "پخش زنده سراسری";
 
             if(titleElem) titleElem.innerText = streamTitle;
-            if(extBtn) extBtn.href = streamUrl;
-            if(iframeElem) iframeElem.src = streamUrl;
+            if(extBtn) extBtn.href = rawStreamUrl;
+
+            if (rawStreamUrl.includes('.m3u8')) {
+                if(videoElem) {
+                    let hlsUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rawStreamUrl);
+                    if (Hls.isSupported()) {
+                        const hls = new Hls();
+                        hls.loadSource(hlsUrl);
+                        hls.attachMedia(videoElem);
+                        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                            videoElem.play().catch(e => console.log("Auto-play blocked:", e));
+                        });
+                    } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
+                        videoElem.src = hlsUrl;
+                        videoElem.addEventListener('loadedmetadata', function() {
+                            videoElem.play().catch(e => console.log("Auto-play blocked:", e));
+                        });
+                    }
+                }
+            }
         }
 
         function checkForNewNews(newsList) {

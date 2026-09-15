@@ -21,7 +21,6 @@
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* هدر در حالت عادی با حداکثر وضوح */
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
@@ -29,7 +28,6 @@
             background-repeat: no-repeat;
         }
 
-        /* هدر در حالت تیره با لایه محافظ ملایم و شفافیت و وضوح بالا */
         .dark .header-bg {
             background-image: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.6)), 
                               url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
@@ -81,14 +79,20 @@
     </script>
 
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
-        <div id="weatherWidgetContainer" class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
-            <div class="flex items-center space-x-2 space-x-reverse">
-                <i class="fa-regular fa-calendar-days text-amber-400"></i>
-                <span id="headerCalendarWidget">بارگذاری تقویم...</span>
+        <!-- نوار بالایی هدر با جداسازی کامل ویجت آب‌وهوا و دکمه تنظیمات -->
+        <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
+            <!-- ویجت آب‌وهوا و تقویم که به صورت مستقل مخفی/نمایش داده می‌شود -->
+            <div id="weatherWidgetContainer" class="flex items-center space-x-3 space-x-reverse">
+                <div class="flex items-center space-x-1 space-x-reverse">
+                    <i class="fa-regular fa-calendar-days text-amber-400"></i>
+                    <span id="headerCalendarWidget">بارگذاری تقویم...</span>
+                </div>
+                <div class="flex items-center space-x-1 space-x-reverse">
+                    <i class="fa-solid fa-cloud-sun text-amber-300"></i>
+                    <span>تهران ۲۴°C</span>
+                </div>
             </div>
-            <div class="flex items-center space-x-2 space-x-reverse">
-                <span><i class="fa-solid fa-cloud-sun text-amber-300 ml-1"></i> تهران ۲۴°C</span>
-            </div>
+            <!-- دکمه‌های کنترلی سمت چپ که همیشه ثابت و نمایان هستند -->
             <div class="flex items-center space-x-1.5 space-x-reverse mr-auto">
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
                     <i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i>
@@ -129,7 +133,6 @@
                     <button onclick="changeFontFamily('Yekan Bakh')" class="px-2 py-1 bg-white/20 rounded">یکان</button>
                 </div>
             </div>
-            <!-- دکمه بازنشانی به حالت اولیه -->
             <div class="pt-1">
                 <button onclick="resetToDefaultSettings()" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-300 py-1.5 rounded-xl font-bold transition text-[10px]">
                     <i class="fa-solid fa-rotate-left ml-1"></i> بازنشانی به تنظیمات اولیه
@@ -166,7 +169,7 @@
         </div>
     </div>
 
-    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
+    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28" onclick="closeSuggestionsOnClickOutside(event)">
         <section id="news-tab" class="page-section">
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
@@ -180,7 +183,6 @@
             </div>
         </section>
 
-        <!-- بخش چندرسانه‌ای کاملاً فعال با پشتیبان داخلی و خارجی -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -537,7 +539,6 @@
                 }
             } catch(e) {
                 console.error("Multimedia RSS error:", e);
-                // پشتیبانی از اخبار اصلی در صورت عدم دسترسی به RSS
                 if (appData.news && appData.news.length > 0) {
                     appData.multimedia = appData.news.slice(0, 10);
                     renderMultimediaFeed();

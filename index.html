@@ -21,11 +21,8 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* هدر با رنگ پایه قرمز میزان و تصویر با بالاترین کیفیت و وضوح */
         .header-bg {
-            background-color: #c51b24;
-            background-image: linear-gradient(rgba(197, 27, 36, 0.4), rgba(127, 29, 29, 0.5)), 
-                              url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
+            background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -278,26 +275,30 @@
         </div>
     </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-2 flex justify-between items-center z-50 shadow-lg">
-        <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-lg">
+        <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1">
             <i class="fa-solid fa-newspaper text-sm"></i>
-            <span class="text-[9px] mt-1 font-bold">اخبار</span>
+            <span class="text-[8.5px] mt-1 font-bold">اخبار</span>
         </button>
-        <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+        <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition flex-1">
             <i class="fa-brands fa-x-twitter text-sm"></i>
-            <span class="text-[9px] mt-1">توییتر</span>
+            <span class="text-[8.5px] mt-1">توییتر</span>
         </button>
-        <button onclick="switchTab('bookmarks-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+        <button onclick="switchTab('bookmarks-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition flex-1">
             <i class="fa-solid fa-bookmark text-sm"></i>
-            <span class="text-[9px] mt-1">ذخیره‌شده‌ها</span>
+            <span class="text-[8.5px] mt-1">ذخیره</span>
         </button>
-        <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+        <button onclick="switchTab('files-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition flex-1">
+            <i class="fa-solid fa-folder-open text-sm"></i>
+            <span class="text-[8.5px] mt-1">پرونده‌ها</span>
+        </button>
+        <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition flex-1">
             <i class="fa-solid fa-scale-balanced text-sm"></i>
-            <span class="text-[9px] mt-1">سامانه‌ها</span>
+            <span class="text-[8.5px] mt-1">سامانه‌ها</span>
         </button>
-        <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+        <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition flex-1">
             <i class="fa-solid fa-user-tie text-sm"></i>
-            <span class="text-[9px] mt-1">وکیل آنلاین</span>
+            <span class="text-[8.5px] mt-1">وکیل آنلاین</span>
         </button>
     </nav>
 
@@ -510,7 +511,7 @@
             `).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
             } else {
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }

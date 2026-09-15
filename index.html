@@ -21,13 +21,14 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
-        /* هدر با رنگ قرمز سازمانی و وضوح بالا و شفاف‌تر روی تصویر */
+        /* هدر با رنگ پایه قرمز میزان و تصویر با بالاترین کیفیت و وضوح */
         .header-bg {
             background-color: #c51b24;
-            background-image: linear-gradient(rgba(197, 27, 36, 0.65), rgba(127, 29, 29, 0.75)), 
+            background-image: linear-gradient(rgba(197, 27, 36, 0.4), rgba(127, 29, 29, 0.5)), 
                               url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
         }
 
         #pullRefreshIndicator {
@@ -151,7 +152,6 @@
             </div>
         </section>
 
-        <!-- بخش توییتر همراه با هدر و نماد اختصاصی مشابه سایر بخش‌ها -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-brands fa-x-twitter ml-1.5 text-sm text-slate-900 dark:text-white"></i> 
@@ -510,7 +510,7 @@
             `).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             } else {
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }

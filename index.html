@@ -33,7 +33,6 @@
                               url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
         }
 
-        /* سرعت حرکت خبر فوری (با تغییر عدد 30 ثانیه می‌توانید سرعت را کم و زیاد کنید) */
         @keyframes ticker {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
@@ -80,7 +79,6 @@
     </script>
 
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
-        <!-- ویجت تقویم و ساعت در بالای هدر -->
         <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
             <div class="flex items-center space-x-2 space-x-reverse">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
@@ -92,14 +90,6 @@
                     <span id="newsBadge" class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full hidden animate-ping"></span>
                 </button>
                 <button onclick="toggleSettingsMenu()" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
-            </div>
-        </div>
-
-        <!-- نوار خبر فوری متحرک -->
-        <div class="bg-red-950/85 dark:bg-slate-900/95 text-white px-3 py-1.5 overflow-hidden flex items-center border-b border-white/10 text-[11px]">
-            <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse">خبر فوری</span>
-            <div class="overflow-hidden whitespace-nowrap relative w-full">
-                <div id="breakingNewsTicker" class="animate-ticker">در حال دریافت آخرین اخبار مهم و قضایی کشور...</div>
             </div>
         </div>
 
@@ -157,7 +147,7 @@
         </div>
     </div>
 
-    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-20" onclick="closeSuggestionsOnClickOutside(event)">
+    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28" onclick="closeSuggestionsOnClickOutside(event)">
         <section id="news-tab" class="page-section">
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
@@ -171,7 +161,6 @@
             </div>
         </section>
 
-        <!-- بخش چندرسانه‌ای شکیل و دارای تصویر کامل برای هر خبر -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -259,12 +248,21 @@
         </section>
     </main>
 
+    <!-- نوار خبر فوری منتقل‌شده به پایین صفحه (بالای منوی ناوبری) -->
+    <div class="fixed bottom-12 left-0 right-0 max-w-md mx-auto bg-red-950/90 dark:bg-slate-900/95 backdrop-blur-md text-white px-3 py-1.5 overflow-hidden flex items-center border-t border-white/10 z-40 shadow-lg text-[11px]">
+        <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse">خبر فوری</span>
+        <div class="overflow-hidden whitespace-nowrap relative w-full">
+            <div id="breakingNewsTicker" class="animate-ticker">در حال دریافت آخرین اخبار مهم و قضایی کشور...</div>
+        </div>
+    </div>
+
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div id="modalCardContainer" class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-bold">دسته‌بندی</span>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
+                    <button onclick="speakNewsAudio()" id="audioReadBtn" class="text-xs bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 px-2.5 py-1 rounded-lg font-bold transition flex items-center space-x-1 space-x-reverse" title="پخش صوتی خبر"><i class="fa-solid fa-volume-high"></i> <span class="text-[9px]">صدا</span></button>
                     <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-[10px]">
                         <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A+</button>
                         <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A-</button>
@@ -389,16 +387,31 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        async function initApp(force = false) {
-            try {
-                const cachedData = localStorage.getItem('mizan_cache');
-                const cacheTime = localStorage.getItem('mizan_cache_time');
-                const now = new Date().getTime();
-
-                if (!force && cachedData && cacheTime && (now - cacheTime < 300000)) {
+        // بارگذاری آنی از کش برای رفع مشکل سرعت اولیه
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedFont = localStorage.getItem('mizan_font');
+            if (savedFont) document.documentElement.style.setProperty('--selected-font', savedFont);
+            if (localStorage.getItem('mizan_theme') === 'dark') {
+                applyThemeUI(true);
+            }
+            
+            const cachedData = localStorage.getItem('mizan_cache');
+            if (cachedData) {
+                try {
                     appData = JSON.parse(cachedData);
                     setupInitialView();
-                    checkForNewNews(appData.news);
+                } catch(e) {}
+            }
+            initApp(false);
+            initPullToRefresh();
+        });
+
+        async function initApp(force = false) {
+            try {
+                const now = new Date().getTime();
+                const cachedTime = localStorage.getItem('mizan_cache_time');
+
+                if (!force && cachedTime && (now - cachedTime < 300000) && appData.news.length > 0) {
                     return;
                 }
 
@@ -406,7 +419,6 @@
                 appData = await response.json();
 
                 fetchMultimediaFeed();
-
                 checkForNewNews(appData.news);
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 localStorage.setItem('mizan_cache_time', now);
@@ -415,10 +427,10 @@
             } catch (error) {
                 console.error("Error loading data:", error);
                 const cachedData = localStorage.getItem('mizan_cache');
-                if (cachedData) {
+                if (cachedData && appData.news.length === 0) {
                     appData = JSON.parse(cachedData);
                     setupInitialView();
-                } else {
+                } else if (appData.news.length === 0) {
                     document.getElementById('newsListContainer').innerHTML = '<p class="text-center text-red-500 py-8 text-xs">خطا در بارگذاری اطلاعات. لطفا دوباره تلاش کنید.</p>';
                 }
             }
@@ -533,16 +545,6 @@
             alert('قلم مینی‌اپ به ' + fontName + ' تغییر یافت.');
             toggleSettingsMenu();
         }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedFont = localStorage.getItem('mizan_font');
-            if (savedFont) document.documentElement.style.setProperty('--selected-font', savedFont);
-            if (localStorage.getItem('mizan_theme') === 'dark') {
-                applyThemeUI(true);
-            }
-            initApp(false);
-            initPullToRefresh();
-        });
 
         function initPullToRefresh() {
             let touchstartY = 0;

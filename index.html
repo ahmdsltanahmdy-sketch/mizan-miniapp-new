@@ -33,6 +33,7 @@
                               url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
         }
 
+        /* سرعت حرکت خبر فوری (با تغییر عدد 30 ثانیه می‌توانید سرعت را کم و زیاد کنید) */
         @keyframes ticker {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
@@ -40,7 +41,7 @@
         .animate-ticker {
             display: inline-block;
             white-space: nowrap;
-            animation: ticker 25s linear infinite;
+            animation: ticker 30s linear infinite;
         }
 
         #pullRefreshIndicator {
@@ -79,8 +80,9 @@
     </script>
 
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
-        <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10">
-            <div class="flex items-center space-x-2 space-x-reverse text-[10px] text-red-100 dark:text-slate-300">
+        <!-- ویجت تقویم و ساعت در بالای هدر -->
+        <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
+            <div class="flex items-center space-x-2 space-x-reverse">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
                 <span id="headerCalendarWidget">بارگذاری تقویم...</span>
             </div>
@@ -93,8 +95,9 @@
             </div>
         </div>
 
-        <div class="bg-red-950/80 dark:bg-slate-900/90 text-white px-3 py-1.5 overflow-hidden flex items-center border-b border-white/10 text-[11px]">
-            <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse">فوری</span>
+        <!-- نوار خبر فوری متحرک -->
+        <div class="bg-red-950/85 dark:bg-slate-900/95 text-white px-3 py-1.5 overflow-hidden flex items-center border-b border-white/10 text-[11px]">
+            <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse">خبر فوری</span>
             <div class="overflow-hidden whitespace-nowrap relative w-full">
                 <div id="breakingNewsTicker" class="animate-ticker">در حال دریافت آخرین اخبار مهم و قضایی کشور...</div>
             </div>
@@ -168,7 +171,7 @@
             </div>
         </section>
 
-        <!-- بخش گالری چندرسانه‌ای همراه با تصویر اختصاصی برای هر خبر -->
+        <!-- بخش چندرسانه‌ای شکیل و دارای تصویر کامل برای هر خبر -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -176,7 +179,7 @@
             <div id="multimediaFeedContainer" class="space-y-3">
                 <div class="text-center py-10 text-slate-400">
                     <i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i>
-                    <p>در حال بارگذاری ویدیوها...</p>
+                    <p>در حال بارگذاری چندرسانه‌ای...</p>
                 </div>
             </div>
         </section>
@@ -262,7 +265,6 @@
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-bold">دسته‌بندی</span>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
-                    <button onclick="speakNewsAudio()" id="audioReadBtn" class="text-xs bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 px-2.5 py-1 rounded-lg font-bold transition flex items-center space-x-1 space-x-reverse" title="پخش صوتی خبر"><i class="fa-solid fa-volume-high"></i> <span class="text-[9px]">صدا</span></button>
                     <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-[10px]">
                         <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A+</button>
                         <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A-</button>
@@ -422,7 +424,6 @@
             }
         }
 
-        // رندر کامل بخش چندرسانه‌ای همراه با تصویر اختصاصی برای هر خبر
         async function fetchMultimediaFeed() {
             try {
                 const rssUrl = "https://www.mizanonline.ir/fa/rss/2";
@@ -678,7 +679,7 @@
             }).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
             } else {
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }

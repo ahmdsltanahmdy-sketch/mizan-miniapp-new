@@ -33,7 +33,6 @@
                               url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
         }
 
-        /* انیمیشن خبر فوری از راست به چپ برای زبان فارسی */
         @keyframes ticker {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
@@ -60,7 +59,7 @@
         }
     </style>
 </head>
-<body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col text-xs relative">
+<body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col text-xs relative" onclick="closeAllDropdowns(event)">
 
     <div id="pullRefreshIndicator"><i class="fa-solid fa-arrow-rotate-down animate-bounce"></i> <span class="mr-1">برای بروزرسانی رها کنید...</span></div>
 
@@ -80,7 +79,6 @@
     </script>
 
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
-        <!-- ویجت آب‌وهوا و تقویم (قابل کنترل از تنظیمات) -->
         <div id="weatherWidgetContainer" class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
             <div class="flex items-center space-x-2 space-x-reverse">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
@@ -94,7 +92,7 @@
                     <i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i>
                     <span id="newsBadge" class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full hidden animate-ping"></span>
                 </button>
-                <button onclick="toggleSettingsMenu()" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
+                <button onclick="toggleSettingsMenu(event)" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
 
@@ -113,12 +111,10 @@
                     <span id="themeText">تیره / روشن</span>
                 </button>
             </div>
-            <!-- تنظیمات نمایش/عدم نمایش ویجت آب‌وهوا -->
             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                 <span>ویجت آب‌وهوا و تقویم:</span>
                 <button onclick="toggleSetting('weather')" id="btnSettingWeather" class="px-3 py-1 bg-red-600 rounded text-[10px] font-bold">نمایش</button>
             </div>
-            <!-- تنظیمات نمایش/عدم نمایش خبر فوری -->
             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                 <span>نوار خبر فوری:</span>
                 <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-3 py-1 bg-red-600 rounded text-[10px] font-bold">نمایش</button>
@@ -162,7 +158,7 @@
         </div>
     </div>
 
-    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28" onclick="closeSuggestionsOnClickOutside(event)">
+    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
         <section id="news-tab" class="page-section">
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
@@ -176,7 +172,6 @@
             </div>
         </section>
 
-        <!-- بخش چندرسانه‌ای اصلاح‌شده و پویا -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -264,7 +259,6 @@
         </section>
     </main>
 
-    <!-- نوار خبر فوری منتقل‌شده به پایین صفحه (جهت حرکت از چپ به راست) -->
     <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto bg-red-950/90 dark:bg-slate-900/95 backdrop-blur-md text-white px-3 py-1.5 overflow-hidden flex items-center border-t border-white/10 z-40 shadow-lg text-[11px]">
         <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse">خبر فوری</span>
         <div class="overflow-hidden whitespace-nowrap relative w-full">
@@ -272,7 +266,6 @@
         </div>
     </div>
 
-    <!-- مودال خبر بدون قابلیت صوتی مشکل‌دار -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div id="modalCardContainer" class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -587,8 +580,15 @@
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
         }
 
-        function toggleSettingsMenu() {
+        function toggleSettingsMenu(event) {
+            if(event) event.stopPropagation();
             document.getElementById('settingsDropdown').classList.toggle('hidden');
+        }
+
+        function closeAllDropdowns(event) {
+            if (!event.target.closest('#settingsDropdown') && !event.target.closest('[title="تنظیمات"]')) {
+                document.getElementById('settingsDropdown').classList.add('hidden');
+            }
         }
 
         function changeFontFamily(fontName) {
@@ -775,7 +775,7 @@
                                     <span class="text-[10px] text-slate-400">${handle}</span>
                                 </div>
                             </div>
-                            <i class="fa-solid fa-hashtag text-sm text-slate-400 hover:text-blue-500 transition"></i>
+                            <i class="fa-brands fa-x-twitter text-sm text-slate-400 hover:text-blue-500 transition"></i>
                         </div>
                         <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">${text}</p>
                         <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">

@@ -149,6 +149,18 @@
             </div>
         </section>
 
+        <!-- بخش جدید توییتر (X) با استایل اختصاصی -->
+        <section id="twitter-tab" class="page-section hidden space-y-3">
+            <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-3">
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fa-brands fa-x-twitter text-base text-slate-900 dark:text-white"></i>
+                    <span class="font-bold text-xs">تایم‌لاین رسمی میزان (X)</span>
+                </div>
+                <a href="https://x.com/MizanNewsAgency" target="_blank" class="text-[10px] text-blue-500 hover:underline">مشاهده در X</a>
+            </div>
+            <div id="twitterFeedContainer" class="space-y-3"></div>
+        </section>
+
         <section id="legal-tab" class="page-section hidden">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300">سامانه‌های الکترونیک قضایی</h2>
             <div id="legalSystemsContainer" class="space-y-3"></div>
@@ -241,27 +253,32 @@
         </div>
     </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-4 flex justify-between items-center z-50 shadow-lg">
+    <!-- منوی ناوبری پایین صفحه (با اضافه شدن تب توییتر) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto py-2 px-3 flex justify-between items-center z-50 shadow-lg">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition">
-            <i class="fa-solid fa-newspaper text-base"></i>
+            <i class="fa-solid fa-newspaper text-sm"></i>
             <span class="text-[9px] mt-1 font-bold">اخبار</span>
         </button>
+        <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
+            <i class="fa-brands fa-x-twitter text-sm"></i>
+            <span class="text-[9px] mt-1">توییتر (X)</span>
+        </button>
         <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
-            <i class="fa-solid fa-scale-balanced text-base"></i>
+            <i class="fa-solid fa-scale-balanced text-sm"></i>
             <span class="text-[9px] mt-1">سامانه‌ها</span>
         </button>
         <button onclick="switchTab('files-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
-            <i class="fa-solid fa-folder-open text-base"></i>
+            <i class="fa-solid fa-folder-open text-sm"></i>
             <span class="text-[9px] mt-1">پرونده‌ها</span>
         </button>
         <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition">
-            <i class="fa-solid fa-user-tie text-base"></i>
+            <i class="fa-solid fa-user-tie text-sm"></i>
             <span class="text-[9px] mt-1">وکیل آنلاین</span>
         </button>
     </nav>
 
     <script>
-        let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [] };
+        let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [] };
 
         let currentCategory = 'all';
         let currentSelectedNews = null;
@@ -292,7 +309,7 @@
                 setupInitialView();
             } catch (error) {
                 console.error("Error loading data:", error);
-                document.getElementById('newsListContainer').innerHTML = '<p class="text-center text-red-500 py-8 text-xs">خطا در بارگذاری اخبار. لطفا دوباره تلاش کنید.</p>';
+                document.getElementById('newsListContainer').innerHTML = '<p class="text-center text-red-500 py-8 text-xs">خطا در بارگذاری اطلاعات. لطفا دوباره تلاش کنید.</p>';
             }
         }
 
@@ -303,6 +320,7 @@
             }
             renderTabs();
             renderNews();
+            renderTwitterFeed();
             renderLegalSystems();
             renderFiles();
             renderOfficialMessages();
@@ -329,7 +347,6 @@
             toggleSettingsMenu();
         }
 
-        // اجرای خودکار و رفرش اولیه به محض باز شدن مینی‌اپ
         window.addEventListener('DOMContentLoaded', () => {
             const savedFont = localStorage.getItem('mizan_font');
             if (savedFont) document.documentElement.style.setProperty('--selected-font', savedFont);
@@ -360,7 +377,7 @@
             window.addEventListener('touchend', async e => {
                 touchendY = e.changedTouches[0].screenY;
                 if (window.scrollY === 0 && touchendY > touchstartY + 90) {
-                    indicator.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال بروزرسانی اخبار...';
+                    indicator.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال بروزرسانی اطلاعات...';
                     await initApp(true);
                     setTimeout(() => {
                         indicator.style.transform = 'translateY(0)';
@@ -454,10 +471,63 @@
             `).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             } else {
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }
+        }
+
+        // رندر کردن پست‌های توییتر با استایل کارت‌های X
+        function renderTwitterFeed() {
+            const container = document.getElementById('twitterFeedContainer');
+            if (!container) return;
+            const tweets = appData.twitter || [];
+
+            if (!tweets.length) {
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl text-center space-y-2 border border-slate-200 dark:border-slate-800">
+                        <i class="fa-brands fa-x-twitter text-2xl text-slate-400"></i>
+                        <p class="text-xs text-slate-500">هنوز پستی از توییتر دریافت نشده است.</p>
+                        <p class="text-[10px] text-slate-400">اطلاعات این بخش از تب TwitterFeed در گوگل‌شیت خوانده می‌شود.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tweets.map(t => {
+                let author = t.author_name || 'خبرگزاری میزان';
+                let handle = t.author_handle || '@MizanNewsAgency';
+                let text = t.tweet_text || '';
+                let date = t.created_at || '';
+                let url = t.tweet_url || 'https://x.com/MizanNewsAgency';
+
+                return `
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2 space-x-reverse">
+                                <div class="w-9 h-9 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-full flex items-center justify-center font-bold text-xs">م</div>
+                                <div>
+                                    <div class="flex items-center space-x-1 space-x-reverse">
+                                        <span class="font-bold text-xs text-slate-900 dark:text-white">${author}</span>
+                                        <i class="fa-solid fa-circle-check text-[10px] text-blue-500"></i>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400">${handle}</span>
+                                </div>
+                            </div>
+                            <a href="${url}" target="_blank" class="text-slate-400 hover:text-blue-500 transition"><i class="fa-brands fa-x-twitter text-sm"></i></a>
+                        </div>
+                        <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">${text}</p>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
+                            <span>${date}</span>
+                            <div class="flex space-x-4 space-x-reverse">
+                                <span><i class="fa-regular fa-comment ml-1"></i></span>
+                                <span><i class="fa-solid fa-retweet ml-1"></i></span>
+                                <span><i class="fa-regular fa-heart ml-1"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function loadMoreNews() {
@@ -809,6 +879,8 @@
             }
             if (sectionId === 'news-tab') {
                 renderNews();
+            } else if (sectionId === 'twitter-tab') {
+                renderTwitterFeed();
             } else if (sectionId === 'files-tab') {
                 renderFiles();
             }

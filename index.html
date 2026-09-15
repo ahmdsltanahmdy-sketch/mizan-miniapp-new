@@ -17,9 +17,9 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* افکت شیشه‌ای بسیار شفاف، عمیق و خیره‌کننده (Ultra Glassmorphism) */
+        /* افکت شیشه‌ای بسیار مدرن، عمیق و خیره‌کننده (Ultra Glassmorphism) */
         .ultra-glass {
-            background: rgba(15, 23, 42, 0.35);
+            background: rgba(15, 23, 42, 0.45);
             backdrop-filter: blur(35px);
             -webkit-backdrop-filter: blur(35px);
             border: 1px solid rgba(255, 255, 255, 0.35);
@@ -27,7 +27,7 @@
             color: #ffffff !important;
         }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
-            background: rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(35px);
             -webkit-backdrop-filter: blur(35px);
             border: 1px solid rgba(255, 255, 255, 0.85);
@@ -124,54 +124,52 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات بسیار شیشه‌ای، شفاف و جذاب -->
-        <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-4 ultra-glass space-y-3.5 text-xs shadow-2xl border-t border-white/30">
-            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
+        <!-- منوی تنظیمات شیشه‌ای جمع‌وجور، زیبا و به صورت کشویی متمرکز (تمام‌صفحه را نمی‌گیرد) -->
+        <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/40">
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
-                <button onclick="showInstallGuide(); document.getElementById('settingsDropdown').classList.add('hidden');" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
+                <button onclick="showInstallGuide(); document.getElementById('settingsDropdown').classList.add('hidden');" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
                     <span>راهنمای نصب</span>
                 </button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
-                <button onclick="toggleTheme()" class="bg-white/30 dark:bg-white/15 hover:bg-white/40 px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/30 shadow-sm">
+                <button onclick="toggleTheme()" class="bg-white/30 dark:bg-white/15 hover:bg-white/40 px-3 py-1 rounded-xl font-medium transition flex items-center space-x-1 space-x-reverse border border-white/30 shadow-sm">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                     <span id="themeText">تیره / روشن</span>
                 </button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
-                <span class="font-bold">ویجت آب‌وهوا و تقویم:</span>
-                <button onclick="toggleSetting('weather')" id="btnSettingWeather" class="px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">ویجت آب‌وهوا:</span>
+                <button onclick="toggleSetting('weather')" id="btnSettingWeather" class="px-2.5 py-1 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
-                <span class="font-bold">نوار خبر فوری:</span>
-                <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow">مخفی</button>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">خبر فوری:</span>
+                <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-2.5 py-1 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow">مخفی</button>
             </div>
-            <!-- تنظیم سرعت خبر فوری -->
-            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">سرعت خبر فوری:</span>
-                <select id="tickerSpeedSelect" onchange="changeTickerSpeed(this.value)" class="bg-white/30 dark:bg-slate-800 px-2.5 py-1 rounded-xl border border-white/20 text-xs">
-                    <option value="45s">کند (آرام)</option>
+                <select id="tickerSpeedSelect" onchange="changeTickerSpeed(this.value)" class="bg-white/30 dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-white/20 text-[10px]">
+                    <option value="45s">کند</option>
                     <option value="30s" selected>متوسط</option>
-                    <option value="15s">تند (سریع)</option>
+                    <option value="15s">تند</option>
                 </select>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
-                <span class="font-bold">زنگ اعلان فوری (هدر):</span>
-                <button onclick="toggleSetting('bell')" id="btnSettingBell" class="px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow">مخفی</button>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">زنگ اعلان:</span>
+                <button onclick="toggleSetting('bell')" id="btnSettingBell" class="px-2.5 py-1 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow">مخفی</button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">قلم مینی‌اپ:</span>
                 <div class="space-x-1 space-x-reverse">
-                    <button onclick="changeFontFamily('Tahoma')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">Tahoma</button>
-                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">وزیر</button>
-                    <button onclick="changeFontFamily('Yekan Bakh')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">یکان</button>
+                    <button onclick="changeFontFamily('Tahoma')" class="px-2 py-0.5 bg-white/30 dark:bg-white/15 rounded-lg border border-white/30">Tahoma</button>
+                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-0.5 bg-white/30 dark:bg-white/15 rounded-lg border border-white/30">وزیر</button>
                 </div>
             </div>
             <div class="pt-1">
-                <button onclick="resetToDefaultSettings()" class="w-full bg-slate-700/80 hover:bg-slate-600 text-amber-300 py-2 rounded-xl font-bold transition text-[10px] shadow border border-slate-600">
-                    <i class="fa-solid fa-rotate-left ml-1"></i> بازنشانی به تنظیمات اولیه
+                <button onclick="resetToDefaultSettings()" class="w-full bg-slate-700/80 hover:bg-slate-600 text-amber-300 py-1.5 rounded-xl font-bold transition text-[10px] shadow border border-slate-600">
+                    <i class="fa-solid fa-rotate-left ml-1"></i> بازنشانی تنظیمات
                 </button>
             </div>
         </div>
@@ -231,7 +229,7 @@
             </div>
         </section>
 
-        <!-- بخش چندرسانه‌ای پایدار -->
+        <!-- بخش چندرسانه‌ای با اتصال به اخبار و تصاویر معتبر -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -319,7 +317,7 @@
         </section>
     </main>
 
-    <!-- نوار خبر فوری شیشه‌ای (به طور پیش‌فرض مخفی تا از تنظیمات فعال شود) -->
+    <!-- نوار خبر فوری شیشه‌ای -->
     <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto ultra-glass px-3 py-1.5 overflow-hidden flex items-center border-t border-white/20 z-40 shadow-2xl text-[11px]" style="display: none;">
         <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 shadow">خبر فوری</span>
         <div class="overflow-hidden whitespace-nowrap relative w-full font-medium">
@@ -452,8 +450,8 @@
 
         let settingsState = {
             showWeather: localStorage.getItem('mizan_set_weather') !== 'false',
-            showTicker: localStorage.getItem('mizan_set_ticker') === 'true', // پیش‌فرض غیرفعال است
-            showBell: localStorage.getItem('mizan_set_bell') === 'true', // پیش‌فرض غیرفعال است
+            showTicker: localStorage.getItem('mizan_set_ticker') === 'true',
+            showBell: localStorage.getItem('mizan_set_bell') === 'true',
             tickerSpeed: localStorage.getItem('mizan_ticker_speed') || '30s'
         };
 
@@ -473,7 +471,6 @@
                 applyThemeUI(true);
             }
             
-            // تنظیم سرعت اسکرول خبر فوری
             document.documentElement.style.setProperty('--ticker-speed', settingsState.tickerSpeed);
             const speedSelect = document.getElementById('tickerSpeedSelect');
             if(speedSelect) speedSelect.value = settingsState.tickerSpeed;
@@ -526,15 +523,15 @@
 
             if(btnW) {
                 btnW.innerText = settingsState.showWeather ? 'نمایش' : 'مخفی';
-                btnW.className = settingsState.showWeather ? "px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
+                btnW.className = settingsState.showWeather ? "px-2.5 py-1 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-2.5 py-1 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
             }
             if(btnT) {
                 btnT.innerText = settingsState.showTicker ? 'نمایش' : 'مخفی';
-                btnT.className = settingsState.showTicker ? "px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
+                btnT.className = settingsState.showTicker ? "px-2.5 py-1 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-2.5 py-1 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
             }
             if(btnB) {
                 btnB.innerText = settingsState.showBell ? 'نمایش' : 'مخفی';
-                btnB.className = settingsState.showBell ? "px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
+                btnB.className = settingsState.showBell ? "px-2.5 py-1 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow" : "px-2.5 py-1 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow";
             }
         }
 
@@ -547,8 +544,8 @@
             localStorage.removeItem('mizan_ticker_speed');
             
             settingsState.showWeather = true;
-            settingsState.showTicker = false; // پیش‌فرض غیرفعال
-            settingsState.showBell = false; // پیش‌فرض غیرفعال
+            settingsState.showTicker = false;
+            settingsState.showBell = false;
             settingsState.tickerSpeed = '30s';
             document.documentElement.style.removeProperty('--selected-font');
             document.documentElement.style.setProperty('--ticker-speed', '30s');

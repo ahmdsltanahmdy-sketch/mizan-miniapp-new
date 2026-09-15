@@ -17,26 +17,26 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* افکت فوق‌العاده شیشه‌ای (Ultra-Glassmorphism) با خوانایی بی‌نقص متون */
+        /* افکت فوق‌العاده شیشه‌ای با حداکثر شفافیت و خوانایی بی‌نقص */
         .ultra-glass {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.4);
-            color: #f8fafc !important;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+            color: #ffffff !important;
         }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.9);
             color: #0f172a !important;
         }
 
-        .glass-tab { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.35); color: #ffffff !important; }
-        .dark .glass-tab { background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .glass-tab { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); color: #ffffff !important; }
+        .dark .glass-tab { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); }
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
@@ -112,54 +112,53 @@
             </div>
             
             <div class="flex items-center space-x-2 space-x-reverse mr-auto">
-                <!-- زنگ اعلان فوری که به صورت پیش‌فرض غیرفعال است (بر اساس تنظیمات) -->
                 <button id="notificationBellBtn" onclick="openNotificationsModal()" title="اعلان‌های فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative hidden">
                     <i class="fa-solid fa-bell text-xs text-amber-300"></i>
-                    <span id="globalNotificationBadge" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full animate-ping hidden"></span>
+                    <span id="globalNotificationBadge" class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-600 rounded-full hidden"></span>
                 </button>
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
                     <i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i>
-                    <span id="newsBadge" class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full hidden animate-ping"></span>
+                    <!-- بج بدون چشمک‌زن -->
+                    <span id="newsBadge" class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full hidden"></span>
                 </button>
                 <button onclick="toggleSettingsMenu(event)" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
 
-        <!-- منوی تنظیمات فوق‌العاده شیشه‌ای با خوانایی کامل متن -->
+        <!-- منوی تنظیمات فوق‌العاده شیشه‌ای و جذاب -->
         <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-4 ultra-glass space-y-3.5 text-xs shadow-2xl border-t border-white/30">
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
                 <button onclick="showInstallGuide(); document.getElementById('settingsDropdown').classList.add('hidden');" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
                     <span>راهنمای نصب</span>
                 </button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
-                <button onclick="toggleTheme()" class="bg-white/25 dark:bg-white/15 hover:bg-white/35 px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/30 shadow-sm">
+                <button onclick="toggleTheme()" class="bg-white/30 dark:bg-white/15 hover:bg-white/40 px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/30 shadow-sm">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                     <span id="themeText">تیره / روشن</span>
                 </button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
                 <span class="font-bold">ویجت آب‌وهوا و تقویم:</span>
                 <button onclick="toggleSetting('weather')" id="btnSettingWeather" class="px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
                 <span class="font-bold">نوار خبر فوری:</span>
                 <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-3 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-bold shadow">نمایش</button>
             </div>
-            <!-- تنظیمات فعال‌سازی زنگ اعلان بالای صفحه -->
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
                 <span class="font-bold">زنگ اعلان فوری (هدر):</span>
                 <button onclick="toggleSetting('bell')" id="btnSettingBell" class="px-3 py-1.5 bg-slate-600 text-white rounded-xl text-[10px] font-bold shadow">مخفی</button>
             </div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-300/30 dark:border-white/15">
+            <div class="flex items-center justify-between pb-2.5 border-b border-white/20">
                 <span class="font-bold">قلم مینی‌اپ:</span>
                 <div class="space-x-1 space-x-reverse">
-                    <button onclick="changeFontFamily('Tahoma')" class="px-2.5 py-1 bg-white/25 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">Tahoma</button>
-                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2.5 py-1 bg-white/25 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">وزیر</button>
-                    <button onclick="changeFontFamily('Yekan Bakh')" class="px-2.5 py-1 bg-white/25 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">یکان</button>
+                    <button onclick="changeFontFamily('Tahoma')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">Tahoma</button>
+                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">وزیر</button>
+                    <button onclick="changeFontFamily('Yekan Bakh')" class="px-2.5 py-1 bg-white/30 dark:bg-white/15 rounded-xl border border-white/30 shadow-sm">یکان</button>
                 </div>
             </div>
             <div class="pt-1">
@@ -201,10 +200,10 @@
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
             <button onclick="closeInstallGuide()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-sm text-[#c51b24]"><i class="fa-solid fa-cloud-arrow-down ml-1"></i> نصب مینی‌اپ میزان</h3>
-            <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">برای استفاده مثل یک اپلیکیشن واقعی:</p>
+            <p class="text-[11px] leading-relaxed opacity-90">برای استفاده مثل یک اپلیکیشن واقعی:</p>
             <div class="bg-white/40 dark:bg-slate-800/40 p-3 rounded-2xl space-y-2 text-[11px] border border-white/20">
                 <p><strong>اندروید:</strong> منوی مرورگر را باز کرده و گزینه <span class="text-red-600 font-bold">«افزودن به صفحه اصلی»</span> را انتخاب کنید.</p>
-                <p class="border-t border-slate-200/50 dark:border-slate-700/50 pt-2"><strong>آیفون:</strong> در سافاری دکمه اشتراک‌گذاری را زده و <span class="text-red-600 font-bold">«Add to Home Screen»</span> را انتخاب کنید.</p>
+                <p class="border-t border-white/20 pt-2"><strong>آیفون:</strong> در سافاری دکمه اشتراک‌گذاری را زده و <span class="text-red-600 font-bold">«Add to Home Screen»</span> را انتخاب کنید.</p>
             </div>
             <button onclick="closeInstallGuide()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">متوجه شدم</button>
         </div>
@@ -224,7 +223,7 @@
             </div>
         </section>
 
-        <!-- بخش چندرسانه‌ای با اتصال به اخبار داخلی و تصاویر معتبر (بدون خطای Timeout) -->
+        <!-- بخش چندرسانه‌ای با اتصال پایدار به اخبار تصویری و ویدیوها -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -312,10 +311,10 @@
         </section>
     </main>
 
-    <!-- نوار خبر فوری شیشه‌ای با تم تیره و متن کاملاً خوانا -->
-    <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto ultra-glass text-white px-3 py-1.5 overflow-hidden flex items-center border-t border-white/20 z-40 shadow-2xl text-[11px]">
-        <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse shadow">خبر فوری</span>
-        <div class="overflow-hidden whitespace-nowrap relative w-full text-slate-100 dark:text-slate-100 font-medium">
+    <!-- نوار خبر فوری شیشه‌ای با تم تیره و خوانایی کامل -->
+    <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto ultra-glass px-3 py-1.5 overflow-hidden flex items-center border-t border-white/20 z-40 shadow-2xl text-[11px]">
+        <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 shadow">خبر فوری</span>
+        <div class="overflow-hidden whitespace-nowrap relative w-full font-medium">
             <div id="breakingNewsTicker" class="animate-ticker">در حال دریافت آخرین اخبار مهم و قضایی کشور...</div>
         </div>
     </div>
@@ -339,7 +338,7 @@
             <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
             <p id="modalSummary" class="text-[11px] mt-2 leading-relaxed whitespace-pre-line opacity-90">خلاصه کامل...</p>
 
-            <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 space-y-2">
+            <div class="mt-4 pt-3 border-t border-white/20 space-y-2">
                 <div class="flex justify-between items-center">
                     <h4 class="font-bold text-xs text-red-600">نظرات کاربران</h4>
                     <span id="pendingCommentsBadge" class="text-[9px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2.5 py-0.5 rounded-full font-medium">۰ نظر در صف انتشار</span>
@@ -446,7 +445,7 @@
         let settingsState = {
             showWeather: localStorage.getItem('mizan_set_weather') !== 'false',
             showTicker: localStorage.getItem('mizan_set_ticker') !== 'false',
-            showBell: localStorage.getItem('mizan_set_bell') === 'true' // به طور پیش‌فرض در حالت اولیه غیرفعال است
+            showBell: localStorage.getItem('mizan_set_bell') === 'true' // به طور پیش‌فرض مخفی است
         };
 
         function updateDateTime() {
@@ -571,10 +570,9 @@
             }
         }
 
-        // بارگذاری ایمن بخش چندرسانه‌ای با استفاده از داده‌های معتبر و بدون ارور Timeout
         async function fetchMultimediaFeed() {
             try {
-                // استفاده از داده‌های اخبار اصلی به عنوان منبع پایدار گالری چندرسانه‌ای برای جلوگیری از قطعی و Timeout
+                // استفاده از اخبار داخلی دارای عکس برای بخش چندرسانه‌ای به جهت پایداری ۱۰۰٪ و عدم خطای Timeout
                 if (appData.news && appData.news.length > 0) {
                     let mediaList = appData.news.filter(n => n.image && n.image.startsWith('http') && !n.title.includes('خبر آزمایشی'));
                     mediaList.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
@@ -591,21 +589,22 @@
             const container = document.getElementById('multimediaFeedContainer');
             if(!container) return;
             let items = appData.multimedia || [];
-            
+            items = items.filter(m => m.image && m.image.startsWith('http') && !m.title.includes('خبر آزمایشی'));
+
             if(!items.length) {
                 container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">محتوای چندرسانه‌ای یافت نشد.</p>';
                 return;
             }
             container.innerHTML = items.map(m => `
-                <a href="${m.link}" target="_blank" class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 hover:border-red-500 transition">
+                <a href="${m.link}" target="_blank" class="block bg-white/40 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl overflow-hidden shadow-sm border border-white/20 hover:border-red-500 transition">
                     <img src="${m.image}" loading="lazy" class="w-full h-36 object-cover" alt="">
                     <div class="p-3.5">
                         <div class="flex items-center justify-between mb-1">
                             <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[9px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-video ml-1"></i> چندرسانه‌ای</span>
-                            <span class="text-[9px] text-slate-400">${m.pubDate ? new Date(m.pubDate).toLocaleDateString('fa-IR') : ''}</span>
+                            <span class="text-[9px] opacity-80">${m.pubDate ? new Date(m.pubDate).toLocaleDateString('fa-IR') : ''}</span>
                         </div>
                         <h3 class="font-bold text-xs line-clamp-2 leading-snug mt-1">${m.title}</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${m.summary || m.description || ''}</p>
+                        <p class="text-[11px] opacity-90 mt-1 line-clamp-2">${m.summary || m.description || ''}</p>
                     </div>
                 </a>
             `).join('');
@@ -643,9 +642,9 @@
                     <a href="${n.link}" target="_blank" class="block p-3 bg-white/40 dark:bg-slate-800/60 rounded-xl hover:bg-white/60 transition space-y-1 border border-white/20 shadow-sm">
                         <div class="flex items-center justify-between text-[9px] text-red-600 font-bold">
                             <span><i class="fa-solid fa-bolt ml-1"></i> خبر جدید</span>
-                            <span class="text-slate-400">${n.category || 'عمومی'}</span>
+                            <span class="opacity-80">${n.category || 'عمومی'}</span>
                         </div>
-                        <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-snug">${n.title}</h4>
+                        <h4 class="font-bold text-xs leading-snug">${n.title}</h4>
                     </a>
                 `).join('');
             }
@@ -805,13 +804,13 @@
             const isFirstRead = readHistory.includes(firstNews.link);
 
             featuredContainer.innerHTML = `
-                <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border ${isFirstRead ? 'border-slate-200 dark:border-slate-800 opacity-80' : 'border-red-500/50'} cursor-pointer hover:shadow-md transition relative">
+                <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white/40 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl overflow-hidden shadow-sm border ${isFirstRead ? 'border-slate-200 dark:border-slate-800 opacity-80' : 'border-red-500/50'} cursor-pointer hover:shadow-md transition relative">
                     ${isFirstRead ? '<span class="absolute top-2 left-2 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[9px] px-2 py-0.5 rounded font-bold">خوانده‌شده</span>' : ''}
                     <img src="${featuredImg}" loading="lazy" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
                         <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
                         <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-normal">${firstNews.summary || ''}</p>
+                        <p class="text-[11px] opacity-90 mt-1 line-clamp-2 leading-normal">${firstNews.summary || ''}</p>
                     </div>
                 </div>
             `;
@@ -820,18 +819,18 @@
             container.innerHTML = currentBatch.map(item => {
                 const isRead = readHistory.includes(item.link);
                 return `
-                    <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border ${isRead ? 'border-slate-200 dark:border-slate-800 opacity-80' : 'border-slate-200 dark:border-slate-800'} cursor-pointer hover:shadow-md transition flex justify-between items-start">
+                    <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white/40 dark:bg-slate-900/60 backdrop-blur-md p-3.5 rounded-2xl shadow-sm border ${isRead ? 'border-slate-200 dark:border-slate-800 opacity-80' : 'border-white/15'} cursor-pointer hover:shadow-md transition flex justify-between items-start">
                         <div>
-                            <h3 class="font-bold text-xs line-clamp-2 leading-snug ${isRead ? 'text-slate-500 dark:text-slate-400' : ''}">${item.title}</h3>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-normal">${item.summary || ''}</p>
+                            <h3 class="font-bold text-xs line-clamp-2 leading-snug ${isRead ? 'opacity-70' : ''}">${item.title}</h3>
+                            <p class="text-[11px] opacity-80 mt-1.5 line-clamp-2 leading-normal">${item.summary || ''}</p>
                         </div>
-                        ${isRead ? '<span class="text-[8px] bg-slate-100 dark:bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded flex-shrink-0 mr-2">خوانده شده</span>' : ''}
+                        ${isRead ? '<span class="text-[8px] bg-slate-100 dark:bg-slate-800 opacity-60 px-1.5 py-0.5 rounded flex-shrink-0 mr-2">خوانده شده</span>' : ''}
                     </div>
                 `;
             }).join('');
 
             if (filteredNews.length > displayedNewsCount) {
-                if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             } else {
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }
@@ -860,22 +859,22 @@
                 let url = t.tweet_url || 'https://x.com/MizanNewsAgency';
 
                 return `
-                    <a href="${url}" target="_blank" class="block bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5 hover:border-red-500 transition cursor-pointer">
+                    <a href="${url}" target="_blank" class="block bg-white/40 dark:bg-slate-900/60 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/15 space-y-2.5 hover:border-red-500 transition cursor-pointer">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2 space-x-reverse">
                                 <div class="w-9 h-9 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-full flex items-center justify-center font-bold text-xs">م</div>
                                 <div>
                                     <div class="flex items-center space-x-1 space-x-reverse">
-                                        <span class="font-bold text-xs text-slate-900 dark:text-white">${author}</span>
+                                        <span class="font-bold text-xs">${author}</span>
                                         <i class="fa-solid fa-circle-check text-[10px] text-blue-500"></i>
                                     </div>
-                                    <span class="text-[10px] text-slate-400">${handle}</span>
+                                    <span class="text-[10px] opacity-80">${handle}</span>
                                 </div>
                             </div>
-                            <i class="fa-brands fa-x-twitter text-sm text-slate-400"></i>
+                            <i class="fa-brands fa-x-twitter text-sm opacity-80"></i>
                         </div>
-                        <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">${text}</p>
-                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
+                        <p class="text-[11px] leading-relaxed whitespace-pre-line opacity-95">${text}</p>
+                        <div class="flex items-center justify-between pt-2 border-t border-white/10 text-[10px] opacity-80">
                             <span>${date}</span>
                         </div>
                     </a>
@@ -942,10 +941,10 @@
             }
 
             container.innerHTML = bookmarks.map(item => `
-                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
+                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="bg-white/40 dark:bg-slate-900/60 backdrop-blur-md p-3.5 rounded-2xl shadow-sm border border-white/15 cursor-pointer hover:shadow-md transition">
                     <span class="text-[9px] text-red-600 font-bold bg-red-50 dark:bg-red-950 px-2 py-0.5 rounded">${item.category || 'عمومی'}</span>
                     <h3 class="font-bold text-xs line-clamp-2 leading-snug mt-1">${item.title}</h3>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-normal">${item.summary || ''}</p>
+                    <p class="text-[11px] opacity-80 mt-1 line-clamp-2 leading-normal">${item.summary || ''}</p>
                 </div>
             `).join('');
         }
@@ -978,15 +977,15 @@
             let html = '';
             if (matchedSystems.length > 0) {
                 html += '<div class="text-[10px] font-bold text-red-600 px-2 py-1">سامانه‌ها</div>';
-                html += matchedSystems.map(sys => `<a href="${sys.url}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold">${sys.title}</div><div class="text-[10px] opacity-80">${sys.description}</div></a>`).join('');
+                html += matchedSystems.map(sys => `<a href="${sys.url}" target="_blank" class="block p-2 hover:bg-white/20 rounded-lg transition"><div class="font-bold">${sys.title}</div><div class="text-[10px] opacity-80">${sys.description}</div></a>`).join('');
             }
             if (matchedFiles.length > 0) {
-                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-white/10 mt-1">پرونده‌های ویژه</div>';
-                html += matchedFiles.map(file => `<a href="${file.url || '#'}" target="_blank" class="block p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="font-bold">${file.title}</div><div class="text-[10px] opacity-80 line-clamp-1">${file.description}</div></a>`).join('');
+                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-white/20 mt-1">پرونده‌های ویژه</div>';
+                html += matchedFiles.map(file => `<a href="${file.url || '#'}" target="_blank" class="block p-2 hover:bg-white/20 rounded-lg transition"><div class="font-bold">${file.title}</div><div class="text-[10px] opacity-80 line-clamp-1">${file.description}</div></a>`).join('');
             }
             if (matchedNews.length > 0) {
-                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-white/10 mt-1">اخبار مرتبط</div>';
-                html += matchedNews.map(item => `<div onclick='selectLiveSuggestion(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer transition"><div class="font-bold line-clamp-1">${item.title}</div><div class="text-[10px] opacity-80 line-clamp-1 mt-0.5">${item.summary || ''}</div></div>`).join('');
+                html += '<div class="text-[10px] font-bold text-red-600 px-2.5 pt-2 pb-1 border-t border-white/20 mt-1">اخبار مرتبط</div>';
+                html += matchedNews.map(item => `<div onclick='selectLiveSuggestion(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2 hover:bg-white/20 rounded-lg cursor-pointer transition"><div class="font-bold line-clamp-1">${item.title}</div><div class="text-[10px] opacity-80 line-clamp-1 mt-0.5">${item.summary || ''}</div></div>`).join('');
             }
             box.innerHTML = html;
             box.classList.remove('hidden');

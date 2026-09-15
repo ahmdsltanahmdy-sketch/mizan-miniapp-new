@@ -21,6 +21,7 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
+        /* پس‌زمینه هدر با عکس اختصاصی هدر */
         .header-bg {
             background: linear-gradient(rgba(197, 27, 36, 0.82), rgba(127, 29, 29, 0.88)), 
                         url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
@@ -149,7 +150,6 @@
             </div>
         </section>
 
-        <!-- بخش توییتر با کارت‌های کاملاً لینک‌شده -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-3">
                 <div class="flex items-center space-x-2 space-x-reverse">
@@ -293,8 +293,6 @@
         let generatedCardBlob = null;
         let isSubmittingComment = false;
         let isSubmittingQuestion = false;
-
-        const DESIRED_FEATURED_IMAGE = 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg';
 
         function updateDateTime() {
             const now = new Date();
@@ -473,10 +471,12 @@
             });
 
             const firstNews = filteredNews[0];
+            // استفاده از تصویر اصلی خود خبر (اگر در شیت بود) یا تصویر پیش‌فرض مناسب
+            const featuredImg = (firstNews.image && firstNews.image.startsWith('http')) ? firstNews.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
             featuredContainer.innerHTML = `
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer hover:shadow-md transition">
-                    <img src="${DESIRED_FEATURED_IMAGE}" loading="lazy" class="w-full h-44 object-cover" alt="">
+                    <img src="${featuredImg}" loading="lazy" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
                         <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">ویژه (${currentCategory})</span>
                         <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
@@ -500,7 +500,6 @@
             }
         }
 
-        // رندر کامل توییت‌ها با قابلیت کلیک روی کل کارت برای ورود به توییت اصلی
         function renderTwitterFeed() {
             const container = document.getElementById('twitterFeedContainer');
             if (!container) return;
@@ -574,7 +573,8 @@
                     title: currentSelectedNews.title,
                     link: currentSelectedNews.link,
                     summary: currentSelectedNews.summary,
-                    category: currentSelectedNews.category
+                    category: currentSelectedNews.category,
+                    image: currentSelectedNews.image || ''
                 });
                 if(btnIcon) btnIcon.className = "fa-solid fa-bookmark text-red-600";
                 alert('خبر با موفقیت ذخیره شد.');
@@ -661,7 +661,10 @@
             document.getElementById('modalTitle').innerText = news.title;
             document.getElementById('modalSummary').innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
             document.getElementById('modalCategory').innerText = news.category || 'عمومی';
-            document.getElementById('modalImg').src = DESIRED_FEATURED_IMAGE;
+            
+            // تصویر مدال خبر
+            const modalImgUrl = (news.image && news.image.startsWith('http')) ? news.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+            document.getElementById('modalImg').src = modalImgUrl;
             document.getElementById('modalLink').href = news.link;
 
             const bookmarks = getLocalBookmarks();

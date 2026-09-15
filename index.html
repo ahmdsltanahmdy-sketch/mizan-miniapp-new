@@ -21,7 +21,9 @@
         .reading-mode-active { font-size: 17px !important; line-height: 2.3 !important; background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
+        /* هدر با تصویر کاملاً شفاف، زنده و با وضوح حداکثری */
         .header-bg {
+            background-color: #7f1d1d;
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
@@ -151,12 +153,12 @@
 
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
-                <i class="fa-brands fa-x-twitter ml-1.5 text-sm text-slate-900 dark:text-white"></i> 
+                <i class="fa-solid fa-hashtag ml-1.5 text-sm text-slate-900 dark:text-white"></i> 
                 تایم‌لاین رسمی خبرگزاری میزان (X)
             </h2>
             <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-3">
                 <div class="flex items-center space-x-2 space-x-reverse">
-                    <i class="fa-brands fa-x-twitter text-base text-slate-900 dark:text-white"></i>
+                    <i class="fa-solid fa-hashtag text-base text-slate-900 dark:text-white"></i>
                     <span class="font-bold text-xs">آخرین توییت‌ها و اطلاعیه‌ها</span>
                 </div>
                 <a href="https://x.com/MizanNewsAgency" target="_blank" class="text-[10px] text-blue-500 hover:underline">مشاهده در X</a>
@@ -281,7 +283,7 @@
             <span class="text-[8.5px] mt-1 font-bold">اخبار</span>
         </button>
         <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition flex-1">
-            <i class="fa-brands fa-x-twitter text-sm"></i>
+            <i class="fa-solid fa-hashtag text-sm"></i>
             <span class="text-[8.5px] mt-1">توییتر</span>
         </button>
         <button onclick="switchTab('bookmarks-tab', this)" class="nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition flex-1">
@@ -525,7 +527,7 @@
             if (!tweets.length) {
                 container.innerHTML = `
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl text-center space-y-2 border border-slate-200 dark:border-slate-800">
-                        <i class="fa-brands fa-x-twitter text-2xl text-slate-400"></i>
+                        <i class="fa-solid fa-hashtag text-2xl text-slate-400"></i>
                         <p class="text-xs text-slate-500">هنوز پستی از توییتر دریافت نشده است.</p>
                         <p class="text-[10px] text-slate-400">لطفاً مطمئن شوید که در تب TwitterFeed گوگل‌شیت اطلاعات وجود دارد.</p>
                     </div>
@@ -553,7 +555,7 @@
                                     <span class="text-[10px] text-slate-400">${handle}</span>
                                 </div>
                             </div>
-                            <i class="fa-brands fa-x-twitter text-sm text-slate-400 hover:text-blue-500 transition"></i>
+                            <i class="fa-solid fa-hashtag text-sm text-slate-400 hover:text-blue-500 transition"></i>
                         </div>
                         <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">${text}</p>
                         <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
@@ -971,8 +973,8 @@
             const targetSec = document.getElementById(sectionId);
             if (targetSec) targetSec.classList.remove('hidden');
             if (btn) {
-                document.querySelectorAll('nav button').forEach(b => b.className = "nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition");
-                btn.className = "nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition";
+                document.querySelectorAll('nav button').forEach(b => b.className = "nav-btn flex flex-col items-center text-slate-400 hover:text-[#c51b24] transition flex-1");
+                btn.className = "nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1";
             }
             if (sectionId === 'news-tab') {
                 renderNews();

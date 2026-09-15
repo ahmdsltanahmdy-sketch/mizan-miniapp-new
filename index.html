@@ -21,6 +21,7 @@
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
         
+        /* هدر در حالت عادی با حداکثر وضوح */
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
@@ -28,8 +29,9 @@
             background-repeat: no-repeat;
         }
 
+        /* هدر در حالت تیره با لایه محافظ ملایم و شفافیت و وضوح بالا */
         .dark .header-bg {
-            background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+            background-image: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.6)), 
                               url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
         }
 
@@ -79,17 +81,13 @@
     </script>
 
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
-        <!-- هدر بالایی شامل ویجت آب‌وهوا و دکمه مستقل تنظیمات -->
-        <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
-            <div id="weatherWidgetContainer" class="flex items-center space-x-3 space-x-reverse">
-                <div class="flex items-center space-x-1 space-x-reverse">
-                    <i class="fa-regular fa-calendar-days text-amber-400"></i>
-                    <span id="headerCalendarWidget">بارگذاری تقویم...</span>
-                </div>
-                <div class="flex items-center space-x-1 space-x-reverse">
-                    <i class="fa-solid fa-cloud-sun text-amber-300"></i>
-                    <span>تهران ۲۴°C</span>
-                </div>
+        <div id="weatherWidgetContainer" class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <i class="fa-regular fa-calendar-days text-amber-400"></i>
+                <span id="headerCalendarWidget">بارگذاری تقویم...</span>
+            </div>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <span><i class="fa-solid fa-cloud-sun text-amber-300 ml-1"></i> تهران ۲۴°C</span>
             </div>
             <div class="flex items-center space-x-1.5 space-x-reverse mr-auto">
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
@@ -100,7 +98,6 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات کاملاً مجزا -->
         <div id="settingsDropdown" class="hidden max-w-md mx-auto w-full px-4 py-3 bg-red-950/95 dark:bg-slate-800/95 backdrop-blur-md text-white space-y-3 text-xs shadow-lg border-t border-white/10">
             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                 <span>نصب مینی‌اپ:</span>
@@ -124,13 +121,19 @@
                 <span>نوار خبر فوری:</span>
                 <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-3 py-1 bg-red-600 rounded text-[10px] font-bold">نمایش</button>
             </div>
-            <div class="flex justify-between items-center">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
                 <span>قلم مینی‌اپ:</span>
                 <div class="space-x-1 space-x-reverse">
                     <button onclick="changeFontFamily('Tahoma')" class="px-2 py-1 bg-white/20 rounded">Tahoma</button>
                     <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-1 bg-white/20 rounded">وزیر</button>
                     <button onclick="changeFontFamily('Yekan Bakh')" class="px-2 py-1 bg-white/20 rounded">یکان</button>
                 </div>
+            </div>
+            <!-- دکمه بازنشانی به حالت اولیه -->
+            <div class="pt-1">
+                <button onclick="resetToDefaultSettings()" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-300 py-1.5 rounded-xl font-bold transition text-[10px]">
+                    <i class="fa-solid fa-rotate-left ml-1"></i> بازنشانی به تنظیمات اولیه
+                </button>
             </div>
         </div>
 
@@ -163,7 +166,7 @@
         </div>
     </div>
 
-    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28" onclick="closeSuggestionsOnClickOutside(event)">
+    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
         <section id="news-tab" class="page-section">
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
@@ -177,7 +180,7 @@
             </div>
         </section>
 
-        <!-- بخش چندرسانه‌ای کاملاً پایدار و هماهنگ با سیستم اخبار -->
+        <!-- بخش چندرسانه‌ای کاملاً فعال با پشتیبان داخلی و خارجی -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -456,6 +459,22 @@
             }
         }
 
+        function resetToDefaultSettings() {
+            localStorage.removeItem('mizan_theme');
+            localStorage.removeItem('mizan_font');
+            localStorage.removeItem('mizan_set_weather');
+            localStorage.removeItem('mizan_set_ticker');
+            
+            settingsState.showWeather = true;
+            settingsState.showTicker = true;
+            document.documentElement.style.removeProperty('--selected-font');
+            
+            applyThemeUI(false);
+            applySettingsUI();
+            document.getElementById('settingsDropdown').classList.add('hidden');
+            alert('تنظیمات مینی‌اپ به حالت اولیه بازنشانی شد.');
+        }
+
         async function initApp(force = false) {
             try {
                 const now = new Date().getTime();
@@ -518,7 +537,7 @@
                 }
             } catch(e) {
                 console.error("Multimedia RSS error:", e);
-                // پشتیبانی از لیست اخبار داخلی در صورت خطای RSS
+                // پشتیبانی از اخبار اصلی در صورت عدم دسترسی به RSS
                 if (appData.news && appData.news.length > 0) {
                     appData.multimedia = appData.news.slice(0, 10);
                     renderMultimediaFeed();

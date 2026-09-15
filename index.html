@@ -33,9 +33,10 @@
                               url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
         }
 
+        /* انیمیشن خبر فوری از راست به چپ برای زبان فارسی */
         @keyframes ticker {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         .animate-ticker {
             display: inline-block;
@@ -79,10 +80,14 @@
     </script>
 
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
-        <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
+        <!-- ویجت آب‌وهوا و تقویم (قابل کنترل از تنظیمات) -->
+        <div id="weatherWidgetContainer" class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
             <div class="flex items-center space-x-2 space-x-reverse">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
                 <span id="headerCalendarWidget">بارگذاری تقویم...</span>
+            </div>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <span><i class="fa-solid fa-cloud-sun text-amber-300 ml-1"></i> تهران ۲۴°C</span>
             </div>
             <div class="flex items-center space-x-1.5 space-x-reverse">
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
@@ -107,6 +112,16 @@
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                     <span id="themeText">تیره / روشن</span>
                 </button>
+            </div>
+            <!-- تنظیمات نمایش/عدم نمایش ویجت آب‌وهوا -->
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span>ویجت آب‌وهوا و تقویم:</span>
+                <button onclick="toggleSetting('weather')" id="btnSettingWeather" class="px-3 py-1 bg-red-600 rounded text-[10px] font-bold">نمایش</button>
+            </div>
+            <!-- تنظیمات نمایش/عدم نمایش خبر فوری -->
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span>نوار خبر فوری:</span>
+                <button onclick="toggleSetting('ticker')" id="btnSettingTicker" class="px-3 py-1 bg-red-600 rounded text-[10px] font-bold">نمایش</button>
             </div>
             <div class="flex justify-between items-center">
                 <span>قلم مینی‌اپ:</span>
@@ -161,6 +176,7 @@
             </div>
         </section>
 
+        <!-- بخش چندرسانه‌ای اصلاح‌شده و پویا -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 text-slate-700 dark:text-slate-300 flex items-center">
                 <i class="fa-solid fa-video ml-1.5 text-red-600"></i> گالری ویدیوها و چندرسانه‌ای میزان
@@ -248,21 +264,21 @@
         </section>
     </main>
 
-    <!-- نوار خبر فوری منتقل‌شده به پایین صفحه (بالای منوی ناوبری) -->
-    <div class="fixed bottom-12 left-0 right-0 max-w-md mx-auto bg-red-950/90 dark:bg-slate-900/95 backdrop-blur-md text-white px-3 py-1.5 overflow-hidden flex items-center border-t border-white/10 z-40 shadow-lg text-[11px]">
+    <!-- نوار خبر فوری منتقل‌شده به پایین صفحه (جهت حرکت از چپ به راست) -->
+    <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto bg-red-950/90 dark:bg-slate-900/95 backdrop-blur-md text-white px-3 py-1.5 overflow-hidden flex items-center border-t border-white/10 z-40 shadow-lg text-[11px]">
         <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 animate-pulse">خبر فوری</span>
         <div class="overflow-hidden whitespace-nowrap relative w-full">
             <div id="breakingNewsTicker" class="animate-ticker">در حال دریافت آخرین اخبار مهم و قضایی کشور...</div>
         </div>
     </div>
 
+    <!-- مودال خبر بدون قابلیت صوتی مشکل‌دار -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div id="modalCardContainer" class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-bold">دسته‌بندی</span>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
-                    <button onclick="speakNewsAudio()" id="audioReadBtn" class="text-xs bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 px-2.5 py-1 rounded-lg font-bold transition flex items-center space-x-1 space-x-reverse" title="پخش صوتی خبر"><i class="fa-solid fa-volume-high"></i> <span class="text-[9px]">صدا</span></button>
                     <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-[10px]">
                         <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A+</button>
                         <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white dark:hover:bg-slate-700 rounded font-bold">A-</button>
@@ -375,6 +391,11 @@
         let bookmarkFilterCategory = 'all';
         let modalFontMultiplier = 0;
 
+        let settingsState = {
+            showWeather: localStorage.getItem('mizan_set_weather') !== 'false',
+            showTicker: localStorage.getItem('mizan_set_ticker') !== 'false'
+        };
+
         function updateDateTime() {
             const now = new Date();
             const dtElem = document.getElementById('liveDateTime');
@@ -387,13 +408,13 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // بارگذاری آنی از کش برای رفع مشکل سرعت اولیه
         window.addEventListener('DOMContentLoaded', () => {
             const savedFont = localStorage.getItem('mizan_font');
             if (savedFont) document.documentElement.style.setProperty('--selected-font', savedFont);
             if (localStorage.getItem('mizan_theme') === 'dark') {
                 applyThemeUI(true);
             }
+            applySettingsUI();
             
             const cachedData = localStorage.getItem('mizan_cache');
             if (cachedData) {
@@ -405,6 +426,36 @@
             initApp(false);
             initPullToRefresh();
         });
+
+        function toggleSetting(type) {
+            if(type === 'weather') {
+                settingsState.showWeather = !settingsState.showWeather;
+                localStorage.setItem('mizan_set_weather', settingsState.showWeather);
+            } else if(type === 'ticker') {
+                settingsState.showTicker = !settingsState.showTicker;
+                localStorage.setItem('mizan_set_ticker', settingsState.showTicker);
+            }
+            applySettingsUI();
+        }
+
+        function applySettingsUI() {
+            const wElem = document.getElementById('weatherWidgetContainer');
+            const tElem = document.getElementById('tickerContainer');
+            const btnW = document.getElementById('btnSettingWeather');
+            const btnT = document.getElementById('btnSettingTicker');
+
+            if(wElem) wElem.style.display = settingsState.showWeather ? 'flex' : 'none';
+            if(tElem) tElem.style.display = settingsState.showTicker ? 'flex' : 'none';
+
+            if(btnW) {
+                btnW.innerText = settingsState.showWeather ? 'نمایش' : 'مخفی';
+                btnW.className = settingsState.showWeather ? "px-3 py-1 bg-red-600 rounded text-[10px] font-bold" : "px-3 py-1 bg-slate-600 rounded text-[10px] font-bold";
+            }
+            if(btnT) {
+                btnT.innerText = settingsState.showTicker ? 'نمایش' : 'مخفی';
+                btnT.className = settingsState.showTicker ? "px-3 py-1 bg-red-600 rounded text-[10px] font-bold" : "px-3 py-1 bg-slate-600 rounded text-[10px] font-bold";
+            }
+        }
 
         async function initApp(force = false) {
             try {
@@ -465,6 +516,7 @@
                 }
             } catch(e) {
                 console.error("Multimedia RSS error:", e);
+                document.getElementById('multimediaFeedContainer').innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">خطا در بارگذاری چندرسانه‌ای.</p>';
             }
         }
 
@@ -890,21 +942,6 @@
             document.getElementById('newsModal').classList.remove('hidden');
         }
 
-        function speakNewsAudio() {
-            if (!currentSelectedNews) return;
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const textToSpeak = currentSelectedNews.title + ". " + (currentSelectedNews.summary || "");
-                const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                utterance.lang = 'fa-IR';
-                utterance.rate = 1.0;
-                window.speechSynthesis.speak(utterance);
-                alert('در حال پخش صوتی خبر...');
-            } else {
-                alert('مرورگر شما از قابلیت خوانش صوتی پشتیبانی نمی‌کند.');
-            }
-        }
-
         function adjustModalFontSize(direction) {
             modalFontMultiplier += direction;
             if(modalFontMultiplier < -2) modalFontMultiplier = -2;
@@ -921,7 +958,6 @@
         }
 
         function closeNewsModal() { 
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             document.getElementById('newsModal').classList.add('hidden'); 
             renderNews();
         }

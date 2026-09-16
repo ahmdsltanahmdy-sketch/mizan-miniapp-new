@@ -316,7 +316,7 @@
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
             files: [{ title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", url: "#" }],
             faq: [{ question: "چگونه ابلاغیه خود را مشاهده کنیم؟", answer: "از طریق سامانه ثنا با کد ملی و رمز شخصی." }],
-            twitter: [{ author_name: "خبرگزاری میزان", tweet_text: "آخرین بیانیه‌ها و اخبار رسمی قوه قضاییه در توییتر میزان." }],
+            twitter: [{ author_name: "خبرگزاری میزان", tweet_text: "آخرین بیانیه‌ها و اخبار رسمی قوه قضاییه در توییتر میزان.", link: "https://twitter.com" }],
             livestream: [{ title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده شبکه خبر" }],
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             infographics: [
@@ -340,7 +340,7 @@
             loadTgSettingsToUI();
         });
 
-        // تابع هوشمند تبدیل اعداد فارسی/عربی به انگلیسی و بالعکس برای یکسان‌سازی جستجو
+        // تابع هوشمند یکسان‌سازی اعداد فارسی/عربی برای جستجو
         function normalizeNumbers(str) {
             if (!str) return '';
             const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
@@ -504,7 +504,6 @@
             });
         }
 
-        // رندر تمیز منوی دسته‌بندی‌ها (بدون تکرار و بر اساس تب‌های گوگل‌شیت)
         function renderCategoryDropdown() {
             const container = document.getElementById('dynamicCategoryList');
             if (!container) return;
@@ -699,16 +698,20 @@
             `).join('');
         }
 
+        // رندر توییتر با هایپرلینک مستقیم به پست اصلی در X
         function renderTwitterFeed() {
             const container = document.getElementById('twitterFeedContainer');
             if (!container) return;
             let list = appData.twitter || [];
             if (!list.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پستی یافت نشد.</p>'; return; }
             container.innerHTML = list.map(t => `
-                <div class="ultra-glass p-4 rounded-2xl border border-white/15 space-y-2">
-                    <div class="font-bold text-xs text-red-500">${t.author_name || 'خبرگزاری میزان'}</div>
-                    <p class="text-[11px] opacity-95">${t.tweet_text || ''}</p>
-                </div>
+                <a href="${t.link || 'https://twitter.com'}" target="_blank" class="block ultra-glass p-4 rounded-2xl border border-white/15 space-y-2 transition hover:border-red-500">
+                    <div class="font-bold text-xs text-red-500 flex items-center justify-between">
+                        <span>${t.author_name || 'خبرگزاری میزان'}</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70"></i>
+                    </div>
+                    <p class="text-[11px] opacity-95 leading-relaxed">${t.tweet_text || ''}</p>
+                </a>
             `).join('');
         }
 
@@ -795,7 +798,6 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // جستجوی آنی هوشمند مجهز به یکسان‌سازی اعداد فارسی و انگلیسی
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');

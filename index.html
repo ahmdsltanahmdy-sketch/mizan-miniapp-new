@@ -62,14 +62,12 @@
             document.body.classList.add('dark');
         }
 
-        // اعمال فونت و اندازه فونت ذخیره شده
         const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';
         document.documentElement.style.setProperty('--selected-font', savedFont);
         const savedFontSize = localStorage.getItem('mizan_font_size') || '12px';
         document.documentElement.style.setProperty('--app-font-size', savedFontSize);
 
         let tgSettings = {
-            miniAppFeatures: localStorage.getItem('tg_mini_app') !== 'false',
             haptic: localStorage.getItem('tg_haptic') !== 'false',
             cloudStorage: localStorage.getItem('tg_cloud') !== 'false'
         };
@@ -95,7 +93,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای کامل (شامل انتخاب فونت، سایز فونت و تمام صفحه) -->
+        <!-- منوی تنظیمات شیشه‌ای کامل (شامل ذخیره‌سازی ابری تلگرام) -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
@@ -123,6 +121,10 @@
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">بازخورد لرزشی (Haptic):</span>
                 <input type="checkbox" id="tgHapticCheck" onchange="updateTgSetting('haptic', this.checked)" checked class="accent-red-600 w-4 h-4">
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">ذخیره‌سازی ابری (Cloud Storage):</span>
+                <input type="checkbox" id="tgCloudCheck" onchange="updateTgSetting('cloudStorage', this.checked)" checked class="accent-red-600 w-4 h-4">
             </div>
         </div>
 
@@ -162,7 +164,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (بدون سیاه شدن صفحه پس از سوییچ مکرر) -->
+        <!-- تب پخش زنده (بدون سیاه شدن صفحه پس از سوییچ مکرر کانال‌ها) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
@@ -188,7 +190,9 @@
         <!-- تب توییتر (ایکس) -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 flex items-center">
-                <span class="w-5 h-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full inline-flex items-center justify-center text-[10px] ml-1.5 shadow-sm"><i class="fa-brands fa-x-twitter"></i></span>
+                <span class="w-5 h-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full inline-flex items-center justify-center text-[10px] ml-1.5 shadow-sm">
+                    <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </span>
                 تایم‌لاین رسمی خبرگزاری میزان (X)
             </h2>
             <div id="twitterFeedContainer" class="space-y-3"></div>
@@ -231,11 +235,14 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با آیکون گرافیکی توییتر / ایکس) -->
+    <!-- ناوبری پایین صفحه (با وکتور اختصاصی و تضمینی ایکس در نوار پایین) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-newspaper text-sm mb-0.5"></i><span class="text-[8px]">اخبار</span></button>
         <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
-        <button onclick="switchTab('twitter-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-brands fa-x-twitter text-sm mb-0.5"></i><span class="text-[8px]">توییتر</span></button>
+        <button onclick="switchTab('twitter-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2">
+            <svg class="w-3.5 h-3.5 mb-1 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span class="text-[8px]">توییتر</span>
+        </button>
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('infographics-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
         <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
@@ -298,6 +305,7 @@
             setInterval(updateDateTime, 1000);
             fetchTehranWeather();
             setupInfiniteScroll();
+            loadTgSettingsToUI();
         });
 
         function updateDateTime() {
@@ -360,9 +368,7 @@
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    alert('خطا در ورود به حالت تمام‌صفحه');
-                });
+                document.documentElement.requestFullscreen().catch(err => {});
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -373,8 +379,13 @@
 
         function updateTgSetting(key, val) {
             tgSettings[key] = val;
-            localStorage.setItem('tg_haptic', val);
+            localStorage.setItem('tg_' + (key === 'haptic' ? 'haptic' : 'cloud'), val);
             triggerHaptic();
+        }
+
+        function loadTgSettingsToUI() {
+            document.getElementById('tgHapticCheck').checked = tgSettings.haptic;
+            document.getElementById('tgCloudCheck').checked = tgSettings.cloudStorage;
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -414,18 +425,17 @@
                 if (currentScroll >= scrollableHeight - 150) {
                     if (appData.news && displayedNewsLimit < appData.news.length) {
                         const indicator = document.getElementById('loadMoreIndicator');
-                        if(indicator) indicator.classList.remove('hidden');
+                        if(indicator) indicator.classList.add('hidden'); // تمیزکاری نمایشگر
                         setTimeout(() => {
                             displayedNewsLimit += 10;
                             renderNews();
-                            if(indicator) indicator.classList.add('hidden');
-                        }, 500);
+                        }, 300);
                     }
                 }
             });
         }
 
-        // پخش زنده پایدار و ایمن (پاکسازی کامل حافظه پلیر برای جلوگیری از سیاه شدن صفحه)
+        // پخش زنده پایدار همراه با پاکسازی کامل نمونه پلیر قبلی برای جلوگیری از سیاه شدن صفحه
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -459,9 +469,11 @@
 
             if (videoElem && stream.url) {
                 if (activeHlsPlayer) {
-                    activeHlsPlayer.stopLoad();
-                    activeHlsPlayer.detachMedia();
-                    activeHlsPlayer.destroy();
+                    try {
+                        activeHlsPlayer.stopLoad();
+                        activeHlsPlayer.detachMedia();
+                        activeHlsPlayer.destroy();
+                    } catch(e) {}
                     activeHlsPlayer = null;
                 }
 
@@ -475,7 +487,7 @@
                 }
 
                 if (Hls.isSupported()) {
-                    const hls = new Hls({ autoStartLoad: true, startLevel: -1, maxBufferLength: 30 });
+                    const hls = new Hls({ autoStartLoad: true, startLevel: -1, maxBufferLength: 15 });
                     activeHlsPlayer = hls;
                     hls.loadSource(streamUrl);
                     hls.attachMedia(videoElem);

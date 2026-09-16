@@ -77,7 +77,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای -->
+        <!-- منوی تنظیمات کاملاً شیشه‌ای (Ultra Glass) -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
@@ -212,7 +212,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه با اصلاح رنگ اکتیو تب‌ها -->
+    <!-- ناوبری پایین صفحه (با آیکون صحیح شبکه ایکس) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-red-600 transition flex-1 font-bold"><i class="fa-solid fa-newspaper text-sm"></i><span class="text-[8px] mt-1">اخبار</span></button>
         <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-tower-broadcast text-sm"></i><span class="text-[8px] mt-1">پخش زنده</span></button>
@@ -281,7 +281,7 @@
             if(icon) icon.classList.add('fa-spin');
             localStorage.removeItem('mizan_cache');
             await initApp();
-            setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
+            setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 400);
         }
 
         function toggleSettingsMenu(event) {
@@ -325,7 +325,7 @@
             renderBookmarks();
         }
 
-        // مدیریت پخش زنده با قابلیت توقف خودکار هنگام خروج از تب
+        // پخش زنده پایدار داخل مینی‌اپ بدون چرخش طولانی
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -342,7 +342,6 @@
                 </button>
             `).join('');
 
-            // بارگذاری اولیه کانال اول بدون پخش خودکار اجباری تا کاربر پلی کند
             setupStreamSource(streams[0]);
         }
 
@@ -370,6 +369,11 @@
                     activeHlsPlayer = hls;
                     hls.loadSource(streamUrl);
                     hls.attachMedia(videoElem);
+                    hls.on(Hls.Events.ERROR, function(event, data) {
+                        if (data.fatal) {
+                            videoElem.src = stream.url;
+                        }
+                    });
                 } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
                     videoElem.src = streamUrl;
                 }
@@ -380,7 +384,7 @@
             setupStreamSource(stream);
             const videoElem = document.getElementById('liveStreamVideo');
             if(videoElem) {
-                videoElem.play().catch(e => console.log("Play action restricted:", e));
+                videoElem.play().catch(e => console.log("Play restricted:", e));
             }
         }
 
@@ -597,19 +601,16 @@
             } catch(e) { alert('خطا در ارسال.'); }
         }
 
-        // سوئیچ تب‌ها همراه با متوقف کردن پخش زنده و مدیریت رنگ دکمه‌های ناوبری پایین
         function switchTab(sectionId, btn) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             const target = document.getElementById(sectionId);
             if(target) target.classList.remove('hidden');
 
-            // اگر کاربر از تب پخش زنده خارج شد، ویدیو متوقف شود
             const videoElem = document.getElementById('liveStreamVideo');
             if (sectionId !== 'multimedia-tab' && videoElem) {
                 videoElem.pause();
             }
 
-            // مدیریت رنگ‌بندی و وضعیت فعال بودن دکمه‌های ناوبری پایین صفحه
             if (btn) {
                 document.querySelectorAll('nav button').forEach(b => {
                     b.classList.remove('text-red-600', 'font-bold');

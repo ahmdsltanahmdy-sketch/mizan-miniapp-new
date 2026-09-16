@@ -90,7 +90,6 @@
                 <span id="headerWeatherWidget">تهران...</span>
                 <div class="relative inline-block">
                     <button onclick="toggleCategoryMenu(event)" title="دسته‌بندی اخبار" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-list-ul text-xs text-amber-300"></i></button>
-                    <!-- منوی زیرمجموعه‌دار تمیز و بدون موارد تکراری و خالی -->
                     <div id="categoryDropdown" class="hidden absolute left-0 top-8 z-50 w-44 ultra-glass rounded-2xl shadow-2xl p-2 space-y-1 text-right border border-white/20">
                         <div id="dynamicCategoryList" class="space-y-1 max-h-48 overflow-y-auto"></div>
                     </div>
@@ -341,6 +340,18 @@
             loadTgSettingsToUI();
         });
 
+        // تابع هوشمند تبدیل اعداد فارسی/عربی به انگلیسی و بالعکس برای یکسان‌سازی جستجو
+        function normalizeNumbers(str) {
+            if (!str) return '';
+            const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+            const arabicNumbers = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+            let output = String(str);
+            for (let i = 0; i < 10; i++) {
+                output = output.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
+            }
+            return output.toLowerCase();
+        }
+
         function updateDateTime() {
             const now = new Date();
             const calElem = document.getElementById('headerCalendarWidget');
@@ -493,7 +504,7 @@
             });
         }
 
-        // رندر تمیز منوی دسته‌بندی‌ها صرفاً بر اساس تب‌های واقعی گوگل‌شیت و گزینه کل اخبار
+        // رندر تمیز منوی دسته‌بندی‌ها (بدون تکرار و بر اساس تب‌های گوگل‌شیت)
         function renderCategoryDropdown() {
             const container = document.getElementById('dynamicCategoryList');
             if (!container) return;
@@ -720,10 +731,10 @@
             if (!container) return;
 
             let list = appData.dictionary || [];
-            const q = filter.trim().toLowerCase();
+            const q = normalizeNumbers(filter.trim());
             if (q.length > 0) {
                 if(clearBtn) clearBtn.classList.remove('hidden');
-                list = list.filter(d => String(d.term).toLowerCase().includes(q) || String(d.definition).toLowerCase().includes(q));
+                list = list.filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q));
             } else {
                 if(clearBtn) clearBtn.classList.add('hidden');
             }
@@ -784,11 +795,12 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
+        // جستجوی آنی هوشمند مجهز به یکسان‌سازی اعداد فارسی و انگلیسی
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');
             if(!box) return;
-            const q = query.trim().toLowerCase();
+            const q = normalizeNumbers(query.trim());
             
             if (q.length > 0) {
                 if(clearBtn) clearBtn.classList.remove('hidden');
@@ -802,7 +814,9 @@
             let resultsHTML = '';
             let uniqueMap = new Map();
             (appData.news || []).forEach(n => {
-                if ((n.title.toLowerCase().includes(q) || (n.summary && n.summary.toLowerCase().includes(q))) && !uniqueMap.has(n.link)) {
+                const titleNorm = normalizeNumbers(n.title);
+                const summaryNorm = normalizeNumbers(n.summary);
+                if ((titleNorm.includes(q) || summaryNorm.includes(q)) && !uniqueMap.has(n.link)) {
                     uniqueMap.set(n.link, n);
                 }
             });

@@ -37,14 +37,22 @@
 
         .glass-tab { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
         .dark .glass-tab { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
-        .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
 
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .animate-ticker {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker var(--ticker-speed, 30s) linear infinite;
         }
     </style>
 </head>
@@ -63,7 +71,7 @@
         }
     </script>
 
-    <!-- هدر اپلیکیشن همراه با منوی تنظیمات -->
+    <!-- هدر اپلیکیشن -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
         <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px]">
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -77,7 +85,7 @@
             </div>
         </div>
 
-        <!-- منوی کشویی تنظیمات -->
+        <!-- منوی تنظیمات شیشه‌ای و کامل -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
@@ -94,6 +102,17 @@
                     <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-0.5 bg-white/20 rounded-lg">وزیر</button>
                 </div>
             </div>
+        </div>
+
+        <!-- کادر جستجو -->
+        <div class="max-w-md mx-auto px-4 py-2.5 relative">
+            <div class="flex space-x-2 space-x-reverse relative">
+                <div class="relative flex-grow">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اخبار، سامانه‌ها و پرونده‌ها..." class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs"></i>
+                </div>
+            </div>
+            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
 
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar py-2"></div>
@@ -144,7 +163,7 @@
         <section id="bookmarks-tab" class="page-section hidden space-y-3"><div id="bookmarksListContainer" class="space-y-3"></div></section>
         <!-- تب سامانه‌های قضایی -->
         <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
-        <!-- تب پرونده‌ها -->
+        <!-- تب پرونده‌های ویژه -->
         <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
 
         <!-- تب وکیل آنلاین -->
@@ -169,12 +188,19 @@
         <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-user-tie text-sm"></i><span class="text-[8px] mt-1">مشاور</span></button>
     </nav>
 
-    <!-- اسکریپت و منطق اجرایی -->
+    <!-- منطق جاوااسکریپت -->
     <script>
         let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [], livestream: [] };
         let activeHlsPlayer = null;
 
         window.addEventListener('DOMContentLoaded', () => {
+            const cached = localStorage.getItem('mizan_cache');
+            if (cached) {
+                try {
+                    appData = JSON.parse(cached);
+                    renderAll();
+                } catch(e) {}
+            }
             initApp();
             updateDateTime();
             setInterval(updateDateTime, 1000);
@@ -203,10 +229,10 @@
             try {
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 appData = await response.json();
+                localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 renderAll();
             } catch (error) {
                 console.error("Error loading data:", error);
-                document.getElementById('newsListContainer').innerHTML = '<p class="text-center text-red-500 py-8">خطا در بارگذاری اطلاعات از سرور.</p>';
             }
         }
 
@@ -242,8 +268,10 @@
             renderTabs();
             renderNews();
             renderFiles();
+            renderLegalSystems();
             renderOfficialMessages();
             renderLiveChannels();
+            renderTwitterFeed();
         }
 
         function renderLiveChannels() {
@@ -309,15 +337,34 @@
 
         function renderNews() {
             const container = document.getElementById('newsListContainer');
-            if (!container || !appData.news) return;
-            if (!appData.news.length) {
+            const featuredContainer = document.getElementById('featuredNewsContainer');
+            if (!container || !featuredContainer) return;
+
+            let allNews = appData.news || [];
+            if (!allNews.length) {
+                featuredContainer.innerHTML = '';
                 container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری یافت نشد.</p>';
                 return;
             }
-            container.innerHTML = appData.news.slice(0, 15).map(n => `
-                <div class="ultra-glass p-3 rounded-2xl space-y-1 cursor-pointer">
+
+            const firstNews = allNews[0];
+            const featuredImg = (firstNews.image && firstNews.image.startsWith('http')) ? firstNews.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+
+            featuredContainer.innerHTML = `
+                <div class="block ultra-glass rounded-2xl overflow-hidden shadow-sm border border-red-500/50">
+                    <img src="${featuredImg}" loading="lazy" class="w-full h-44 object-cover" alt="">
+                    <div class="p-3.5">
+                        <span class="bg-red-100 text-red-600 text-[10px] px-2.5 py-0.5 rounded-full font-bold">خبر ویژه</span>
+                        <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
+                        <p class="text-[11px] opacity-90 mt-1 line-clamp-2">${firstNews.summary || ''}</p>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = allNews.slice(1, 15).map(n => `
+                <div class="ultra-glass p-3 rounded-2xl space-y-1">
                     <h3 class="font-bold text-xs">${n.title}</h3>
-                    <p class="text-[10px] opacity-80">${n.summary || ''}</p>
+                    <p class="text-[10px] opacity-80 line-clamp-2">${n.summary || ''}</p>
                 </div>
             `).join('');
         }
@@ -325,10 +372,46 @@
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             if (!container || !appData.files) return;
+            if (!appData.files.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>';
+                return;
+            }
             container.innerHTML = appData.files.map(f => `
-                <div class="ultra-glass p-3 rounded-2xl space-y-1">
-                    <h3 class="font-bold text-xs text-red-500">${f.title}</h3>
-                    <p class="text-[10px] opacity-80">${f.description}</p>
+                <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
+                    ${f.image ? `<img src="${f.image}" loading="lazy" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
+                    <h3 class="font-bold text-sm text-red-500">${f.title}</h3>
+                    <p class="text-[11px] opacity-90 leading-relaxed">${f.description}</p>
+                    ${f.url ? `<a href="${f.url}" target="_blank" class="block text-center bg-red-500/20 text-red-400 py-2 rounded-xl text-xs font-bold transition">مشاهده پرونده</a>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderLegalSystems() {
+            const container = document.getElementById('legalSystemsContainer');
+            if (!container || !appData.legalSystems) return;
+            if (!appData.legalSystems.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">سامانه‌ای ثبت نشده است.</p>';
+                return;
+            }
+            container.innerHTML = appData.legalSystems.map(sys => `
+                <div class="ultra-glass p-4 rounded-2xl border border-white/15 flex items-center justify-between">
+                    <div><h3 class="font-bold text-xs text-red-500">${sys.title}</h3><p class="text-[11px] opacity-80">${sys.description}</p></div>
+                    <a href="${sys.url}" target="_blank" class="bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold">ورود</a>
+                </div>
+            `).join('');
+        }
+
+        function renderTwitterFeed() {
+            const container = document.getElementById('twitterFeedContainer');
+            if (!container || !appData.twitter) return;
+            if (!appData.twitter.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پستی یافت نشد.</p>';
+                return;
+            }
+            container.innerHTML = appData.twitter.map(t => `
+                <div class="ultra-glass p-4 rounded-2xl border border-white/15 space-y-2">
+                    <div class="font-bold text-xs text-red-500">${t.author_name || 'خبرگزاری میزان'}</div>
+                    <p class="text-[11px] opacity-95">${t.tweet_text || ''}</p>
                 </div>
             `).join('');
         }
@@ -342,6 +425,17 @@
                     <p class="text-[10px] opacity-90">پاسخ: ${q.answer}</p>
                 </div>
             `).join('');
+        }
+
+        function handleLiveSearch(query) {
+            const box = document.getElementById('liveSuggestionsBox');
+            if(!box) return;
+            const q = query.trim().toLowerCase();
+            if (!q) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+            const matches = (appData.news || []).filter(n => n.title.toLowerCase().includes(q)).slice(0, 4);
+            if (!matches.length) { box.innerHTML = '<div class="p-2 text-center">موردی یافت نشد</div>'; box.classList.remove('hidden'); return; }
+            box.innerHTML = matches.map(m => `<div class="p-2 hover:bg-white/20 rounded-lg cursor-pointer"><div class="font-bold line-clamp-1">${m.title}</div></div>`).join('');
+            box.classList.remove('hidden');
         }
 
         async function submitQuestion() {

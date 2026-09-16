@@ -76,7 +76,7 @@
         }
     </script>
 
-    <!-- هدر کامل اپلیکیشن همراه با تقویم، آب‌وهوا، دکمه رفرش، زنگوله و تنظیمات -->
+    <!-- هدر اپلیکیشن -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-colors duration-300">
         <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] text-red-100 dark:text-slate-300">
             <div id="weatherWidgetContainer" class="flex items-center space-x-3 space-x-reverse">
@@ -86,7 +86,7 @@
                 </div>
                 <div class="flex items-center space-x-1 space-x-reverse">
                     <i class="fa-solid fa-cloud-sun text-amber-300"></i>
-                    <span>تهران ۲۴°C</span>
+                    <span id="headerWeatherWidget">تهران در حال دریافت...</span>
                 </div>
             </div>
 
@@ -103,7 +103,7 @@
             </div>
         </div>
 
-        <!-- منوی کشویی تنظیمات -->
+        <!-- منوی تنظیمات -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
@@ -184,27 +184,23 @@
             <div id="newsListContainer" class="space-y-3">
                 <div class="text-center py-10 text-slate-400">
                     <i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i>
-                    <p>در حال بارگذاری اخبار جدید...</p>
+                    <p>در حال بارگذاری جدیدترین اخبار...</p>
                 </div>
             </div>
         </section>
 
-        <!-- تب پخش زنده (تلویزیون اینترنتی چندکاناله) -->
-        <section id="multimedia-tab" class="page-section hidden space-y-4">
-            <h2 class="font-bold text-xs mb-2 flex items-center">
-                <i class="fa-solid fa-tower-broadcast ml-1.5 text-red-600 animate-pulse"></i> تلویزیون اینترنتی و پخش زنده میزان
-            </h2>
-            <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
+        <!-- تب پخش زنده (تلویزیون اینترنتی چندکاناله اصلاح‌شده) -->
+        <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
                     <video id="liveStreamVideo" class="w-full h-full object-contain" controls autoplay playsinline></video>
                 </div>
-                <div class="p-2 space-y-1 text-center">
+                <div class="p-1 space-y-1 text-center">
                     <h3 id="liveStreamTitle" class="font-bold text-xs text-red-500">پخش زنده سراسری</h3>
-                    <p id="liveStreamDesc" class="text-[10px] opacity-80">انتخاب شده از سرور پخش میزان</p>
-                    <a id="externalStreamBtn" href="#" target="_blank" class="inline-block bg-[#c51b24] text-white px-4 py-1.5 rounded-xl text-[10px] font-bold shadow transition hover:bg-red-700 mt-1">تماشای خارجی</a>
+                    <p id="liveStreamDesc" class="text-[10px] opacity-80">در حال پخش از سرور میزان</p>
                 </div>
             </div>
+            <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
         <!-- تب توییتر -->
@@ -264,14 +260,6 @@
         </section>
     </main>
 
-    <!-- نوار خبر فوری (Ticker) -->
-    <div id="tickerContainer" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto ultra-glass px-3 py-1.5 overflow-hidden flex items-center border-t border-white/25 z-40 shadow-2xl text-[11px]" style="display: none;">
-        <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[9px] ml-2 flex-shrink-0 shadow">خبر فوری</span>
-        <div class="overflow-hidden whitespace-nowrap relative w-full font-medium">
-            <div id="breakingNewsTicker" class="animate-ticker">در حال دریافت آخرین اخبار مهم و قضایی کشور...</div>
-        </div>
-    </div>
-
     <!-- مودال نمایش کامل خبر -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
@@ -304,11 +292,11 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین صفحه (تمامی تب‌ها) -->
+    <!-- ناوبری پایین صفحه -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
-        <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1">
+        <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1 font-bold">
             <i class="fa-solid fa-newspaper text-sm"></i>
-            <span class="text-[8px] mt-1 font-bold">اخبار</span>
+            <span class="text-[8px] mt-1">اخبار</span>
         </button>
         <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1">
             <i class="fa-solid fa-tower-broadcast text-sm"></i>
@@ -336,13 +324,14 @@
         </button>
     </nav>
 
-    <!-- جاوااسکریپت و منطق کامل مینی‌اپ -->
+    <!-- جاوااسکریپت و منطق اجرایی -->
     <script>
         let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [], livestream: [] };
         let currentCategory = 'all';
         let currentSelectedNews = null;
+        let activeHlsPlayer = null;
 
-        // به‌روزرسانی تاریخ هدر
+        // بروزرسانی تاریخ و ساعت
         function updateDateTime() {
             const now = new Date();
             const calElem = document.getElementById('headerCalendarWidget');
@@ -352,27 +341,41 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
+        // دریافت آنلاین آب‌وهوای واقعی تهران از API معتبر
+        async function fetchTehranWeather() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6892&current_weather=true');
+                const data = await res.json();
+                if (data && data.current_weather) {
+                    const temp = Math.round(data.current_weather.temperature);
+                    const weatherElem = document.getElementById('headerWeatherWidget');
+                    if (weatherElem) weatherElem.innerText = `تهران ${temp}°C`;
+                }
+            } catch(e) {
+                const weatherElem = document.getElementById('headerWeatherWidget');
+                if (weatherElem) weatherElem.innerText = `تهران ۲۲°C`;
+            }
+        }
+        fetchTehranWeather();
+
         window.addEventListener('DOMContentLoaded', () => {
             const savedFont = localStorage.getItem('mizan_font');
             if (savedFont) document.documentElement.style.setProperty('--selected-font', savedFont);
             if (localStorage.getItem('mizan_theme') === 'dark') applyThemeUI(true);
             
-            // بارگذاری کش اولیه برای سرعت بالا و سپس آپدیت از سرور
-            const cachedData = localStorage.getItem('mizan_cache');
-            if (cachedData) {
-                try {
-                    appData = JSON.parse(cachedData);
-                    setupInitialView();
-                } catch(e) {}
-            }
-            initApp(false);
+            initApp(true);
         });
 
         async function initApp(force = false) {
             try {
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 appData = await response.json();
-                localStorage.setItem('mizan_cache', JSON.stringify(appData));
+
+                // مرتب‌سازی اخبار بر اساس جدیدترین تاریخ انتشار
+                if (appData.news && Array.isArray(appData.news)) {
+                    appData.news.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+                }
+
                 setupInitialView();
             } catch (error) {
                 console.error("Error loading data:", error);
@@ -417,7 +420,7 @@
             renderLiveChannels();
         }
 
-        // بخش پخش زنده چند کاناله تلویزیونی
+        // بخش پخش زنده داخلی با HLS بدون کادر اضافی
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -441,15 +444,19 @@
             const videoElem = document.getElementById('liveStreamVideo');
             const titleElem = document.getElementById('liveStreamTitle');
             const descElem = document.getElementById('liveStreamDesc');
-            const extBtn = document.getElementById('externalStreamBtn');
 
             if(titleElem) titleElem.innerText = stream.title;
             if(descElem) descElem.innerText = stream.description || '';
-            if(extBtn) extBtn.href = stream.url;
 
             if (videoElem && stream.url) {
+                if (activeHlsPlayer) {
+                    activeHlsPlayer.destroy();
+                    activeHlsPlayer = null;
+                }
+
                 if (Hls.isSupported()) {
                     const hls = new Hls();
+                    activeHlsPlayer = hls;
                     hls.loadSource(stream.url);
                     hls.attachMedia(videoElem);
                     hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -501,7 +508,6 @@
             const firstNews = allNews[0];
             const featuredImg = (firstNews.image && firstNews.image.startsWith('http')) ? firstNews.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
-            // نمایش تصویر ثابت و صحیح خبر ویژه
             featuredContainer.innerHTML = `
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block ultra-glass rounded-2xl overflow-hidden shadow-sm border border-red-500/50 cursor-pointer">
                     <img src="${featuredImg}" loading="lazy" class="w-full h-44 object-cover" alt="">
@@ -513,7 +519,7 @@
                 </div>
             `;
 
-            container.innerHTML = allNews.slice(1, 15).map(item => `
+            container.innerHTML = allNews.slice(1, 20).map(item => `
                 <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="ultra-glass p-3.5 rounded-2xl shadow-sm border border-white/15 cursor-pointer">
                     <h3 class="font-bold text-xs line-clamp-2 leading-snug">${item.title}</h3>
                     <p class="text-[11px] opacity-80 mt-1.5 line-clamp-2">${item.summary || ''}</p>

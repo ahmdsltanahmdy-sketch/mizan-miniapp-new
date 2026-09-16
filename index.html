@@ -37,8 +37,6 @@
 
         .glass-tab { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
         .dark .glass-tab { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); }
-        
-        /* حالت مطالعه برای مودال خبر */
         .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
         .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
 
@@ -116,7 +114,7 @@
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar py-2"></div>
     </header>
 
-    <!-- مودال جستجوی پیشرفته (کره زمین) -->
+    <!-- مودال جستجوی پیشرفته -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
             <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -127,21 +125,18 @@
         </div>
     </div>
 
-    <!-- مودال اختصاصی نمایش خبر همراه با قابلیت تغییر فونت و حالت مطالعه -->
+    <!-- مودال نمایش خبر -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
             <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
             <div class="flex justify-between items-center mb-2">
                 <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded font-bold shadow-sm">دسته‌بندی</span>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
-                    <!-- کنترل اندازه فونت -->
                     <div class="flex bg-black/30 rounded-xl p-0.5 text-[10px] border border-white/20">
                         <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white/20 rounded-lg font-bold">A+</button>
                         <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white/20 rounded-lg font-bold">A-</button>
                     </div>
-                    <!-- دکمه ذخیره خبر -->
                     <button onclick="toggleBookmarkCurrentNews()" id="modalBookmarkBtn" class="text-xs bg-black/30 px-2.5 py-1 rounded-xl transition border border-white/20 shadow-sm" title="ذخیره خبر"><i class="fa-regular fa-bookmark"></i></button>
-                    <!-- حالت مطالعه -->
                     <button onclick="toggleReadingMode()" class="text-xs bg-black/30 hover:bg-white/20 px-2.5 py-1 rounded-xl font-medium transition border border-white/20 shadow-sm" title="حالت مطالعه"><i class="fa-solid fa-book-open"></i></button>
                 </div>
             </div>
@@ -174,11 +169,11 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده با رفع قطعی چرخش پلیر -->
+        <!-- تب پخش زنده -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
-                    <video id="liveStreamVideo" class="w-full h-full object-contain" controls autoplay playsinline></video>
+                    <video id="liveStreamVideo" class="w-full h-full object-contain" controls playsinline></video>
                 </div>
                 <div class="p-1 flex items-center justify-between">
                     <div>
@@ -193,8 +188,12 @@
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
-        <!-- تب توییتر -->
-        <section id="twitter-tab" class="page-section hidden space-y-3"><div id="twitterFeedContainer" class="space-y-3"></div></section>
+        <!-- تب توییتر (با آیکون شبکه ایکس) -->
+        <section id="twitter-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-3 flex items-center"><i class="fa-brands fa-x-twitter ml-1.5 text-sm"></i> تایم‌لاین رسمی خبرگزاری میزان (X)</h2>
+            <div id="twitterFeedContainer" class="space-y-3"></div>
+        </section>
+        
         <!-- تب ذخیره‌شده‌ها -->
         <section id="bookmarks-tab" class="page-section hidden space-y-3"><div id="bookmarksListContainer" class="space-y-3"></div></section>
         <!-- تب سامانه‌های قضایی -->
@@ -213,18 +212,18 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه -->
+    <!-- ناوبری پایین صفحه با اصلاح رنگ اکتیو تب‌ها -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-red-600 transition flex-1 font-bold"><i class="fa-solid fa-newspaper text-sm"></i><span class="text-[8px] mt-1">اخبار</span></button>
         <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-tower-broadcast text-sm"></i><span class="text-[8px] mt-1">پخش زنده</span></button>
-        <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-hashtag text-sm"></i><span class="text-[8px] mt-1">توییتر</span></button>
+        <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-brands fa-x-twitter text-sm"></i><span class="text-[8px] mt-1">توییتر</span></button>
         <button onclick="switchTab('bookmarks-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-bookmark text-sm"></i><span class="text-[8px] mt-1">ذخیره</span></button>
         <button onclick="switchTab('files-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-folder-open text-sm"></i><span class="text-[8px] mt-1">پرونده‌ها</span></button>
         <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-scale-balanced text-sm"></i><span class="text-[8px] mt-1">سامانه‌ها</span></button>
         <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-user-tie text-sm"></i><span class="text-[8px] mt-1">مشاور</span></button>
     </nav>
 
-    <!-- منطق جاوااسکریپت پیشرفته -->
+    <!-- منطق جاوااسکریپت -->
     <script>
         let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [], livestream: [] };
         let activeHlsPlayer = null;
@@ -267,6 +266,9 @@
             try {
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 appData = await response.json();
+                if (appData.news && Array.isArray(appData.news)) {
+                    appData.news.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+                }
                 localStorage.setItem('mizan_cache', JSON.stringify(appData));
                 renderAll();
             } catch (error) {
@@ -277,6 +279,7 @@
         async function manualRefresh() {
             const icon = document.getElementById('refreshIcon');
             if(icon) icon.classList.add('fa-spin');
+            localStorage.removeItem('mizan_cache');
             await initApp();
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
         }
@@ -322,7 +325,7 @@
             renderBookmarks();
         }
 
-        // پخش زنده پایدار داخل مینی‌اپ با پروکسی امن کلاینت‌ساید
+        // مدیریت پخش زنده با قابلیت توقف خودکار هنگام خروج از تب
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -339,10 +342,11 @@
                 </button>
             `).join('');
 
-            playSelectedStream(streams[0]);
+            // بارگذاری اولیه کانال اول بدون پخش خودکار اجباری تا کاربر پلی کند
+            setupStreamSource(streams[0]);
         }
 
-        function playSelectedStream(stream) {
+        function setupStreamSource(stream) {
             const videoElem = document.getElementById('liveStreamVideo');
             const titleElem = document.getElementById('liveStreamTitle');
             const extBtn = document.getElementById('externalStreamBtn');
@@ -366,22 +370,17 @@
                     activeHlsPlayer = hls;
                     hls.loadSource(streamUrl);
                     hls.attachMedia(videoElem);
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                        videoElem.play().catch(e => console.log("Autoplay restricted:", e));
-                    });
-                    hls.on(Hls.Events.ERROR, function(event, data) {
-                        if (data.fatal) {
-                            console.warn("HLS fatal error encountered, trying direct load...");
-                            videoElem.src = stream.url;
-                            videoElem.play().catch(e => {});
-                        }
-                    });
                 } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
                     videoElem.src = streamUrl;
-                    videoElem.addEventListener('loadedmetadata', () => {
-                        videoElem.play().catch(e => console.log("Autoplay restricted:", e));
-                    });
                 }
+            }
+        }
+
+        function playSelectedStream(stream) {
+            setupStreamSource(stream);
+            const videoElem = document.getElementById('liveStreamVideo');
+            if(videoElem) {
+                videoElem.play().catch(e => console.log("Play action restricted:", e));
             }
         }
 
@@ -425,7 +424,6 @@
             `).join('');
         }
 
-        // مودال و قابلیت‌های پیشرفته مطالعه خبر
         function openNewsModal(news) {
             currentSelectedNews = news;
             modalFontMultiplier = 0;
@@ -599,9 +597,28 @@
             } catch(e) { alert('خطا در ارسال.'); }
         }
 
+        // سوئیچ تب‌ها همراه با متوقف کردن پخش زنده و مدیریت رنگ دکمه‌های ناوبری پایین
         function switchTab(sectionId, btn) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
+            const target = document.getElementById(sectionId);
+            if(target) target.classList.remove('hidden');
+
+            // اگر کاربر از تب پخش زنده خارج شد، ویدیو متوقف شود
+            const videoElem = document.getElementById('liveStreamVideo');
+            if (sectionId !== 'multimedia-tab' && videoElem) {
+                videoElem.pause();
+            }
+
+            // مدیریت رنگ‌بندی و وضعیت فعال بودن دکمه‌های ناوبری پایین صفحه
+            if (btn) {
+                document.querySelectorAll('nav button').forEach(b => {
+                    b.classList.remove('text-red-600', 'font-bold');
+                    b.classList.add('opacity-70');
+                });
+                btn.classList.remove('opacity-70');
+                btn.classList.add('text-red-600', 'font-bold');
+            }
+            window.scrollTo(0, 0);
         }
     </script>
 </body>

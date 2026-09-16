@@ -340,7 +340,6 @@
             loadTgSettingsToUI();
         });
 
-        // تابع هوشمند یکسان‌سازی اعداد فارسی/عربی برای جستجو
         function normalizeNumbers(str) {
             if (!str) return '';
             const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
@@ -698,21 +697,25 @@
             `).join('');
         }
 
-        // رندر توییتر با هایپرلینک مستقیم به پست اصلی در X
+        // رندر توییتر با پشتیبانی از کلیدهای مختلف لینک پست در ایکس
         function renderTwitterFeed() {
             const container = document.getElementById('twitterFeedContainer');
             if (!container) return;
             let list = appData.twitter || [];
             if (!list.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پستی یافت نشد.</p>'; return; }
-            container.innerHTML = list.map(t => `
-                <a href="${t.link || 'https://twitter.com'}" target="_blank" class="block ultra-glass p-4 rounded-2xl border border-white/15 space-y-2 transition hover:border-red-500">
-                    <div class="font-bold text-xs text-red-500 flex items-center justify-between">
-                        <span>${t.author_name || 'خبرگزاری میزان'}</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70"></i>
-                    </div>
-                    <p class="text-[11px] opacity-95 leading-relaxed">${t.tweet_text || ''}</p>
-                </a>
-            `).join('');
+            
+            container.innerHTML = list.map(t => {
+                const tweetUrl = t.link || t.url || 'https://twitter.com';
+                return `
+                    <a href="${tweetUrl}" target="_blank" class="block ultra-glass p-4 rounded-2xl border border-white/15 space-y-2 transition hover:border-red-500">
+                        <div class="font-bold text-xs text-red-500 flex items-center justify-between">
+                            <span>${t.author_name || 'خبرگزاری میزان'}</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70"></i>
+                        </div>
+                        <p class="text-[11px] opacity-95 leading-relaxed">${t.tweet_text || ''}</p>
+                    </a>
+                `;
+            }).join('');
         }
 
         function renderOfficialMessages() {

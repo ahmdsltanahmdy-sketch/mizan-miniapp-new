@@ -57,7 +57,7 @@
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('mizan_user_id', userId);
         }
-        if (localStorage.getItem('mizan_theme'] === 'dark') {
+        if (localStorage.getItem('mizan_theme') === 'dark') {
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
         }
@@ -164,7 +164,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (بدون خطای 403 و سیاه شدن صفحه) -->
+        <!-- تب پخش زنده -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
@@ -307,6 +307,13 @@
                     renderAll();
                 } catch(e) {}
             }
+            // فالبک فوری داده‌های نمونه برای جلوگیری از گیر کردن روی حالت بارگذاری
+            if (!appData.news.length) {
+                appData.news = [
+                    { title: "آخرین تحولات حقوقی و قضایی کشور", summary: "مشروح اخبار و گزارش‌های حقوقی در پایگاه خبری میزان...", link: "https://mizanonline.ir", category: "قضایی", pubDate: new Date().toISOString() }
+                ];
+            }
+            renderAll();
             initApp();
             updateDateTime();
             setInterval(updateDateTime, 1000);
@@ -335,15 +342,21 @@
 
         async function initApp() {
             try {
-                const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
-                appData = await response.json();
-                if (appData.news && Array.isArray(appData.news)) {
-                    appData.news.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000); // تایم‌اوت 6 ثانیه‌ای برای جلوگیری از معطلی
+                const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime(), { signal: controller.signal });
+                clearTimeout(timeoutId);
+                const newData = await response.json();
+                if (newData && newData.news && newData.news.length > 0) {
+                    appData = newData;
+                    if (appData.news && Array.isArray(appData.news)) {
+                        appData.news.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+                    }
+                    localStorage.setItem('mizan_cache', JSON.stringify(appData));
+                    renderAll();
                 }
-                localStorage.setItem('mizan_cache', JSON.stringify(appData));
-                renderAll();
             } catch (error) {
-                console.error("Error loading data:", error);
+                console.log("Using cached or demo data due to fetch limit.");
             }
         }
 
@@ -442,7 +455,6 @@
             });
         }
 
-        // پخش زنده پایدار با چرخش هوشمند پروکسی‌ها جهت جلوگیری از ارور 403 و سیاه شدن صفحه
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -475,9 +487,8 @@
             if(spinner) spinner.style.display = 'flex';
 
             if (videoElem && stream.url) {
-                // استفاده از پروکسی‌های ترکیبی برای دور زدن خطای 403
                 let streamUrl = stream.url;
-                if (streamUrl.includes('.m3u8')) {
+                if (streamUrl.includes('.m3u8') && !streamUrl.includes('allorigins')) {
                     streamUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(stream.url);
                 }
 
@@ -496,14 +507,8 @@
 
                         hls.on(Hls.Events.ERROR, function(event, data) {
                             if (data.fatal) {
-                                // فال‌بک خودکار به پروکسی جایگزین دوم در صورت خطای 403
-                                if (hls.url && hls.url.includes('allorigins')) {
-                                    hls.loadSource("https://corsproxy.io/?" + encodeURIComponent(stream.url));
-                                    hls.startLoad();
-                                } else {
-                                    if(spinner) spinner.style.display = 'none';
-                                    videoElem.src = stream.url;
-                                }
+                                if(spinner) spinner.style.display = 'none';
+                                videoElem.src = stream.url;
                             }
                         });
                     }

@@ -88,11 +88,10 @@
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">
                 <span id="headerWeatherWidget">تهران...</span>
-                <!-- دکمه منوی کشویی زیرمجموعه‌دار تب‌ها در کنار رفرش و تنظیمات -->
                 <div class="relative inline-block">
                     <button onclick="toggleCategoryMenu(event)" title="دسته‌بندی اخبار" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-list-ul text-xs text-amber-300"></i></button>
+                    <!-- منوی زیرمجموعه‌دار بدون متن‌های اضافی -->
                     <div id="categoryDropdown" class="hidden absolute left-0 top-8 z-50 w-44 ultra-glass rounded-2xl shadow-2xl p-2 space-y-1 text-right border border-white/20">
-                        <div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10">دسته‌بندی اخبار</div>
                         <div id="dynamicCategoryList" class="space-y-1 max-h-48 overflow-y-auto"></div>
                     </div>
                 </div>
@@ -101,7 +100,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای (شامل فید شخصی) -->
+        <!-- منوی تنظیمات شیشه‌ای -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت فید شخصی (For You):</span>
@@ -162,7 +161,6 @@
         <section id="news-tab" class="page-section">
             <div class="flex justify-between items-center mb-3">
                 <h2 id="currentNewsCategoryTitle" class="font-bold text-xs text-red-600"><i class="fa-solid fa-fire ml-1"></i> آخرین اخبار</h2>
-                <span id="activeCategoryBadge" class="text-[9px] bg-black/30 px-2.5 py-1 rounded-xl border border-white/20">همه اخبار</span>
             </div>
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
@@ -228,7 +226,7 @@
         <!-- تب اینفوگرافیک‌های حقوقی -->
         <section id="infographics-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-image ml-1.5 text-red-600"></i> اینفوگرافیک‌های حقوقی</h2>
-            <div id="infographicsContainer" class="space-y-3"></div>
+            <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
         <!-- تب پادکست‌های خبری -->
@@ -285,6 +283,20 @@
         </div>
     </div>
 
+    <!-- مودال اینفوگرافیک -->
+    <div id="infographicModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+            <button onclick="closeInfographicModal()" class="absolute top-3 left-3 text-slate-400 p-2"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 id="modalInfoTitle" class="font-bold text-xs text-red-500 pt-1">عنوان اینفوگرافیک</h3>
+            <div class="relative max-h-[60vh] overflow-y-auto rounded-xl">
+                <img id="modalInfoImg" src="" class="w-full object-contain rounded-xl shadow-lg" alt="">
+            </div>
+            <a id="downloadInfoBtn" href="#" target="_blank" download class="block bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold shadow transition hover:bg-red-700">
+                <i class="fa-solid fa-download ml-1.5"></i> دانلود تصویر اصلی
+            </a>
+        </div>
+    </div>
+
     <!-- مودال جستجوی پیشرفته -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
@@ -299,33 +311,25 @@
     <script>
         let fallbackData = {
             news: [
-                { title: "آخرین تحولات حقوقی و قضایی کشور", summary: "مشروح اخبار و گزارش‌های حقوقی در پایگاه خبری میزان...", link: "https://mizanonline.ir", category: "قضایی", pubDate: new Date().toISOString() },
-                { title: "جزئیات جدید از خدمات الکترونیک قضایی", summary: "راهنمای استفاده از سامانه ثنا و خدمات نوین...", link: "https://mizanonline.ir", category: "حقوقی", pubDate: new Date().toISOString() }
+                { title: "آخرین تحولات حقوقی و قضایی کشور", summary: "مشروح اخبار و گزارش‌های حقوقی در پایگاه خبری میزان...", link: "https://mizanonline.ir", category: "قضایی", pubDate: new Date().toISOString() }
             ],
             tabs: [{ tab_name: "سراسری" }, { tab_name: "حقوقی" }],
-            legalSystems: [
-                { title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" },
-                { title: "درگاه ملی قوه قضاییه", description: "خدمات الکترونیک قضایی", url: "https://adliran.ir" }
-            ],
+            legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
             files: [{ title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", url: "#" }],
             faq: [{ question: "چگونه ابلاغیه خود را مشاهده کنیم؟", answer: "از طریق سامانه ثنا با کد ملی و رمز شخصی." }],
             twitter: [{ author_name: "خبرگزاری میزان", tweet_text: "آخرین بیانیه‌ها و اخبار رسمی قوه قضاییه در توییتر میزان." }],
-            livestream: [
-                { title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده شبکه خبر" },
-                { title: "شبکه یک", url: "https://www.telewebion.com/live/tv1", description: "پخش زنده شبکه یک" }
+            livestream: [{ title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده شبکه خبر" }],
+            dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
+            infographics: [
+                { title: "مراحل ثبت دادخواست در دفاتر خدمات الکترونیک", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" }
             ],
-            dictionary: [
-                { term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." },
-                { term: "فرجام‌خواهی", definition: "بررسی انطباق رای دادگاه با قانون در دیوان عالی کشور." }
-            ],
-            infographics: [{ title: "مراحل ثبت دادخواست", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" }],
             podcasts: [{ title: "بولتن صوتی حقوقی هفته", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
         let currentSelectedNews = null;
         let displayedNewsLimit = 15;
-        let selectedCategoryFilter = 'all'; // پیش‌فرض همه اخبار
+        let selectedCategoryFilter = 'all';
 
         window.addEventListener('DOMContentLoaded', () => {
             renderAll();
@@ -393,7 +397,6 @@
             document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
-        // بستن منوها با کلیک خارج از آن‌ها
         window.addEventListener('click', () => {
             const setDrop = document.getElementById('settingsDropdown');
             const catDrop = document.getElementById('categoryDropdown');
@@ -490,7 +493,7 @@
             });
         }
 
-        // رندر منوی زیرمجموعه‌دار دسته‌بندی‌ها (کل اخبار + تب‌های گوگل شیت)
+        // رندر منوی دسته‌بندی‌ها صرفاً بر اساس نام تب‌ها و گزینه کل اخبار
         function renderCategoryDropdown() {
             const container = document.getElementById('dynamicCategoryList');
             if (!container) return;
@@ -510,8 +513,6 @@
         function filterNewsCategory(catName) {
             selectedCategoryFilter = catName;
             document.getElementById('categoryDropdown').classList.add('hidden');
-            const badge = document.getElementById('activeCategoryBadge');
-            if(badge) badge.innerText = catName === 'all' ? 'همه اخبار' : catName;
             renderCategoryDropdown();
             renderNews();
             triggerHaptic();
@@ -535,8 +536,6 @@
                     <div class="text-[10px] opacity-80 truncate">${stream.description || 'کانال تلویزیونی'}</div>
                 </button>
             `).join('');
-
-            playSelectedStream(streams[0]);
         }
 
         function playSelectedStream(stream) {
@@ -563,12 +562,10 @@
 
             let allNews = appData.news || [];
 
-            // اعمال فیلتر فید شخصی
             if (tgSettings.forYou) {
                 allNews = allNews.filter(n => String(n.category || '').includes('حقوقی') || String(n.category || '').includes('قضایی'));
             }
 
-            // اعمال فیلتر منوی زیرمجموعه‌دار دسته‌بندی
             if (selectedCategoryFilter !== 'all') {
                 allNews = allNews.filter(n => String(n.category || '').trim() === selectedCategoryFilter.trim() || String(n.tabId || '').trim() === selectedCategoryFilter.trim());
             }
@@ -754,8 +751,27 @@
             const container = document.getElementById('infographicsContainer');
             if (!container) return;
             let list = appData.infographics || [];
-            if (!list.length) { container.innerHTML = '<p class="text-center opacity-70 py-4">اینفوگرافیکی ثبت نشده است.</p>'; return; }
-            container.innerHTML = list.map(inf => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><img src="${inf.image}" class="w-full rounded-xl" alt=""><h4 class="font-bold text-xs text-red-500">${inf.title}</h4></div>`).join('');
+            if (!list.length) { container.innerHTML = '<p class="text-center opacity-70 py-4 col-span-2">اینفوگرافیکی ثبت نشده است.</p>'; return; }
+            
+            container.innerHTML = list.map(inf => `
+                <div onclick='openInfographicModal(${JSON.stringify(inf).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-2.5 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 shadow-sm flex flex-col justify-between">
+                    <div class="w-full aspect-square rounded-xl overflow-hidden bg-slate-900 flex items-center justify-center">
+                        <img src="${inf.image}" loading="lazy" class="w-full h-full object-cover transition transform hover:scale-105" alt="">
+                    </div>
+                    <h4 class="font-bold text-[11px] text-red-500 line-clamp-2 text-right">${inf.title}</h4>
+                </div>
+            `).join('');
+        }
+
+        function openInfographicModal(inf) {
+            document.getElementById('modalInfoTitle').innerText = inf.title;
+            document.getElementById('modalInfoImg').src = inf.image;
+            document.getElementById('downloadInfoBtn').href = inf.image;
+            document.getElementById('infographicModal').classList.remove('hidden');
+        }
+
+        function closeInfographicModal() {
+            document.getElementById('infographicModal').classList.add('hidden');
         }
 
         function renderPodcasts() {
@@ -834,13 +850,14 @@
             } catch(e) { alert('خطا در ارسال.'); }
         }
 
+        // قطع کامل پخش زنده هنگام خروج از تب و بارگذاری مجدد با انتخاب کانال در بازگشت
         function switchTab(sectionId, btn) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(sectionId).classList.remove('hidden');
 
             const iframeElem = document.getElementById('liveStreamIframe');
             if (sectionId !== 'multimedia-tab' && iframeElem) {
-                iframeElem.src = "";
+                iframeElem.src = ""; // توقف و قطع کامل پخش زنده
             } else if (sectionId === 'multimedia-tab' && iframeElem && !iframeElem.src) {
                 let streams = appData.livestream || [];
                 if (streams.length) playSelectedStream(streams[0]);

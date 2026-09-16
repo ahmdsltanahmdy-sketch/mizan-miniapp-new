@@ -57,7 +57,7 @@
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('mizan_user_id', userId);
         }
-        if (localStorage.getItem('mizan_theme'] === 'dark') {
+        if (localStorage.getItem('mizan_theme') === 'dark') {
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
         }
@@ -289,32 +289,11 @@
         </div>
     </div>
 
-    <!-- منطق جاوااسکریپت با سیستم فال‌بک داده‌های پیش‌فرض -->
+    <!-- منطق جاوااسکریپت -->
     <script>
-        let fallbackData = {
-            news: [
-                { title: "آخرین تحولات حقوقی و قضایی کشور", summary: "مشروح اخبار و گزارش‌های حقوقی در پایگاه خبری میزان...", link: "https://mizanonline.ir", category: "قضایی", pubDate: new Date().toISOString() },
-                { title: "جزئیات جدید از خدمات الکترونیک قضایی", summary: "راهنمای استفاده از سامانه ثنا و خدمات نوین...", link: "https://mizanonline.ir", category: "حقوقی", pubDate: new Date().toISOString() }
-            ],
-            tabs: [{ tab_name: "سراسری" }, { tab_name: "حقوقی" }],
-            legalSystems: [
-                { title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" },
-                { title: "درگاه ملی قوه قضاییه", description: "خدمات الکترونیک قضایی", url: "https://adliran.ir" }
-            ],
-            files: [{ title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", url: "#" }],
-            faq: [{ question: "چگونه ابلاغیه خود را مشاهده کنیم؟", answer: "از طریق سامانه ثنا با کد ملی و رمز شخصی." }],
-            twitter: [{ author_name: "خبرگزاری میزان", tweet_text: "آخرین بیانیه‌ها و اخبار رسمی قوه قضاییه در توییتر میزان." }],
-            livestream: [{ title: "شبکه خبر", url: "https://live-aburayhan1104.telewebion.net/ek/irinn/live/240p/index.m3u8", description: "پخش زنده شبکه خبر" }],
-            dictionary: [
-                { term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." },
-                { term: "فرجام‌خواهی", definition: "بررسی انطباق رای دادگاه با قانون در دیوان عالی کشور." },
-                { term: "قرار بازداشت موقت", definition: "حکمی برای حبس متهم در جرایم خاص تا زمان صدور رای نهایی." }
-            ],
-            infographics: [{ title: "مراحل ثبت دادخواست", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" }],
-            podcasts: [{ title: "بولتن صوتی حقوقی هفته", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }]
+        let appData = JSON.parse(localStorage.getItem('mizan_cache')) || { 
+            news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [], livestream: [], dictionary: [], infographics: [], podcasts: [] 
         };
-
-        let appData = JSON.parse(localStorage.getItem('mizan_cache') || JSON.stringify(fallbackData));
         let activeHlsPlayer = null;
         let currentSelectedNews = null;
         let modalFontMultiplier = 0;
@@ -363,7 +342,7 @@
                     renderAll();
                 }
             } catch (error) {
-                console.log("Using fallback/cached data.");
+                console.log("Using cached data.");
             }
         }
 
@@ -784,6 +763,7 @@
             } else {
                 box.innerHTML = resultsHTML;
             }
+            box.classList.add('open');
             box.classList.remove('hidden');
         }
 

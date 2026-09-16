@@ -37,6 +37,10 @@
 
         .glass-tab { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
         .dark .glass-tab { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        /* حالت مطالعه برای مودال خبر */
+        .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
+        .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
 
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
@@ -75,7 +79,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای کامل -->
+        <!-- منوی تنظیمات شیشه‌ای -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
@@ -94,7 +98,7 @@
             </div>
         </div>
 
-        <!-- کادر جستجوی آنی و دکمه کره زمین -->
+        <!-- کادر جستجو -->
         <div class="max-w-md mx-auto px-4 py-2.5 relative">
             <div class="flex space-x-2 space-x-reverse relative items-center">
                 <div class="relative flex-grow">
@@ -102,12 +106,10 @@
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs"></i>
                     <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <!-- دکمه کره زمین برای باز کردن مودال سرچ پیشرفته سایت میزان -->
                 <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته در سایت میزان" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
                     <i class="fa-solid fa-earth-americas text-sm"></i>
                 </button>
             </div>
-            <!-- باکس نتایج جستجوی آنی -->
             <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
 
@@ -119,9 +121,36 @@
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
             <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-sm text-[#c51b24] flex items-center"><i class="fa-solid fa-earth-americas ml-1.5"></i> جستجوی پیشرفته در سایت میزان</h3>
-            <p class="text-[11px] opacity-90">عبارت مورد نظر خود را وارد کنید تا در کل آرشیو سایت میزان جستجو شود:</p>
-            <input type="text" id="advSearchInput" placeholder="مثلا: حقوقی، ثنا، مهار تورم..." class="w-full bg-black/30 rounded-xl px-3 py-2.5 text-xs focus:outline-none border border-white/20 shadow-inner text-white">
+            <p class="text-[11px] opacity-90">عبارت مورد نظر خود را وارد کنید:</p>
+            <input type="text" id="advSearchInput" placeholder="مثلا: حقوقی، ثنا..." class="w-full bg-black/30 rounded-xl px-3 py-2.5 text-xs focus:outline-none border border-white/20 shadow-inner text-white">
             <button onclick="executeAdvancedGoogleSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow transition hover:bg-red-700">جستجو در گوگل (سایت میزان)</button>
+        </div>
+    </div>
+
+    <!-- مودال اختصاصی نمایش خبر همراه با قابلیت تغییر فونت و حالت مطالعه -->
+    <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
+            <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            <div class="flex justify-between items-center mb-2">
+                <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded font-bold shadow-sm">دسته‌بندی</span>
+                <div class="flex items-center space-x-1.5 space-x-reverse">
+                    <!-- کنترل اندازه فونت -->
+                    <div class="flex bg-black/30 rounded-xl p-0.5 text-[10px] border border-white/20">
+                        <button onclick="adjustModalFontSize(1)" class="px-2 py-0.5 hover:bg-white/20 rounded-lg font-bold">A+</button>
+                        <button onclick="adjustModalFontSize(-1)" class="px-2 py-0.5 hover:bg-white/20 rounded-lg font-bold">A-</button>
+                    </div>
+                    <!-- دکمه ذخیره خبر -->
+                    <button onclick="toggleBookmarkCurrentNews()" id="modalBookmarkBtn" class="text-xs bg-black/30 px-2.5 py-1 rounded-xl transition border border-white/20 shadow-sm" title="ذخیره خبر"><i class="fa-regular fa-bookmark"></i></button>
+                    <!-- حالت مطالعه -->
+                    <button onclick="toggleReadingMode()" class="text-xs bg-black/30 hover:bg-white/20 px-2.5 py-1 rounded-xl font-medium transition border border-white/20 shadow-sm" title="حالت مطالعه"><i class="fa-solid fa-book-open"></i></button>
+                </div>
+            </div>
+            <img id="modalImg" src="" loading="lazy" class="w-full h-36 object-cover rounded-2xl mb-3 shadow-md" alt="">
+            <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
+            <p id="modalSummary" class="text-[11px] mt-2 leading-relaxed whitespace-pre-line opacity-90">خلاصه کامل...</p>
+            <div class="flex space-x-2 space-x-reverse mt-4">
+                <a id="modalLink" href="#" target="_blank" class="flex-grow bg-[#c51b24] hover:bg-red-700 text-white text-center py-2.5 rounded-xl text-xs font-bold transition shadow">مشاهده کامل در سایت میزان</a>
+            </div>
         </div>
     </div>
 
@@ -145,7 +174,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (با پروکسی هوشمند HLS برای پخش قطعی داخل مینی‌اپ) -->
+        <!-- تب پخش زنده با رفع قطعی چرخش پلیر -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
@@ -195,10 +224,12 @@
         <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-user-tie text-sm"></i><span class="text-[8px] mt-1">مشاور</span></button>
     </nav>
 
-    <!-- منطق جاوااسکریپت کامل و حرفه‌ای -->
+    <!-- منطق جاوااسکریپت پیشرفته -->
     <script>
         let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [], livestream: [] };
         let activeHlsPlayer = null;
+        let currentSelectedNews = null;
+        let modalFontMultiplier = 0;
 
         window.addEventListener('DOMContentLoaded', () => {
             const cached = localStorage.getItem('mizan_cache');
@@ -264,18 +295,12 @@
         function showInstallGuide() { document.getElementById('installGuideModal').classList.remove('hidden'); }
         function closeInstallGuide() { document.getElementById('installGuideModal').classList.add('hidden'); }
 
-        // توابع مربوط به مودال جستجوی پیشرفته (کره زمین)
-        function openAdvancedSearchModal() {
-            document.getElementById('advancedSearchModal').classList.remove('hidden');
-        }
-        function closeAdvancedSearchModal() {
-            document.getElementById('advancedSearchModal').classList.add('hidden');
-        }
+        function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
+        function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
         function executeAdvancedGoogleSearch() {
             const query = document.getElementById('advSearchInput').value.trim();
             if (!query) return alert('لطفا عبارت مورد نظر را وارد کنید.');
-            const googleUrl = `https://www.google.com/search?q=site:mizanonline.ir+${encodeURIComponent(query)}`;
-            window.open(googleUrl, '_blank');
+            window.open(`https://www.google.com/search?q=site:mizanonline.ir+${encodeURIComponent(query)}`, '_blank');
             closeAdvancedSearchModal();
         }
 
@@ -294,9 +319,10 @@
             renderOfficialMessages();
             renderLiveChannels();
             renderTwitterFeed();
+            renderBookmarks();
         }
 
-        // پخش زنده داخلی با پروکسی امن HLS جهت جلوگیری قطعی از خطای CORS
+        // پخش زنده پایدار داخل مینی‌اپ با پروکسی امن کلاینت‌ساید
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -343,6 +369,13 @@
                     hls.on(Hls.Events.MANIFEST_PARSED, () => {
                         videoElem.play().catch(e => console.log("Autoplay restricted:", e));
                     });
+                    hls.on(Hls.Events.ERROR, function(event, data) {
+                        if (data.fatal) {
+                            console.warn("HLS fatal error encountered, trying direct load...");
+                            videoElem.src = stream.url;
+                            videoElem.play().catch(e => {});
+                        }
+                    });
                 } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
                     videoElem.src = streamUrl;
                     videoElem.addEventListener('loadedmetadata', () => {
@@ -374,7 +407,7 @@
             const featuredImg = (firstNews.image && firstNews.image.startsWith('http')) ? firstNews.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
 
             featuredContainer.innerHTML = `
-                <div onclick='window.open("${firstNews.link}", "_blank")' class="block ultra-glass rounded-2xl overflow-hidden shadow-sm border border-red-500/50 cursor-pointer">
+                <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block ultra-glass rounded-2xl overflow-hidden shadow-sm border border-red-500/50 cursor-pointer">
                     <img src="${featuredImg}" loading="lazy" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
                         <span class="bg-red-100 text-red-600 text-[10px] px-2.5 py-0.5 rounded-full font-bold">خبر ویژه</span>
@@ -385,9 +418,79 @@
             `;
 
             container.innerHTML = allNews.slice(1, 15).map(n => `
-                <div onclick='window.open("${n.link}", "_blank")' class="ultra-glass p-3 rounded-2xl space-y-1 cursor-pointer hover:border-red-500 transition">
+                <div onclick='openNewsModal(${JSON.stringify(n).replace(/'/g, "&apos;")})' class="ultra-glass p-3 rounded-2xl space-y-1 cursor-pointer hover:border-red-500 transition">
                     <h3 class="font-bold text-xs">${n.title}</h3>
                     <p class="text-[10px] opacity-80 line-clamp-2">${n.summary || ''}</p>
+                </div>
+            `).join('');
+        }
+
+        // مودال و قابلیت‌های پیشرفته مطالعه خبر
+        function openNewsModal(news) {
+            currentSelectedNews = news;
+            modalFontMultiplier = 0;
+            const titleElem = document.getElementById('modalTitle');
+            const summaryElem = document.getElementById('modalSummary');
+
+            titleElem.innerText = news.title;
+            titleElem.style.fontSize = '12px';
+            summaryElem.innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
+            summaryElem.style.fontSize = '11px';
+
+            document.getElementById('modalCategory').innerText = news.category || 'عمومی';
+            document.getElementById('modalImg').src = (news.image && news.image.startsWith('http')) ? news.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
+            document.getElementById('modalLink').href = news.link;
+
+            const bookmarks = getLocalBookmarks();
+            const isBookmarked = bookmarks.some(b => b.link === news.link);
+            const btnIcon = document.querySelector('#modalBookmarkBtn i');
+            if(btnIcon) btnIcon.className = isBookmarked ? "fa-solid fa-bookmark text-red-600" : "fa-regular fa-bookmark";
+
+            document.getElementById('newsModal').classList.remove('hidden');
+        }
+
+        function closeNewsModal() { document.getElementById('newsModal').classList.add('hidden'); }
+        function toggleReadingMode() { document.getElementById('modalCardContainer').classList.toggle('reading-mode-active'); }
+
+        function adjustModalFontSize(direction) {
+            modalFontMultiplier += direction;
+            if(modalFontMultiplier < -2) modalFontMultiplier = -2;
+            if(modalFontMultiplier > 4) modalFontMultiplier = 4;
+
+            document.getElementById('modalTitle').style.fontSize = (12 + (modalFontMultiplier * 1.5)) + 'px';
+            document.getElementById('modalSummary').style.fontSize = (11 + (modalFontMultiplier * 1.5)) + 'px';
+        }
+
+        function getLocalBookmarks() {
+            try { return JSON.parse(localStorage.getItem('mizan_bookmarks') || '[]'); } catch(e) { return []; }
+        }
+
+        function toggleBookmarkCurrentNews() {
+            if (!currentSelectedNews) return;
+            let bookmarks = getLocalBookmarks();
+            const index = bookmarks.findIndex(b => b.link === currentSelectedNews.link);
+            const btnIcon = document.querySelector('#modalBookmarkBtn i');
+            if (index > -1) {
+                bookmarks.splice(index, 1);
+                if(btnIcon) btnIcon.className = "fa-regular fa-bookmark";
+                alert('از ذخیره‌شده‌ها حذف شد.');
+            } else {
+                bookmarks.push(currentSelectedNews);
+                if(btnIcon) btnIcon.className = "fa-solid fa-bookmark text-red-600";
+                alert('خبر ذخیره شد.');
+            }
+            localStorage.setItem('mizan_bookmarks', JSON.stringify(bookmarks));
+            renderBookmarks();
+        }
+
+        function renderBookmarks() {
+            const container = document.getElementById('bookmarksListContainer');
+            if(!container) return;
+            let bookmarks = getLocalBookmarks();
+            if (!bookmarks.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری ذخیره نشده است.</p>'; return; }
+            container.innerHTML = bookmarks.map(item => `
+                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="ultra-glass p-3.5 rounded-2xl border border-white/15 cursor-pointer">
+                    <h3 class="font-bold text-xs">${item.title}</h3>
                 </div>
             `).join('');
         }
@@ -395,10 +498,7 @@
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             if (!container || !appData.files) return;
-            if (!appData.files.length) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>';
-                return;
-            }
+            if (!appData.files.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>'; return; }
             container.innerHTML = appData.files.map(f => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
                     ${f.image ? `<img src="${f.image}" loading="lazy" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
@@ -412,10 +512,7 @@
         function renderLegalSystems() {
             const container = document.getElementById('legalSystemsContainer');
             if (!container || !appData.legalSystems) return;
-            if (!appData.legalSystems.length) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">سامانه‌ای ثبت نشده است.</p>';
-                return;
-            }
+            if (!appData.legalSystems.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">سامانه‌ای ثبت نشده است.</p>'; return; }
             container.innerHTML = appData.legalSystems.map(sys => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 flex items-center justify-between">
                     <div><h3 class="font-bold text-xs text-red-500">${sys.title}</h3><p class="text-[11px] opacity-80">${sys.description}</p></div>
@@ -427,10 +524,7 @@
         function renderTwitterFeed() {
             const container = document.getElementById('twitterFeedContainer');
             if (!container || !appData.twitter) return;
-            if (!appData.twitter.length) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پستی یافت نشد.</p>';
-                return;
-            }
+            if (!appData.twitter.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پستی یافت نشد.</p>'; return; }
             container.innerHTML = appData.twitter.map(t => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 space-y-2">
                     <div class="font-bold text-xs text-red-500">${t.author_name || 'خبرگزاری میزان'}</div>
@@ -450,7 +544,6 @@
             `).join('');
         }
 
-        // جستجوی جامع و آنی با دکمه کنسل / پاک کردن سریع
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');
@@ -458,32 +551,19 @@
             const q = query.trim().toLowerCase();
             
             if (q.length > 0) {
-                clearBtn.classList.remove('hidden');
+                if(clearBtn) clearBtn.classList.remove('hidden');
             } else {
-                clearBtn.classList.add('hidden');
+                if(clearBtn) clearBtn.classList.add('hidden');
                 box.classList.add('hidden');
                 box.innerHTML = '';
                 return;
             }
 
             let resultsHTML = '';
-
             const matchedNews = (appData.news || []).filter(n => n.title.toLowerCase().includes(q) || (n.summary && n.summary.toLowerCase().includes(q))).slice(0, 3);
             if (matchedNews.length > 0) {
                 resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1">اخبار</div>`;
-                resultsHTML += matchedNews.map(m => `<div onclick='window.open("${m.link}", "_blank"); document.getElementById("liveSuggestionsBox").classList.add("hidden");' class="p-2 hover:bg-white/20 rounded-lg cursor-pointer"><div class="font-bold line-clamp-1">${m.title}</div></div>`).join('');
-            }
-
-            const matchedLegal = (appData.legalSystems || []).filter(l => l.title.toLowerCase().includes(q) || l.description.toLowerCase().includes(q)).slice(0, 2);
-            if (matchedLegal.length > 0) {
-                resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1 border-t border-white/10 mt-1">سامانه‌ها</div>`;
-                resultsHTML += matchedLegal.map(l => `<a href="${l.url}" target="_blank" class="block p-2 hover:bg-white/20 rounded-lg"><div class="font-bold">${l.title}</div></a>`).join('');
-            }
-
-            const matchedFiles = (appData.files || []).filter(f => f.title.toLowerCase().includes(q) || f.description.toLowerCase().includes(q)).slice(0, 2);
-            if (matchedFiles.length > 0) {
-                resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1 border-t border-white/10 mt-1">پرونده‌ها</div>`;
-                resultsHTML += matchedFiles.map(f => `<a href="${f.url || '#'}" target="_blank" class="block p-2 hover:bg-white/20 rounded-lg"><div class="font-bold">${f.title}</div></a>`).join('');
+                resultsHTML += matchedNews.map(m => `<div onclick='openNewsModal(${JSON.stringify(m).replace(/'/g, "&apos;")}); document.getElementById("liveSuggestionsBox").classList.add("hidden");' class="p-2 hover:bg-white/20 rounded-lg cursor-pointer"><div class="font-bold line-clamp-1">${m.title}</div></div>`).join('');
             }
 
             if (!resultsHTML) {

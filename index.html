@@ -68,7 +68,8 @@
 
         let tgSettings = {
             haptic: localStorage.getItem('tg_haptic') !== 'false',
-            cloudStorage: localStorage.getItem('tg_cloud') !== 'false'
+            cloudStorage: localStorage.getItem('tg_cloud') !== 'false',
+            forYou: localStorage.getItem('mizan_foryou') === 'true'
         };
 
         function triggerHaptic() {
@@ -87,13 +88,25 @@
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">
                 <span id="headerWeatherWidget">تهران...</span>
+                <!-- دکمه منوی کشویی زیرمجموعه‌دار تب‌ها در کنار رفرش و تنظیمات -->
+                <div class="relative inline-block">
+                    <button onclick="toggleCategoryMenu(event)" title="دسته‌بندی اخبار" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-list-ul text-xs text-amber-300"></i></button>
+                    <div id="categoryDropdown" class="hidden absolute left-0 top-8 z-50 w-44 ultra-glass rounded-2xl shadow-2xl p-2 space-y-1 text-right border border-white/20">
+                        <div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10">دسته‌بندی اخبار</div>
+                        <div id="dynamicCategoryList" class="space-y-1 max-h-48 overflow-y-auto"></div>
+                    </div>
+                </div>
                 <button onclick="manualRefresh()" title="بروزرسانی" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
                 <button onclick="toggleSettingsMenu(event)" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای -->
+        <!-- منوی تنظیمات شیشه‌ای (شامل فید شخصی) -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">حالت فید شخصی (For You):</span>
+                <input type="checkbox" id="forYouSettingCheck" onchange="toggleForYouFeedSetting(this.checked)" class="accent-red-600 w-4 h-4">
+            </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
                 <button onclick="toggleTheme()" class="bg-white/20 px-3 py-1 rounded-xl font-medium border border-white/20"><i id="theme-icon" class="fa-solid fa-moon"></i> تیره / روشن</button>
@@ -141,8 +154,6 @@
             </div>
             <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
-
-        <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar py-2"></div>
     </header>
 
     <!-- بدنه اصلی مینی‌اپ -->
@@ -150,8 +161,8 @@
         <!-- تب اخبار -->
         <section id="news-tab" class="page-section">
             <div class="flex justify-between items-center mb-3">
-                <h2 class="font-bold text-xs text-red-600"><i class="fa-solid fa-fire ml-1"></i> آخرین اخبار</h2>
-                <button onclick="toggleForYouFeed()" id="forYouBtn" class="text-[10px] bg-black/30 px-3 py-1.5 rounded-xl border border-white/20 transition">فید شخصی (For You)</button>
+                <h2 id="currentNewsCategoryTitle" class="font-bold text-xs text-red-600"><i class="fa-solid fa-fire ml-1"></i> آخرین اخبار</h2>
+                <span id="activeCategoryBadge" class="text-[9px] bg-black/30 px-2.5 py-1 rounded-xl border border-white/20">همه اخبار</span>
             </div>
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
@@ -163,7 +174,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (پخش تضمینی و درجا داخل مینی‌اپ بدون معطلی) -->
+        <!-- تب پخش زنده -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
@@ -314,8 +325,7 @@
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
         let currentSelectedNews = null;
         let displayedNewsLimit = 15;
-        let isForYouActive = false;
-        let lastSubmitTime = 0;
+        let selectedCategoryFilter = 'all'; // پیش‌فرض همه اخبار
 
         window.addEventListener('DOMContentLoaded', () => {
             renderAll();
@@ -374,7 +384,22 @@
         function toggleSettingsMenu(event) {
             if(event) event.stopPropagation();
             document.getElementById('settingsDropdown').classList.toggle('hidden');
+            document.getElementById('categoryDropdown').classList.add('hidden');
         }
+
+        function toggleCategoryMenu(event) {
+            if(event) event.stopPropagation();
+            document.getElementById('categoryDropdown').classList.toggle('hidden');
+            document.getElementById('settingsDropdown').classList.add('hidden');
+        }
+
+        // بستن منوها با کلیک خارج از آن‌ها
+        window.addEventListener('click', () => {
+            const setDrop = document.getElementById('settingsDropdown');
+            const catDrop = document.getElementById('categoryDropdown');
+            if(setDrop) setDrop.classList.add('hidden');
+            if(catDrop) catDrop.classList.add('hidden');
+        });
 
         function changeFontFamily(fontName) {
             document.documentElement.style.setProperty('--selected-font', fontName);
@@ -399,6 +424,13 @@
             document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
+        function toggleForYouFeedSetting(isChecked) {
+            tgSettings.forYou = isChecked;
+            localStorage.setItem('mizan_foryou', isChecked);
+            renderNews();
+            triggerHaptic();
+        }
+
         function updateTgSetting(key, val) {
             tgSettings[key] = val;
             localStorage.setItem('tg_' + (key === 'haptic' ? 'haptic' : 'cloud'), val);
@@ -408,6 +440,7 @@
         function loadTgSettingsToUI() {
             document.getElementById('tgHapticCheck').checked = tgSettings.haptic;
             document.getElementById('tgCloudCheck').checked = tgSettings.cloudStorage;
+            document.getElementById('forYouSettingCheck').checked = tgSettings.forYou;
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -427,7 +460,7 @@
         }
 
         function renderAll() {
-            renderTabs();
+            renderCategoryDropdown();
             renderNews();
             renderFiles();
             renderLegalSystems();
@@ -457,7 +490,33 @@
             });
         }
 
-        // پخش زنده تضمینی و آنی داخل خود مینی‌اپ با استفاده از پلیر هوشمند جاسازی‌شده
+        // رندر منوی زیرمجموعه‌دار دسته‌بندی‌ها (کل اخبار + تب‌های گوگل شیت)
+        function renderCategoryDropdown() {
+            const container = document.getElementById('dynamicCategoryList');
+            if (!container) return;
+
+            let html = `<button onclick="filterNewsCategory('all')" class="w-full text-right px-3 py-1.5 rounded-xl transition hover:bg-white/20 text-[10px] font-bold ${selectedCategoryFilter === 'all' ? 'text-red-500 bg-white/10' : ''}">همه اخبار</button>`;
+            
+            if (appData.tabs && Array.isArray(appData.tabs)) {
+                appData.tabs.forEach(t => {
+                    const tName = t.tab_name || '';
+                    const isSel = selectedCategoryFilter === tName;
+                    html += `<button onclick="filterNewsCategory('${tName}')" class="w-full text-right px-3 py-1.5 rounded-xl transition hover:bg-white/20 text-[10px] font-bold ${isSel ? 'text-red-500 bg-white/10' : ''}">${tName}</button>`;
+                });
+            }
+            container.innerHTML = html;
+        }
+
+        function filterNewsCategory(catName) {
+            selectedCategoryFilter = catName;
+            document.getElementById('categoryDropdown').classList.add('hidden');
+            const badge = document.getElementById('activeCategoryBadge');
+            if(badge) badge.innerText = catName === 'all' ? 'همه اخبار' : catName;
+            renderCategoryDropdown();
+            renderNews();
+            triggerHaptic();
+        }
+
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -497,25 +556,26 @@
             }
         }
 
-        function renderTabs() {
-            const container = document.getElementById('tabsContainer');
-            if (!container || !appData.tabs) return;
-            container.innerHTML = appData.tabs.map(t => `<button class="px-3 py-1 rounded-full text-xs glass-tab">${t.tab_name}</button>`).join('');
-        }
-
         function renderNews() {
             const container = document.getElementById('newsListContainer');
             const featuredContainer = document.getElementById('featuredNewsContainer');
             if (!container || !featuredContainer) return;
 
             let allNews = appData.news || [];
-            if (isForYouActive) {
+
+            // اعمال فیلتر فید شخصی
+            if (tgSettings.forYou) {
                 allNews = allNews.filter(n => String(n.category || '').includes('حقوقی') || String(n.category || '').includes('قضایی'));
+            }
+
+            // اعمال فیلتر منوی زیرمجموعه‌دار دسته‌بندی
+            if (selectedCategoryFilter !== 'all') {
+                allNews = allNews.filter(n => String(n.category || '').trim() === selectedCategoryFilter.trim() || String(n.tabId || '').trim() === selectedCategoryFilter.trim());
             }
 
             if (!allNews.length) {
                 featuredContainer.innerHTML = '';
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری یافت نشد.</p>';
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری در این دسته‌بندی یافت نشد.</p>';
                 return;
             }
 

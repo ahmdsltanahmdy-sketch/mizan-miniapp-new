@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات کاملاً شیشه‌ای (Ultra Glass) -->
+        <!-- منوی تنظیمات شیشه‌ای کامل -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
@@ -94,25 +94,36 @@
             </div>
         </div>
 
-        <!-- کادر جستجوی پیشرفته با دکمه کره زمین و دکمه کنسل/پاک کردن -->
+        <!-- کادر جستجوی آنی و دکمه کره زمین -->
         <div class="max-w-md mx-auto px-4 py-2.5 relative">
             <div class="flex space-x-2 space-x-reverse relative items-center">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجو در کل مینی‌اپ (اخبار، سامانه‌ها، پرونده‌ها...)" class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/20 shadow-inner">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اخبار، سامانه‌ها و پرونده‌ها..." class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/20 shadow-inner">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs"></i>
                     <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <!-- دکمه کره زمین برای جستجوی پیشرفته در گوگل (فقط سایت میزان) -->
-                <button onclick="openGoogleMizanSearch()" title="جستجوی پیشرفته در سایت میزان (گوگل)" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
+                <!-- دکمه کره زمین برای باز کردن مودال سرچ پیشرفته سایت میزان -->
+                <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته در سایت میزان" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
                     <i class="fa-solid fa-earth-americas text-sm"></i>
                 </button>
             </div>
-            <!-- باکس نتایج جستجوی آنی (سراسری) -->
+            <!-- باکس نتایج جستجوی آنی -->
             <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
 
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar py-2"></div>
     </header>
+
+    <!-- مودال جستجوی پیشرفته (کره زمین) -->
+    <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
+            <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-sm text-[#c51b24] flex items-center"><i class="fa-solid fa-earth-americas ml-1.5"></i> جستجوی پیشرفته در سایت میزان</h3>
+            <p class="text-[11px] opacity-90">عبارت مورد نظر خود را وارد کنید تا در کل آرشیو سایت میزان جستجو شود:</p>
+            <input type="text" id="advSearchInput" placeholder="مثلا: حقوقی، ثنا، مهار تورم..." class="w-full bg-black/30 rounded-xl px-3 py-2.5 text-xs focus:outline-none border border-white/20 shadow-inner text-white">
+            <button onclick="executeAdvancedGoogleSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow transition hover:bg-red-700">جستجو در گوگل (سایت میزان)</button>
+        </div>
+    </div>
 
     <!-- مودال راهنمای نصب -->
     <div id="installGuideModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
@@ -134,7 +145,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (رفع قطعی پخش با پروکسی مستقیم) -->
+        <!-- تب پخش زنده (با پروکسی هوشمند HLS برای پخش قطعی داخل مینی‌اپ) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
@@ -184,7 +195,7 @@
         <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-user-tie text-sm"></i><span class="text-[8px] mt-1">مشاور</span></button>
     </nav>
 
-    <!-- منطق جاوااسکریپت کامل و بدون باگ -->
+    <!-- منطق جاوااسکریپت کامل و حرفه‌ای -->
     <script>
         let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [], livestream: [] };
         let activeHlsPlayer = null;
@@ -253,6 +264,21 @@
         function showInstallGuide() { document.getElementById('installGuideModal').classList.remove('hidden'); }
         function closeInstallGuide() { document.getElementById('installGuideModal').classList.add('hidden'); }
 
+        // توابع مربوط به مودال جستجوی پیشرفته (کره زمین)
+        function openAdvancedSearchModal() {
+            document.getElementById('advancedSearchModal').classList.remove('hidden');
+        }
+        function closeAdvancedSearchModal() {
+            document.getElementById('advancedSearchModal').classList.add('hidden');
+        }
+        function executeAdvancedGoogleSearch() {
+            const query = document.getElementById('advSearchInput').value.trim();
+            if (!query) return alert('لطفا عبارت مورد نظر را وارد کنید.');
+            const googleUrl = `https://www.google.com/search?q=site:mizanonline.ir+${encodeURIComponent(query)}`;
+            window.open(googleUrl, '_blank');
+            closeAdvancedSearchModal();
+        }
+
         function toggleTheme() {
             const isDark = document.documentElement.classList.toggle('dark');
             document.body.classList.toggle('dark', isDark);
@@ -270,7 +296,7 @@
             renderTwitterFeed();
         }
 
-        // پخش زنده داخلی با پروکسی امن HLS و کلیک‌پذیری کامل نتایج سرچ
+        // پخش زنده داخلی با پروکسی امن HLS جهت جلوگیری قطعی از خطای CORS
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -424,7 +450,7 @@
             `).join('');
         }
 
-        // قابلیت جستجوی جامع و آنی در تمام بخش‌های مینی‌اپ با قابلیت کلیک روی نتایج
+        // جستجوی جامع و آنی با دکمه کنسل / پاک کردن سریع
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');
@@ -442,21 +468,18 @@
 
             let resultsHTML = '';
 
-            // جستجو در اخبار
             const matchedNews = (appData.news || []).filter(n => n.title.toLowerCase().includes(q) || (n.summary && n.summary.toLowerCase().includes(q))).slice(0, 3);
             if (matchedNews.length > 0) {
                 resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1">اخبار</div>`;
                 resultsHTML += matchedNews.map(m => `<div onclick='window.open("${m.link}", "_blank"); document.getElementById("liveSuggestionsBox").classList.add("hidden");' class="p-2 hover:bg-white/20 rounded-lg cursor-pointer"><div class="font-bold line-clamp-1">${m.title}</div></div>`).join('');
             }
 
-            // جستجو در سامانه‌ها
             const matchedLegal = (appData.legalSystems || []).filter(l => l.title.toLowerCase().includes(q) || l.description.toLowerCase().includes(q)).slice(0, 2);
             if (matchedLegal.length > 0) {
                 resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1 border-t border-white/10 mt-1">سامانه‌ها</div>`;
                 resultsHTML += matchedLegal.map(l => `<a href="${l.url}" target="_blank" class="block p-2 hover:bg-white/20 rounded-lg"><div class="font-bold">${l.title}</div></a>`).join('');
             }
 
-            // جستجو در پرونده‌ها
             const matchedFiles = (appData.files || []).filter(f => f.title.toLowerCase().includes(q) || f.description.toLowerCase().includes(q)).slice(0, 2);
             if (matchedFiles.length > 0) {
                 resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1 border-t border-white/10 mt-1">پرونده‌ها</div>`;
@@ -471,7 +494,6 @@
             box.classList.remove('hidden');
         }
 
-        // دکمه کنسل / پاک کردن سرچ
         function clearSearchInput() {
             const input = document.getElementById('searchInput');
             const box = document.getElementById('liveSuggestionsBox');
@@ -479,14 +501,6 @@
             if(input) input.value = '';
             if(box) { box.classList.add('hidden'); box.innerHTML = ''; }
             if(clearBtn) clearBtn.classList.add('hidden');
-        }
-
-        // جستجوی پیشرفته در گوگل محدود به سایت میزان (با دکمه کره زمین)
-        function openGoogleMizanSearch() {
-            const query = document.getElementById('searchInput').value.trim();
-            const searchTarget = query ? query : 'خبرگزاری میزان';
-            const googleUrl = `https://www.google.com/search?q=site:mizanonline.ir+${encodeURIComponent(searchTarget)}`;
-            window.open(googleUrl, '_blank');
         }
 
         async function submitQuestion() {

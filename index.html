@@ -14,7 +14,7 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: var(--selected-font, Tahoma), Arial, sans-serif; }
+        body { font-family: var(--selected-font, Tahoma), Arial, sans-serif; font-size: var(--app-font-size, 12px); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -48,7 +48,7 @@
         }
     </style>
 </head>
-<body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col text-xs relative">
+<body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyLAmhCoWqHKBNUUarrgXzXrasbpy7Ygq0V4dJCMwu5EwNJs5dxM_NvcXgzJBW68A4p/exec'; 
@@ -61,6 +61,12 @@
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
         }
+
+        // اعمال فونت و اندازه فونت ذخیره شده
+        const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';
+        document.documentElement.style.setProperty('--selected-font', savedFont);
+        const savedFontSize = localStorage.getItem('mizan_font_size') || '12px';
+        document.documentElement.style.setProperty('--app-font-size', savedFontSize);
 
         let tgSettings = {
             miniAppFeatures: localStorage.getItem('tg_mini_app') !== 'false',
@@ -89,23 +95,34 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای -->
+        <!-- منوی تنظیمات شیشه‌ای کامل (شامل انتخاب فونت، سایز فونت و تمام صفحه) -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
                 <button onclick="toggleTheme()" class="bg-white/20 px-3 py-1 rounded-xl font-medium border border-white/20"><i id="theme-icon" class="fa-solid fa-moon"></i> تیره / روشن</button>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
-                <span class="font-bold">امکانات تلگرام:</span>
-                <input type="checkbox" id="tgFeatCheck" onchange="updateTgSetting('miniAppFeatures', this.checked)" checked class="accent-red-600 w-4 h-4">
+                <span class="font-bold">حالت تمام‌صفحه:</span>
+                <button onclick="toggleFullScreen()" class="bg-amber-500 text-white px-3 py-1 rounded-xl font-bold shadow"><i class="fa-solid fa-expand ml-1"></i> ورود/خروج</button>
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">قلم مینی‌اپ:</span>
+                <div class="space-x-1 space-x-reverse">
+                    <button onclick="changeFontFamily('Tahoma')" class="px-2 py-0.5 bg-white/20 rounded-lg">Tahoma</button>
+                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-0.5 bg-white/20 rounded-lg">وزیر</button>
+                </div>
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">اندازه متن:</span>
+                <div class="space-x-1 space-x-reverse">
+                    <button onclick="changeAppFontSize('11px')" class="px-2 py-0.5 bg-white/20 rounded-lg">کوچک</button>
+                    <button onclick="changeAppFontSize('12px')" class="px-2 py-0.5 bg-white/20 rounded-lg">متوسط</button>
+                    <button onclick="changeAppFontSize('14px')" class="px-2 py-0.5 bg-white/20 rounded-lg">بزرگ</button>
+                </div>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">بازخورد لرزشی (Haptic):</span>
                 <input type="checkbox" id="tgHapticCheck" onchange="updateTgSetting('haptic', this.checked)" checked class="accent-red-600 w-4 h-4">
-            </div>
-            <div class="flex items-center justify-between pb-2 border-b border-white/20">
-                <span class="font-bold">ذخیره‌سازی ابری:</span>
-                <input type="checkbox" id="tgCloudCheck" onchange="updateTgSetting('cloudStorage', this.checked)" checked class="accent-red-600 w-4 h-4">
             </div>
         </div>
 
@@ -145,7 +162,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده -->
+        <!-- تب پخش زنده (بدون سیاه شدن صفحه پس از سوییچ مکرر) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
@@ -168,7 +185,7 @@
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
-        <!-- تب توییتر (ایکس) با آیکون گرافیکی توپر و استاندارد -->
+        <!-- تب توییتر (ایکس) -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 flex items-center">
                 <span class="w-5 h-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full inline-flex items-center justify-center text-[10px] ml-1.5 shadow-sm"><i class="fa-brands fa-x-twitter"></i></span>
@@ -214,18 +231,18 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با وکتور گرافیکی کامل ایکس و هماهنگ با تصویر ارسالی شما) -->
+    <!-- ناوبری پایین صفحه (با آیکون گرافیکی توییتر / ایکس) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
-        <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-newspaper text-sm"></i><span class="text-[8px] mt-1">اخبار</span></button>
-        <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm"></i><span class="text-[8px] mt-1">پخش زنده</span></button>
-        <button onclick="switchTab('twitter-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-brands fa-x-twitter text-sm"></i><span class="text-[8px] mt-1">توییتر</span></button>
-        <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-book text-sm"></i><span class="text-[8px] mt-1">اصطلاحات</span></button>
-        <button onclick="switchTab('infographics-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-image text-sm"></i><span class="text-[8px] mt-1">اینفوگرافیک</span></button>
-        <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm"></i><span class="text-[8px] mt-1">پادکست</span></button>
-        <button onclick="switchTab('bookmarks-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bookmark text-sm"></i><span class="text-[8px] mt-1">ذخیره</span></button>
-        <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm"></i><span class="text-[8px] mt-1">پرونده‌ها</span></button>
-        <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm"></i><span class="text-[8px] mt-1">سامانه‌ها</span></button>
-        <button onclick="switchTab('lawyer-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm"></i><span class="text-[8px] mt-1">مشاور</span></button>
+        <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-newspaper text-sm mb-0.5"></i><span class="text-[8px]">اخبار</span></button>
+        <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
+        <button onclick="switchTab('twitter-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-brands fa-x-twitter text-sm mb-0.5"></i><span class="text-[8px]">توییتر</span></button>
+        <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
+        <button onclick="switchTab('infographics-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
+        <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
+        <button onclick="switchTab('bookmarks-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bookmark text-sm mb-0.5"></i><span class="text-[8px]">ذخیره</span></button>
+        <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
+        <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
+        <button onclick="switchTab('lawyer-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
     </nav>
 
     <!-- مودال نمایش خبر -->
@@ -335,6 +352,31 @@
             document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
+        function changeAppFontSize(sizeVal) {
+            document.documentElement.style.setProperty('--app-font-size', sizeVal);
+            localStorage.setItem('mizan_font_size', sizeVal);
+            document.getElementById('settingsDropdown').classList.add('hidden');
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert('خطا در ورود به حالت تمام‌صفحه');
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+            document.getElementById('settingsDropdown').classList.add('hidden');
+        }
+
+        function updateTgSetting(key, val) {
+            tgSettings[key] = val;
+            localStorage.setItem('tg_haptic', val);
+            triggerHaptic();
+        }
+
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
         function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
         function executeAdvancedGoogleSearch() {
@@ -383,7 +425,7 @@
             });
         }
 
-        // پخش زنده سریع با استفاده از پروکسی پایدار
+        // پخش زنده پایدار و ایمن (پاکسازی کامل حافظه پلیر برای جلوگیری از سیاه شدن صفحه)
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -417,9 +459,15 @@
 
             if (videoElem && stream.url) {
                 if (activeHlsPlayer) {
+                    activeHlsPlayer.stopLoad();
+                    activeHlsPlayer.detachMedia();
                     activeHlsPlayer.destroy();
                     activeHlsPlayer = null;
                 }
+
+                videoElem.pause();
+                videoElem.removeAttribute('src');
+                videoElem.load();
 
                 let streamUrl = stream.url;
                 if (streamUrl.includes('.m3u8') && !streamUrl.includes('allorigins')) {
@@ -427,7 +475,7 @@
                 }
 
                 if (Hls.isSupported()) {
-                    const hls = new Hls({ autoStartLoad: true, startLevel: -1 });
+                    const hls = new Hls({ autoStartLoad: true, startLevel: -1, maxBufferLength: 30 });
                     activeHlsPlayer = hls;
                     hls.loadSource(streamUrl);
                     hls.attachMedia(videoElem);

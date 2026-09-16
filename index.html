@@ -161,15 +161,19 @@
 
     <!-- بدنه اصلی مینی‌اپ -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
-        <!-- تب اخبار -->
+        <!-- تب اخبار (با قابلیت اسکرول بی‌نهایت برای بارگذاری اخبار قدیمی‌تر) -->
         <section id="news-tab" class="page-section">
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
                 <div class="text-center py-10 opacity-70"><i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i><p>در حال بارگذاری اخبار...</p></div>
             </div>
+            <div id="loadMoreIndicator" class="text-center py-4 hidden">
+                <i class="fa-solid fa-spinner fa-spin text-red-600 text-base"></i>
+                <p class="text-[10px] opacity-70 mt-1">بارگذاری اخبار قدیمی‌تر...</p>
+            </div>
         </section>
 
-        <!-- تب پخش زنده (سوییچ آنی و بدون تاخیر) -->
+        <!-- تب پخش زنده (پخش آنی و سوییچ سریع بین شبکه‌ها) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
@@ -212,7 +216,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه با آیکون صحیح و برچسب "توییتر" -->
+    <!-- ناوبری پایین صفحه (با آیکون صحیح و برچسب "توییتر") -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-red-600 transition flex-1 font-bold"><i class="fa-solid fa-newspaper text-sm"></i><span class="text-[8px] mt-1">اخبار</span></button>
         <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-tower-broadcast text-sm"></i><span class="text-[8px] mt-1">پخش زنده</span></button>
@@ -229,6 +233,7 @@
         let activeHlsPlayer = null;
         let currentSelectedNews = null;
         let modalFontMultiplier = 0;
+        let displayedNewsLimit = 15;
 
         window.addEventListener('DOMContentLoaded', () => {
             const cached = localStorage.getItem('mizan_cache');
@@ -242,6 +247,7 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
             fetchTehranWeather();
+            setupInfiniteScroll();
         });
 
         function updateDateTime() {
@@ -280,6 +286,7 @@
             const icon = document.getElementById('refreshIcon');
             if(icon) icon.classList.add('fa-spin');
             localStorage.removeItem('mizan_cache');
+            displayedNewsLimit = 15;
             await initApp();
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 400);
         }
@@ -325,7 +332,26 @@
             renderBookmarks();
         }
 
-        // سوییچ آنی و بدون تاخیر بین کانال‌های پخش زنده به همراه پخش خودکار فوری
+        // سیستم بارگذاری اخبار قدیمی‌تر هنگام اسکرول (Infinite Scroll)
+        function setupInfiniteScroll() {
+            window.addEventListener('scroll', () => {
+                const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const currentScroll = window.scrollY;
+                if (currentScroll >= scrollableHeight - 150) {
+                    if (appData.news && displayedNewsLimit < appData.news.length) {
+                        const indicator = document.getElementById('loadMoreIndicator');
+                        if(indicator) indicator.classList.remove('hidden');
+                        setTimeout(() => {
+                            displayedNewsLimit += 10;
+                            renderNews();
+                            if(indicator) indicator.classList.add('hidden');
+                        }, 500);
+                    }
+                }
+            });
+        }
+
+        // پخش زنده آنی و بهینه‌سازی شده بدون تاخیر
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -342,13 +368,12 @@
                 </button>
             `).join('');
 
-            // در بارگذاری اولیه، فقط کانال اول تنظیم شود تا کاربر به دلخواه پلی کند
             if (!activeHlsPlayer) {
-                setupStreamSource(streams[0]);
+                setupStreamSource(streams[0], false);
             }
         }
 
-        function setupStreamSource(stream) {
+        function setupStreamSource(stream, autoPlay = false) {
             const videoElem = document.getElementById('liveStreamVideo');
             const titleElem = document.getElementById('liveStreamTitle');
             const extBtn = document.getElementById('externalStreamBtn');
@@ -368,12 +393,14 @@
                 }
 
                 if (Hls.isSupported()) {
-                    const hls = new Hls({ autoStartLoad: true, startLevel: -1 });
+                    const hls = new Hls({ autoStartLoad: true, startLevel: -1, capLevelToPlayerSize: true });
                     activeHlsPlayer = hls;
                     hls.loadSource(streamUrl);
                     hls.attachMedia(videoElem);
                     hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                        videoElem.play().catch(e => console.log("Autoplay restricted:", e));
+                        if (autoPlay) {
+                            videoElem.play().catch(e => console.log("Autoplay restricted:", e));
+                        }
                     });
                     hls.on(Hls.Events.ERROR, function(event, data) {
                         if (data.fatal) {
@@ -382,18 +409,20 @@
                     });
                 } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
                     videoElem.src = streamUrl;
-                    videoElem.addEventListener('loadedmetadata', () => {
-                        videoElem.play().catch(e => console.log("Autoplay restricted:", e));
-                    });
+                    if (autoPlay) {
+                        videoElem.addEventListener('loadedmetadata', () => {
+                            videoElem.play().catch(e => console.log("Autoplay restricted:", e));
+                        });
+                    }
                 }
             }
         }
 
         function playSelectedStream(stream) {
-            setupStreamSource(stream);
+            setupStreamSource(stream, true);
             const videoElem = document.getElementById('liveStreamVideo');
             if(videoElem) {
-                videoElem.play().catch(e => console.log("Play action restricted:", e));
+                videoElem.play().catch(e => console.log("Play restricted:", e));
             }
         }
 
@@ -429,7 +458,7 @@
                 </div>
             `;
 
-            container.innerHTML = allNews.slice(1, 15).map(n => `
+            container.innerHTML = allNews.slice(1, displayedNewsLimit).map(n => `
                 <div onclick='openNewsModal(${JSON.stringify(n).replace(/'/g, "&apos;")})' class="ultra-glass p-3 rounded-2xl space-y-1 cursor-pointer hover:border-red-500 transition">
                     <h3 class="font-bold text-xs">${n.title}</h3>
                     <p class="text-[10px] opacity-80 line-clamp-2">${n.summary || ''}</p>

@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای کامل (شامل ذخیره‌سازی ابری تلگرام) -->
+        <!-- منوی تنظیمات شیشه‌ای -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
@@ -164,7 +164,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (بدون سیاه شدن صفحه پس از سوییچ مکرر کانال‌ها) -->
+        <!-- تب پخش زنده (بدون سیاه شدن صفحه با پایداری کامل نمونه پلیر) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
@@ -205,11 +205,19 @@
         <!-- تب پرونده‌های ویژه -->
         <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
 
-        <!-- تب فرهنگ اصطلاحات حقوقی -->
+        <!-- تب فرهنگ اصطلاحات حقوقی (با سرچ اختصاصی و فوق‌قوی) -->
         <section id="dictionary-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-book ml-1.5 text-red-600"></i> فرهنگ اصطلاحات حقوقی و قضایی</h2>
-            <input type="text" id="dictSearch" oninput="renderDictionary(this.value)" placeholder="جستجوی واژه حقوقی..." class="w-full bg-black/20 rounded-xl px-3 py-2 text-xs border border-white/10 mb-2 text-white">
-            <div id="dictionaryContainer" class="space-y-2"></div>
+            <div class="flex items-center justify-between mb-1">
+                <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-book ml-1.5 text-red-600"></i> فرهنگ اصطلاحات حقوقی</h2>
+                <span id="dictCounter" class="text-[9px] opacity-70"></span>
+            </div>
+            <!-- کادر سرچ اختصاصی اصطلاحات -->
+            <div class="relative">
+                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته در واژگان حقوقی..." class="w-full bg-black/20 dark:bg-black/40 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/20 focus:outline-none shadow-inner text-white">
+                <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-400 text-xs"></i>
+                <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="dictionaryContainer" class="space-y-2 mt-2"></div>
         </section>
 
         <!-- تب اینفوگرافیک‌های حقوقی -->
@@ -235,7 +243,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با وکتور اختصاصی و تضمینی ایکس در نوار پایین) -->
+    <!-- ناوبری پایین صفحه -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-newspaper text-sm mb-0.5"></i><span class="text-[8px]">اخبار</span></button>
         <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
@@ -425,7 +433,7 @@
                 if (currentScroll >= scrollableHeight - 150) {
                     if (appData.news && displayedNewsLimit < appData.news.length) {
                         const indicator = document.getElementById('loadMoreIndicator');
-                        if(indicator) indicator.classList.add('hidden'); // تمیزکاری نمایشگر
+                        if(indicator) indicator.classList.add('hidden');
                         setTimeout(() => {
                             displayedNewsLimit += 10;
                             renderNews();
@@ -435,7 +443,7 @@
             });
         }
 
-        // پخش زنده پایدار همراه با پاکسازی کامل نمونه پلیر قبلی برای جلوگیری از سیاه شدن صفحه
+        // پخش زنده پایدار و ایمن (حل قطعی مشکل سیاه شدن صفحه با مدیریت دقیق نمونه HLS)
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -468,43 +476,32 @@
             if(spinner) spinner.style.display = 'flex';
 
             if (videoElem && stream.url) {
-                if (activeHlsPlayer) {
-                    try {
-                        activeHlsPlayer.stopLoad();
-                        activeHlsPlayer.detachMedia();
-                        activeHlsPlayer.destroy();
-                    } catch(e) {}
-                    activeHlsPlayer = null;
-                }
-
-                videoElem.pause();
-                videoElem.removeAttribute('src');
-                videoElem.load();
-
                 let streamUrl = stream.url;
-                if (streamUrl.includes('.m3u8') && !streamUrl.includes('allorigins')) {
+                if (streamUrl.includes('.m3u8') && !streamUrl.includes('corsproxy')) {
                     streamUrl = "https://corsproxy.io/?" + encodeURIComponent(stream.url);
                 }
 
                 if (Hls.isSupported()) {
-                    const hls = new Hls({ autoStartLoad: true, startLevel: -1, maxBufferLength: 15 });
-                    activeHlsPlayer = hls;
-                    hls.loadSource(streamUrl);
-                    hls.attachMedia(videoElem);
-                    
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                        if(spinner) spinner.style.display = 'none';
-                        if (autoPlay) {
-                            videoElem.play().catch(e => {});
-                        }
-                    });
-
-                    hls.on(Hls.Events.ERROR, function(event, data) {
-                        if (data.fatal) {
+                    if (!activeHlsPlayer) {
+                        const hls = new Hls({ autoStartLoad: true, startLevel: -1, maxBufferLength: 15 });
+                        activeHlsPlayer = hls;
+                        hls.attachMedia(videoElem);
+                        
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => {
                             if(spinner) spinner.style.display = 'none';
-                            videoElem.src = stream.url;
-                        }
-                    });
+                            if (autoPlay) {
+                                videoElem.play().catch(e => {});
+                            }
+                        });
+
+                        hls.on(Hls.Events.ERROR, function(event, data) {
+                            if (data.fatal) {
+                                if(spinner) spinner.style.display = 'none';
+                                videoElem.src = stream.url;
+                            }
+                        });
+                    }
+                    activeHlsPlayer.loadSource(streamUrl);
                 } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
                     videoElem.src = streamUrl;
                     videoElem.addEventListener('loadedmetadata', () => {
@@ -678,14 +675,45 @@
             `).join('');
         }
 
+        // جستجوی اختصاصی و فوق‌قوی در صفحه اصطلاحات حقوقی
         function renderDictionary(filter = '') {
             const container = document.getElementById('dictionaryContainer');
+            const counterElem = document.getElementById('dictCounter');
+            const clearBtn = document.getElementById('clearDictBtn');
             if (!container) return;
-            let list = appData.dictionary || [{term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان."}];
-            if (filter.trim()) {
-                list = list.filter(d => d.term.includes(filter) || d.definition.includes(filter));
+
+            let list = appData.dictionary || [
+                {term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان."},
+                {term: "فرجام‌خواهی", definition: "بررسی انطباق رای دادگاه با قانون در دیوان عالی کشور."}
+            ];
+
+            const q = filter.trim().toLowerCase();
+            if (q.length > 0) {
+                if(clearBtn) clearBtn.classList.remove('hidden');
+                list = list.filter(d => String(d.term).toLowerCase().includes(q) || String(d.definition).toLowerCase().includes(q));
+            } else {
+                if(clearBtn) clearBtn.classList.add('hidden');
             }
-            container.innerHTML = list.map(d => `<div class="ultra-glass p-3 rounded-xl"><strong class="text-red-500">${d.term}:</strong> <span class="opacity-90">${d.definition}</span></div>`).join('');
+
+            if(counterElem) counterElem.innerText = `${list.length} واژه یافت شد`;
+
+            if (!list.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ واژه‌ای با این عبارت یافت نشد.</p>';
+                return;
+            }
+
+            container.innerHTML = list.map(d => `
+                <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1">
+                    <div class="font-bold text-red-500 text-xs flex items-center"><i class="fa-solid fa-scale-balanced ml-1.5 text-[10px]"></i> ${d.term}</div>
+                    <p class="text-[11px] opacity-90 leading-relaxed">${d.definition}</p>
+                </div>
+            `).join('');
+        }
+
+        function clearDictSearch() {
+            const input = document.getElementById('dictAdvancedSearchInput');
+            if(input) input.value = '';
+            renderDictionary('');
         }
 
         function renderInfographics() {

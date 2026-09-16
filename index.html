@@ -86,18 +86,13 @@
                 </div>
                 <div class="flex items-center space-x-1 space-x-reverse">
                     <i class="fa-solid fa-cloud-sun text-amber-300"></i>
-                    <span id="headerWeatherWidget">تهران در حال دریافت...</span>
+                    <span id="headerWeatherWidget">تهران...</span>
                 </div>
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse mr-auto">
-                <button id="notificationBellBtn" onclick="openNotificationsModal()" title="اعلان‌های فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
-                    <i class="fa-solid fa-bell text-xs text-amber-300"></i>
-                    <span id="globalNotificationBadge" class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-600 rounded-full hidden"></span>
-                </button>
                 <button onclick="manualRefresh()" title="بروزرسانی فوری" class="p-1.5 rounded-full hover:bg-white/10 transition relative">
                     <i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i>
-                    <span id="newsBadge" class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full hidden"></span>
                 </button>
                 <button onclick="toggleSettingsMenu(event)" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
@@ -106,30 +101,18 @@
         <!-- منوی تنظیمات -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
-                <span class="font-bold">نصب مینی‌اپ:</span>
-                <button onclick="showInstallGuide(); document.getElementById('settingsDropdown').classList.add('hidden');" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1 space-x-reverse shadow transition">
-                    <i class="fa-solid fa-cloud-arrow-down"></i>
-                    <span>راهنمای نصب</span>
-                </button>
-            </div>
-            <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
-                <button onclick="toggleTheme()" class="bg-white/20 hover:bg-white/30 px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/20 shadow-sm">
+                <button onclick="toggleTheme()" class="bg-white/20 hover:bg-white/30 px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 space-x-reverse border border-white/20">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
-                    <span id="themeText">تیره / روشن</span>
+                    <span>تیره / روشن</span>
                 </button>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">قلم مینی‌اپ:</span>
                 <div class="space-x-1 space-x-reverse">
-                    <button onclick="changeFontFamily('Tahoma')" class="px-2 py-0.5 bg-white/20 rounded-lg border border-white/20">Tahoma</button>
-                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-0.5 bg-white/20 rounded-lg border border-white/20">وزیر</button>
+                    <button onclick="changeFontFamily('Tahoma')" class="px-2 py-0.5 bg-white/20 rounded-lg">Tahoma</button>
+                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-0.5 bg-white/20 rounded-lg">وزیر</button>
                 </div>
-            </div>
-            <div class="pt-1">
-                <button onclick="resetToDefaultSettings()" class="w-full bg-slate-700/80 hover:bg-slate-600 text-amber-300 py-1.5 rounded-xl font-bold transition text-[10px] shadow border border-slate-600">
-                    <i class="fa-solid fa-rotate-left ml-1"></i> بازنشانی تنظیمات
-                </button>
             </div>
         </div>
 
@@ -137,44 +120,16 @@
         <div class="max-w-md mx-auto px-4 py-2.5 relative">
             <div class="flex space-x-2 space-x-reverse relative">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" onkeydown="handleSearchKey(event)" placeholder="جستجوی آنی در اخبار، سامانه‌ها و پرونده‌ها..." class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:bg-white focus:text-slate-900 transition border border-white/20 shadow-inner">
-                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs cursor-pointer" onclick="triggerSearch()"></i>
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اخبار و پرونده‌ها..." class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-10 pl-4 text-xs focus:outline-none border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs"></i>
                 </div>
-                <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته" class="glass-tab px-3 rounded-xl text-xs flex items-center justify-center transition text-white shadow">
-                    <i class="fa-solid fa-earth-americas"></i>
-                </button>
             </div>
             <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
 
-        <!-- تب‌های دسته‌بندی بالای اخبار -->
+        <!-- تب‌های دسته‌بندی اخبار -->
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar border-t border-white/10 py-2"></div>
     </header>
-
-    <!-- مودال اعلان‌ها -->
-    <div id="notificationsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl max-h-[80vh] overflow-y-auto space-y-3">
-            <button onclick="closeNotificationsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
-            <h3 class="font-bold text-xs text-[#c51b24] flex items-center"><i class="fa-solid fa-bell ml-1.5"></i> آخرین اخبار و اعلان‌های فوری</h3>
-            <div id="notificationsListContainer" class="space-y-2 text-xs">
-                <p class="text-center text-slate-400 py-4">در حال دریافت اعلان‌ها...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- مودال راهنمای نصب -->
-    <div id="installGuideModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
-            <button onclick="closeInstallGuide()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
-            <h3 class="font-bold text-sm text-[#c51b24]"><i class="fa-solid fa-cloud-arrow-down ml-1"></i> نصب مینی‌اپ میزان</h3>
-            <p class="text-[11px] leading-relaxed opacity-90">برای استفاده مثل یک اپلیکیشن واقعی:</p>
-            <div class="bg-black/30 p-3 rounded-2xl space-y-2 text-[11px] border border-white/20">
-                <p><strong>اندروید:</strong> منوی مرورگر را باز کرده و گزینه <span class="text-red-500 font-bold">«افزودن به صفحه اصلی»</span> را انتخاب کنید.</p>
-                <p class="border-t border-white/20 pt-2"><strong>آیفون:</strong> در سافاری دکمه اشتراک‌گذاری را زده و <span class="text-red-500 font-bold">«Add to Home Screen»</span> را انتخاب کنید.</p>
-            </div>
-            <button onclick="closeInstallGuide()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">متوجه شدم</button>
-        </div>
-    </div>
 
     <!-- بدنه اصلی مینی‌اپ -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
@@ -184,20 +139,22 @@
             <div id="newsListContainer" class="space-y-3">
                 <div class="text-center py-10 text-slate-400">
                     <i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i>
-                    <p>در حال بارگذاری جدیدترین اخبار...</p>
+                    <p>در حال دریافت جدیدترین اخبار...</p>
                 </div>
             </div>
         </section>
 
-        <!-- تب پخش زنده (تلویزیون اینترنتی چندکاناله اصلاح‌شده) -->
+        <!-- تب پخش زنده (بدون کادر اضافی + دکمه تماشای خارجی مجزا) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
                     <video id="liveStreamVideo" class="w-full h-full object-contain" controls autoplay playsinline></video>
                 </div>
-                <div class="p-1 space-y-1 text-center">
+                <div class="p-1 space-y-2 text-center">
                     <h3 id="liveStreamTitle" class="font-bold text-xs text-red-500">پخش زنده سراسری</h3>
-                    <p id="liveStreamDesc" class="text-[10px] opacity-80">در حال پخش از سرور میزان</p>
+                    <a id="externalStreamBtn" href="#" target="_blank" class="inline-block bg-red-600/20 text-red-400 border border-red-500/30 px-4 py-1.5 rounded-xl text-[10px] font-bold transition hover:bg-red-600 hover:text-white">
+                        <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای مستقیم در پلیر خارجی
+                    </a>
                 </div>
             </div>
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
@@ -205,44 +162,34 @@
 
         <!-- تب توییتر -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-3 flex items-center">
-                <i class="fa-solid fa-hashtag ml-1.5 text-sm"></i> تایم‌لاین رسمی خبرگزاری میزان (X)
-            </h2>
+            <h2 class="font-bold text-xs mb-3 flex items-center"><i class="fa-solid fa-hashtag ml-1.5"></i> تایم‌لاین رسمی خبرگزاری میزان (X)</h2>
             <div id="twitterFeedContainer" class="space-y-3"></div>
         </section>
 
         <!-- تب ذخیره‌شده‌ها -->
         <section id="bookmarks-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-2 flex items-center">
-                <i class="fa-solid fa-bookmark ml-1.5 text-red-600"></i> اخبار ذخیره‌شده
-            </h2>
+            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-bookmark ml-1.5 text-red-600"></i> اخبار ذخیره‌شده</h2>
             <div id="bookmarksListContainer" class="space-y-3"></div>
         </section>
 
         <!-- تب سامانه‌های قضایی -->
         <section id="legal-tab" class="page-section hidden">
-            <h2 class="font-bold text-xs mb-3 flex items-center">
-                <i class="fa-solid fa-scale-balanced ml-1.5 text-red-600"></i> سامانه‌های الکترونیک قضایی
-            </h2>
+            <h2 class="font-bold text-xs mb-3 flex items-center"><i class="fa-solid fa-scale-balanced ml-1.5 text-red-600"></i> سامانه‌های الکترونیک قضایی</h2>
             <div id="legalSystemsContainer" class="space-y-3"></div>
         </section>
 
         <!-- تب پرونده‌های ویژه -->
         <section id="files-tab" class="page-section hidden">
-            <h2 class="font-bold text-xs mb-3 flex items-center">
-                <i class="fa-solid fa-folder-open ml-1.5 text-red-600"></i> پرونده‌های ویژه و مستندات
-            </h2>
+            <h2 class="font-bold text-xs mb-3 flex items-center"><i class="fa-solid fa-folder-open ml-1.5 text-red-600"></i> پرونده‌های ویژه و مستندات</h2>
             <div id="filesContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب مشاوره وکیل آنلاین -->
+        <!-- تب مشاوره وکیل آنلاین (دارای سیستم ضد اسپم) -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
             <div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="font-bold text-xs text-red-600 flex items-center">
-                        <i class="fa-solid fa-user-tie ml-1.5"></i> پرسش از وکیل آنلاین
-                    </h2>
-                    <span id="pendingBadge" class="bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 text-[10px] px-2.5 py-1 rounded-full font-bold">۰ سوال در حال بررسی</span>
+                    <h2 class="font-bold text-xs text-red-600 flex items-center"><i class="fa-solid fa-user-tie ml-1.5"></i> پرسش از وکیل آنلاین</h2>
+                    <span id="pendingBadge" class="bg-amber-100 text-amber-700 text-[10px] px-2.5 py-1 rounded-full font-bold">۰ سوال در حال بررسی</span>
                 </div>
                 <textarea id="questionInput" placeholder="سوال حقوقی خود را بنویسید..." class="w-full bg-black/20 rounded-xl p-3 text-xs focus:outline-none h-24 mb-2 resize-none border border-white/10"></textarea>
                 <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-[#c51b24] hover:bg-red-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow">ارسال سوال</button>
@@ -252,117 +199,62 @@
                 <div id="officialMessagesContainer" class="space-y-3"></div>
             </div>
         </section>
-
-        <!-- تب جستجو -->
-        <section id="search-tab" class="page-section hidden">
-            <h2 class="font-bold text-xs mb-3 text-red-600">نتایج جستجو</h2>
-            <div id="searchResultsContainer" class="space-y-3"></div>
-        </section>
     </main>
 
-    <!-- مودال نمایش کامل خبر -->
+    <!-- مودال نمایش خبر -->
     <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
-            <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
-            <div class="flex justify-between items-center mb-2">
-                <span id="modalCategory" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded font-bold shadow-sm">دسته‌بندی</span>
-                <div class="flex items-center space-x-1.5 space-x-reverse">
-                    <button onclick="toggleBookmarkCurrentNews()" id="modalBookmarkBtn" class="text-xs bg-black/30 px-2.5 py-1 rounded-xl transition border border-white/20 shadow-sm" title="ذخیره خبر"><i class="fa-regular fa-bookmark"></i></button>
-                    <button onclick="toggleReadingMode()" class="text-xs bg-black/30 hover:bg-white/20 px-2.5 py-1 rounded-xl font-medium transition border border-white/20 shadow-sm" title="حالت مطالعه"><i class="fa-solid fa-book-open"></i></button>
-                </div>
-            </div>
-            <img id="modalImg" src="" loading="lazy" class="w-full h-36 object-cover rounded-2xl mb-3 shadow-md" alt="">
+        <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400"><i class="fa-solid fa-xmark text-base"></i></button>
+            <span id="modalCategory" class="bg-red-100 text-red-700 text-[10px] px-2.5 py-0.5 rounded font-bold">دسته‌بندی</span>
+            <img id="modalImg" src="" loading="lazy" class="w-full h-36 object-cover rounded-2xl my-3 shadow-md" alt="">
             <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
-            <p id="modalSummary" class="text-[11px] mt-2 leading-relaxed whitespace-pre-line opacity-90">خلاصه کامل...</p>
+            <p id="modalSummary" class="text-[11px] mt-2 leading-relaxed opacity-90">خلاصه...</p>
             <div class="flex space-x-2 space-x-reverse mt-4">
-                <a id="modalLink" href="#" target="_blank" class="flex-grow bg-[#c51b24] hover:bg-red-700 text-white text-center py-2.5 rounded-xl text-xs font-bold transition shadow">سایت میزان</a>
-                <button onclick="shareCurrentNews()" class="bg-black/30 hover:bg-white/20 px-3 py-2.5 rounded-xl text-xs transition shadow border border-white/20" title="اشتراک‌گذاری"><i class="fa-solid fa-share-nodes"></i></button>
+                <a id="modalLink" href="#" target="_blank" class="flex-grow bg-[#c51b24] text-white text-center py-2.5 rounded-xl text-xs font-bold shadow">سایت میزان</a>
             </div>
-        </div>
-    </div>
-
-    <!-- مودال جستجوی پیشرفته -->
-    <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl">
-            <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
-            <h3 class="font-bold text-sm text-[#c51b24] mb-3"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته کل سایت</h3>
-            <input type="text" id="advSearchInput" placeholder="جستجو در آرشیو..." class="w-full bg-black/30 rounded-xl px-3 py-2.5 text-xs mb-3 focus:outline-none border border-white/20 shadow-inner" onkeydown="if(event.key==='Enter') executeAdvancedSearch()">
-            <button onclick="executeAdvancedSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold mb-3 shadow">جستجوی جامع</button>
-            <div id="advSearchResults" class="max-h-60 overflow-y-auto space-y-2 text-xs"></div>
         </div>
     </div>
 
     <!-- ناوبری پایین صفحه -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
-        <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1 font-bold">
-            <i class="fa-solid fa-newspaper text-sm"></i>
-            <span class="text-[8px] mt-1">اخبار</span>
-        </button>
-        <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1">
-            <i class="fa-solid fa-tower-broadcast text-sm"></i>
-            <span class="text-[8px] mt-1">پخش زنده</span>
-        </button>
-        <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1">
-            <i class="fa-solid fa-hashtag text-sm"></i>
-            <span class="text-[8px] mt-1">توییتر</span>
-        </button>
-        <button onclick="switchTab('bookmarks-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1">
-            <i class="fa-solid fa-bookmark text-sm"></i>
-            <span class="text-[8px] mt-1">ذخیره</span>
-        </button>
-        <button onclick="switchTab('files-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1">
-            <i class="fa-solid fa-folder-open text-sm"></i>
-            <span class="text-[8px] mt-1">پرونده‌ها</span>
-        </button>
-        <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1">
-            <i class="fa-solid fa-scale-balanced text-sm"></i>
-            <span class="text-[8px] mt-1">سامانه‌ها</span>
-        </button>
-        <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1">
-            <i class="fa-solid fa-user-tie text-sm"></i>
-            <span class="text-[8px] mt-1">مشاور</span>
-        </button>
+        <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-red-600 transition flex-1 font-bold"><i class="fa-solid fa-newspaper text-sm"></i><span class="text-[8px] mt-1">اخبار</span></button>
+        <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-tower-broadcast text-sm"></i><span class="text-[8px] mt-1">پخش زنده</span></button>
+        <button onclick="switchTab('twitter-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-hashtag text-sm"></i><span class="text-[8px] mt-1">توییتر</span></button>
+        <button onclick="switchTab('bookmarks-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-bookmark text-sm"></i><span class="text-[8px] mt-1">ذخیره</span></button>
+        <button onclick="switchTab('files-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-folder-open text-sm"></i><span class="text-[8px] mt-1">پرونده‌ها</span></button>
+        <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-scale-balanced text-sm"></i><span class="text-[8px] mt-1">سامانه‌ها</span></button>
+        <button onclick="switchTab('lawyer-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-user-tie text-sm"></i><span class="text-[8px] mt-1">مشاور</span></button>
     </nav>
 
-    <!-- جاوااسکریپت و منطق اجرایی -->
+    <!-- اسکریپت و منطق اجرایی -->
     <script>
         let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [], livestream: [] };
         let currentCategory = 'all';
         let currentSelectedNews = null;
         let activeHlsPlayer = null;
 
-        // بروزرسانی تاریخ و ساعت
         function updateDateTime() {
             const now = new Date();
             const calElem = document.getElementById('headerCalendarWidget');
-            const persianDate = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
-            if(calElem) calElem.innerText = persianDate + " | " + now.toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
+            if(calElem) calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' }) + " | " + now.toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
         }
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // دریافت آنلاین آب‌وهوای واقعی تهران از API معتبر
         async function fetchTehranWeather() {
             try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6892&current_weather=true');
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current_weather=true');
                 const data = await res.json();
                 if (data && data.current_weather) {
-                    const temp = Math.round(data.current_weather.temperature);
-                    const weatherElem = document.getElementById('headerWeatherWidget');
-                    if (weatherElem) weatherElem.innerText = `تهران ${temp}°C`;
+                    document.getElementById('headerWeatherWidget').innerText = `تهران ${Math.round(data.current_weather.temperature)}°C`;
                 }
             } catch(e) {
-                const weatherElem = document.getElementById('headerWeatherWidget');
-                if (weatherElem) weatherElem.innerText = `تهران ۲۲°C`;
+                document.getElementById('headerWeatherWidget').innerText = `تهران ۲۳°C`;
             }
         }
         fetchTehranWeather();
 
         window.addEventListener('DOMContentLoaded', () => {
-            const savedFont = localStorage.getItem('mizan_font');
-            if (savedFont) document.documentElement.style.setProperty('--selected-font', savedFont);
-            if (localStorage.getItem('mizan_theme') === 'dark') applyThemeUI(true);
-            
             initApp(true);
         });
 
@@ -371,7 +263,6 @@
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 appData = await response.json();
 
-                // مرتب‌سازی اخبار بر اساس جدیدترین تاریخ انتشار
                 if (appData.news && Array.isArray(appData.news)) {
                     appData.news.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
                 }
@@ -389,26 +280,6 @@
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
         }
 
-        function toggleSettingsMenu(event) {
-            if(event) event.stopPropagation();
-            document.getElementById('settingsDropdown').classList.toggle('hidden');
-        }
-
-        function changeFontFamily(fontName) {
-            document.documentElement.style.setProperty('--selected-font', fontName);
-            localStorage.setItem('mizan_font', fontName);
-            document.getElementById('settingsDropdown').classList.add('hidden');
-        }
-
-        function resetToDefaultSettings() {
-            localStorage.removeItem('mizan_theme');
-            localStorage.removeItem('mizan_font');
-            document.documentElement.style.removeProperty('--selected-font');
-            applyThemeUI(false);
-            document.getElementById('settingsDropdown').classList.add('hidden');
-            alert('تنظیمات به حالت اولیه بازنشانی شد.');
-        }
-
         function setupInitialView() {
             renderTabs();
             renderNews();
@@ -420,7 +291,6 @@
             renderLiveChannels();
         }
 
-        // بخش پخش زنده داخلی با HLS بدون کادر اضافی
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -443,10 +313,10 @@
         function playSelectedStream(stream) {
             const videoElem = document.getElementById('liveStreamVideo');
             const titleElem = document.getElementById('liveStreamTitle');
-            const descElem = document.getElementById('liveStreamDesc');
+            const extBtn = document.getElementById('externalStreamBtn');
 
             if(titleElem) titleElem.innerText = stream.title;
-            if(descElem) descElem.innerText = stream.description || '';
+            if(extBtn) extBtn.href = stream.url;
 
             if (videoElem && stream.url) {
                 if (activeHlsPlayer) {
@@ -501,7 +371,7 @@
 
             if (!allNews.length) {
                 featuredContainer.innerHTML = '';
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs font-medium">هیچ خبری در این دسته‌بندی ثبت نشده است.</p>';
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs font-medium">هیچ خبری ثبت نشده است.</p>';
                 return;
             }
 
@@ -512,7 +382,7 @@
                 <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block ultra-glass rounded-2xl overflow-hidden shadow-sm border border-red-500/50 cursor-pointer">
                     <img src="${featuredImg}" loading="lazy" class="w-full h-44 object-cover" alt="">
                     <div class="p-3.5">
-                        <span class="bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300 text-[10px] px-2.5 py-0.5 rounded-full font-bold">خبر ویژه</span>
+                        <span class="bg-red-100 text-red-600 text-[10px] px-2.5 py-0.5 rounded-full font-bold">خبر ویژه</span>
                         <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
                         <p class="text-[11px] opacity-90 mt-1 line-clamp-2">${firstNews.summary || ''}</p>
                     </div>
@@ -531,16 +401,8 @@
             const container = document.getElementById('twitterFeedContainer');
             if (!container) return;
             const tweets = appData.twitter || [];
-            if (!tweets.length) {
-                container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">پستی یافت نشد.</p>';
-                return;
-            }
-            container.innerHTML = tweets.map(t => `
-                <div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15 space-y-2">
-                    <div class="font-bold text-xs text-red-500">${t.author_name || 'خبرگزاری میزان'}</div>
-                    <p class="text-[11px] opacity-95 leading-relaxed">${t.tweet_text || ''}</p>
-                </div>
-            `).join('');
+            if (!tweets.length) { container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">پستی یافت نشد.</p>'; return; }
+            container.innerHTML = tweets.map(t => `<div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15 space-y-2"><div class="font-bold text-xs text-red-500">${t.author_name || 'خبرگزاری میزان'}</div><p class="text-[11px] opacity-95">${t.tweet_text || ''}</p></div>`).join('');
         }
 
         function getLocalBookmarks() {
@@ -551,13 +413,8 @@
             if (!currentSelectedNews) return;
             let bookmarks = getLocalBookmarks();
             const index = bookmarks.findIndex(b => b.link === currentSelectedNews.link);
-            if (index > -1) {
-                bookmarks.splice(index, 1);
-                alert('از ذخیره‌شده‌ها حذف شد.');
-            } else {
-                bookmarks.push(currentSelectedNews);
-                alert('خبر با موفقیت ذخیره شد.');
-            }
+            if (index > -1) { bookmarks.splice(index, 1); alert('حذف شد.'); }
+            else { bookmarks.push(currentSelectedNews); alert('ذخیره شد.'); }
             localStorage.setItem('mizan_bookmarks', JSON.stringify(bookmarks));
             renderBookmarks();
         }
@@ -566,67 +423,35 @@
             const container = document.getElementById('bookmarksListContainer');
             if(!container) return;
             let bookmarks = getLocalBookmarks();
-            if (!bookmarks.length) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری ذخیره نشده است.</p>';
-                return;
-            }
-            container.innerHTML = bookmarks.map(item => `
-                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="ultra-glass p-3.5 rounded-2xl border border-white/15 cursor-pointer">
-                    <h3 class="font-bold text-xs">${item.title}</h3>
-                </div>
-            `).join('');
+            if (!bookmarks.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">خالی است.</p>'; return; }
+            container.innerHTML = bookmarks.map(item => `<div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="ultra-glass p-3.5 rounded-2xl border border-white/15 cursor-pointer"><h3 class="font-bold text-xs">${item.title}</h3></div>`).join('');
         }
 
         function renderLegalSystems() {
             const container = document.getElementById('legalSystemsContainer');
             if (!container || !appData.legalSystems) return;
-            container.innerHTML = appData.legalSystems.map(sys => `
-                <div class="ultra-glass p-4 rounded-2xl border border-white/15 flex items-center justify-between">
-                    <div><h3 class="font-bold text-xs text-red-500">${sys.title}</h3><p class="text-[11px] opacity-80 mt-0.5">${sys.description}</p></div>
-                    <a href="${sys.url}" target="_blank" class="bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold transition border border-red-500/30">ورود</a>
-                </div>
-            `).join('');
+            container.innerHTML = appData.legalSystems.map(sys => `<div class="ultra-glass p-4 rounded-2xl border border-white/15 flex items-center justify-between"><div><h3 class="font-bold text-xs text-red-500">${sys.title}</h3><p class="text-[11px] opacity-80">${sys.description}</p></div><a href="${sys.url}" target="_blank" class="bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold">ورود</a></div>`).join('');
         }
 
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             if (!container) return;
             const filesList = appData.files || [];
-            if (!filesList.length) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>';
-                return;
-            }
-            container.innerHTML = filesList.map(file => `
-                <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
-                    ${file.image ? `<img src="${file.image}" loading="lazy" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
-                    <h3 class="font-bold text-sm text-red-500">${file.title}</h3>
-                    <p class="text-[11px] opacity-90 leading-relaxed">${file.description}</p>
-                    ${file.url ? `<a href="${file.url}" target="_blank" class="block text-center bg-red-500/20 text-red-400 py-2 rounded-xl text-xs font-bold transition">مشاهده پرونده</a>` : ''}
-                </div>
-            `).join('');
+            if (!filesList.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">خالی است.</p>'; return; }
+            container.innerHTML = filesList.map(file => `<div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">${file.image ? `<img src="${file.image}" loading="lazy" class="w-full h-40 object-cover rounded-xl" alt="">` : ''}<h3 class="font-bold text-sm text-red-500">${file.title}</h3><p class="text-[11px] opacity-90">${file.description}</p>${file.url ? `<a href="${file.url}" target="_blank" class="block text-center bg-red-500/20 text-red-400 py-2 rounded-xl text-xs font-bold">مشاهده</a>` : ''}</div>`).join('');
         }
 
         function renderOfficialMessages() {
             const container = document.getElementById('officialMessagesContainer');
             const badge = document.getElementById('pendingBadge');
             if (!container || !appData.faq) return;
-            
             const answeredFaq = appData.faq.filter(item => item.answer && !item.answer.includes('در صف بررسی'));
             const pendingFaq = appData.faq.filter(item => !item.answer || item.answer.includes('در صف بررسی'));
-            
             if (badge) badge.innerText = `${pendingFaq.length} سوال در حال بررسی`;
-            if (!answeredFaq.length) {
-                container.innerHTML = '<p class="text-[11px] text-slate-400">پاسخ برگزیده‌ای ثبت نشده است.</p>';
-                return;
-            }
-            container.innerHTML = answeredFaq.map(msg => `
-                <div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-1">
-                    <h4 class="font-bold text-xs text-red-500">سوال: ${msg.question}</h4>
-                    <p class="text-[11px] opacity-90">پاسخ: ${msg.answer}</p>
-                </div>
-            `).join('');
+            container.innerHTML = answeredFaq.map(msg => `<div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-1"><h4 class="font-bold text-xs text-red-500">سوال: ${msg.question}</h4><p class="text-[11px] opacity-90">پاسخ: ${msg.answer}</p></div>`).join('');
         }
 
+        // سیستم ضد اسپم و ارسال سوال
         async function submitQuestion() {
             const q = document.getElementById('questionInput').value.trim();
             const submitBtn = document.getElementById('submitQuestionBtn');
@@ -640,7 +465,7 @@
                     alert('سوال با موفقیت ثبت شد.');
                     document.getElementById('questionInput').value = '';
                     initApp(true);
-                } else { alert('خطا در ثبت سوال.'); }
+                } else { alert(result.message || 'خطا در ثبت سوال.'); }
             } catch (err) { alert('خطا در ارتباط با سرور.'); }
             finally {
                 if(submitBtn) { submitBtn.disabled = false; submitBtn.innerText = 'ارسال سوال'; }
@@ -658,12 +483,6 @@
         }
 
         function closeNewsModal() { document.getElementById('newsModal').classList.add('hidden'); }
-        function toggleReadingMode() { document.getElementById('modalCardContainer').classList.toggle('reading-mode-active'); }
-        function shareCurrentNews() {
-            if (!currentSelectedNews) return;
-            navigator.clipboard.writeText(currentSelectedNews.link);
-            alert('لینک خبر کپی شد.');
-        }
 
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
@@ -671,59 +490,22 @@
             const q = query.trim().toLowerCase();
             if (!q) { box.classList.add('hidden'); box.innerHTML = ''; return; }
             const matches = (appData.news || []).filter(n => n.title.toLowerCase().includes(q)).slice(0, 4);
-            if (!matches.length) { box.innerHTML = '<div class="p-2 text-center">موردی یافت نشد</div>'; box.classList.remove('hidden'); return; }
             box.innerHTML = matches.map(m => `<div onclick='openNewsModal(${JSON.stringify(m).replace(/'/g, "&apos;")}); document.getElementById("liveSuggestionsBox").classList.add("hidden");' class="p-2 hover:bg-white/20 rounded-lg cursor-pointer"><div class="font-bold line-clamp-1">${m.title}</div></div>`).join('');
             box.classList.remove('hidden');
         }
 
-        function triggerSearch() {
-            const query = document.getElementById('searchInput').value;
-            if(!query.trim()) return;
-            switchTab('search-tab');
-            const container = document.getElementById('searchResultsContainer');
-            const matches = (appData.news || []).filter(n => n.title.toLowerCase().includes(query.toLowerCase()));
-            container.innerHTML = matches.length ? matches.map(m => `<a href="${m.link}" target="_blank" class="block ultra-glass p-3 rounded-xl mb-2 font-bold">${m.title}</a>`).join('') : '<p class="text-center py-4">موردی یافت نشد.</p>';
-        }
-
-        function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
-        function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
-        function executeAdvancedSearch() {
-            const query = document.getElementById('advSearchInput').value.toLowerCase();
-            const resultsBox = document.getElementById('advSearchResults');
-            const matches = (appData.news || []).filter(n => n.title.toLowerCase().includes(query));
-            resultsBox.innerHTML = matches.length ? matches.map(m => `<a href="${m.link}" target="_blank" class="block ultra-glass p-2.5 rounded-xl mb-1"><strong>${m.title}</strong></a>`).join('') : '<p class="text-center py-4">موردی یافت نشد.</p>';
-        }
-
-        function openNotificationsModal() { document.getElementById('notificationsModal').classList.remove('hidden'); }
-        function closeNotificationsModal() { document.getElementById('notificationsModal').classList.add('hidden'); }
-        function showInstallGuide() { document.getElementById('installGuideModal').classList.remove('hidden'); }
-        function closeInstallGuide() { document.getElementById('installGuideModal').classList.add('hidden'); }
-
-        let isDarkTheme = false;
         function toggleTheme() {
-            isDarkTheme = !isDarkTheme;
-            localStorage.setItem('mizan_theme', isDarkTheme ? 'dark' : 'light');
-            applyThemeUI(isDarkTheme);
-        }
-
-        function applyThemeUI(dark) {
-            isDarkTheme = dark;
-            if (dark) {
-                document.body.className = "bg-slate-950 text-slate-100 dark min-h-screen flex flex-col text-sm relative";
-                document.documentElement.classList.add('dark');
-            } else {
-                document.body.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col text-sm relative";
-                document.documentElement.classList.remove('dark');
-            }
+            const isDark = document.documentElement.classList.toggle('dark');
+            document.body.classList.toggle('dark', isDark);
+            localStorage.setItem('mizan_theme', isDark ? 'dark' : 'light');
         }
 
         function switchTab(sectionId, btn) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
-            const target = document.getElementById(sectionId);
-            if(target) target.classList.remove('hidden');
+            document.getElementById(sectionId).classList.remove('hidden');
             if (btn) {
                 document.querySelectorAll('nav button').forEach(b => b.className = "nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1");
-                btn.className = "nav-btn flex flex-col items-center text-[#c51b24] dark:text-red-400 transition flex-1 font-bold";
+                btn.className = "nav-btn flex flex-col items-center text-red-600 transition flex-1 font-bold";
             }
             window.scrollTo(0, 0);
         }

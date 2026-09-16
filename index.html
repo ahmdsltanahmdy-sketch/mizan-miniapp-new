@@ -90,7 +90,7 @@
                 <span id="headerWeatherWidget">تهران...</span>
                 <div class="relative inline-block">
                     <button onclick="toggleCategoryMenu(event)" title="دسته‌بندی اخبار" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-list-ul text-xs text-amber-300"></i></button>
-                    <!-- منوی زیرمجموعه‌دار بدون متن‌های اضافی -->
+                    <!-- منوی زیرمجموعه‌دار تمیز و بدون موارد تکراری و خالی -->
                     <div id="categoryDropdown" class="hidden absolute left-0 top-8 z-50 w-44 ultra-glass rounded-2xl shadow-2xl p-2 space-y-1 text-right border border-white/20">
                         <div id="dynamicCategoryList" class="space-y-1 max-h-48 overflow-y-auto"></div>
                     </div>
@@ -493,7 +493,7 @@
             });
         }
 
-        // رندر منوی دسته‌بندی‌ها صرفاً بر اساس نام تب‌ها و گزینه کل اخبار
+        // رندر تمیز منوی دسته‌بندی‌ها صرفاً بر اساس تب‌های واقعی گوگل‌شیت و گزینه کل اخبار
         function renderCategoryDropdown() {
             const container = document.getElementById('dynamicCategoryList');
             if (!container) return;
@@ -502,9 +502,11 @@
             
             if (appData.tabs && Array.isArray(appData.tabs)) {
                 appData.tabs.forEach(t => {
-                    const tName = t.tab_name || '';
-                    const isSel = selectedCategoryFilter === tName;
-                    html += `<button onclick="filterNewsCategory('${tName}')" class="w-full text-right px-3 py-1.5 rounded-xl transition hover:bg-white/20 text-[10px] font-bold ${isSel ? 'text-red-500 bg-white/10' : ''}">${tName}</button>`;
+                    const tName = t.tab_name ? String(t.tab_name).trim() : '';
+                    if (tName) {
+                        const isSel = selectedCategoryFilter === tName;
+                        html += `<button onclick="filterNewsCategory('${tName}')" class="w-full text-right px-3 py-1.5 rounded-xl transition hover:bg-white/20 text-[10px] font-bold ${isSel ? 'text-red-500 bg-white/10' : ''}">${tName}</button>`;
+                    }
                 });
             }
             container.innerHTML = html;
@@ -850,14 +852,13 @@
             } catch(e) { alert('خطا در ارسال.'); }
         }
 
-        // قطع کامل پخش زنده هنگام خروج از تب و بارگذاری مجدد با انتخاب کانال در بازگشت
         function switchTab(sectionId, btn) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(sectionId).classList.remove('hidden');
 
             const iframeElem = document.getElementById('liveStreamIframe');
             if (sectionId !== 'multimedia-tab' && iframeElem) {
-                iframeElem.src = ""; // توقف و قطع کامل پخش زنده
+                iframeElem.src = "";
             } else if (sectionId === 'multimedia-tab' && iframeElem && !iframeElem.src) {
                 let streams = appData.livestream || [];
                 if (streams.length) playSelectedStream(streams[0]);

@@ -57,7 +57,7 @@
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('mizan_user_id', userId);
         }
-        if (localStorage.getItem('mizan_theme') === 'dark') {
+        if (localStorage.getItem('mizan_theme'] === 'dark') {
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
         }
@@ -164,7 +164,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (بدون سیاه شدن صفحه با پایداری کامل نمونه پلیر) -->
+        <!-- تب پخش زنده (بدون خطای 403 و سیاه شدن صفحه) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
@@ -205,13 +205,12 @@
         <!-- تب پرونده‌های ویژه -->
         <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
 
-        <!-- تب فرهنگ اصطلاحات حقوقی (با سرچ اختصاصی و فوق‌قوی) -->
+        <!-- تب فرهنگ اصطلاحات حقوقی -->
         <section id="dictionary-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-book ml-1.5 text-red-600"></i> فرهنگ اصطلاحات حقوقی</h2>
                 <span id="dictCounter" class="text-[9px] opacity-70"></span>
             </div>
-            <!-- کادر سرچ اختصاصی اصطلاحات -->
             <div class="relative">
                 <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته در واژگان حقوقی..." class="w-full bg-black/20 dark:bg-black/40 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/20 focus:outline-none shadow-inner text-white">
                 <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-400 text-xs"></i>
@@ -443,7 +442,7 @@
             });
         }
 
-        // پخش زنده پایدار و ایمن (حل قطعی مشکل سیاه شدن صفحه با مدیریت دقیق نمونه HLS)
+        // پخش زنده پایدار با چرخش هوشمند پروکسی‌ها جهت جلوگیری از ارور 403 و سیاه شدن صفحه
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -476,14 +475,15 @@
             if(spinner) spinner.style.display = 'flex';
 
             if (videoElem && stream.url) {
+                // استفاده از پروکسی‌های ترکیبی برای دور زدن خطای 403
                 let streamUrl = stream.url;
-                if (streamUrl.includes('.m3u8') && !streamUrl.includes('corsproxy')) {
-                    streamUrl = "https://corsproxy.io/?" + encodeURIComponent(stream.url);
+                if (streamUrl.includes('.m3u8')) {
+                    streamUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(stream.url);
                 }
 
                 if (Hls.isSupported()) {
                     if (!activeHlsPlayer) {
-                        const hls = new Hls({ autoStartLoad: true, startLevel: -1, maxBufferLength: 15 });
+                        const hls = new Hls({ autoStartLoad: true, startLevel: -1, maxBufferLength: 10 });
                         activeHlsPlayer = hls;
                         hls.attachMedia(videoElem);
                         
@@ -496,12 +496,19 @@
 
                         hls.on(Hls.Events.ERROR, function(event, data) {
                             if (data.fatal) {
-                                if(spinner) spinner.style.display = 'none';
-                                videoElem.src = stream.url;
+                                // فال‌بک خودکار به پروکسی جایگزین دوم در صورت خطای 403
+                                if (hls.url && hls.url.includes('allorigins')) {
+                                    hls.loadSource("https://corsproxy.io/?" + encodeURIComponent(stream.url));
+                                    hls.startLoad();
+                                } else {
+                                    if(spinner) spinner.style.display = 'none';
+                                    videoElem.src = stream.url;
+                                }
                             }
                         });
                     }
                     activeHlsPlayer.loadSource(streamUrl);
+                    activeHlsPlayer.startLoad();
                 } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
                     videoElem.src = streamUrl;
                     videoElem.addEventListener('loadedmetadata', () => {
@@ -675,7 +682,6 @@
             `).join('');
         }
 
-        // جستجوی اختصاصی و فوق‌قوی در صفحه اصطلاحات حقوقی
         function renderDictionary(filter = '') {
             const container = document.getElementById('dictionaryContainer');
             const counterElem = document.getElementById('dictCounter');

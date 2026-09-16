@@ -57,7 +57,7 @@
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('mizan_user_id', userId);
         }
-        if (localStorage.getItem('mizan_theme') === 'dark') {
+        if (localStorage.getItem('mizan_theme'] === 'dark') {
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
         }
@@ -289,9 +289,32 @@
         </div>
     </div>
 
-    <!-- منطق جاوااسکریپت -->
+    <!-- منطق جاوااسکریپت با سیستم فال‌بک داده‌های پیش‌فرض -->
     <script>
-        let appData = { news: [], tabs: [], legalSystems: [], files: [], faq: [], twitter: [], livestream: [], dictionary: [], infographics: [], podcasts: [] };
+        let fallbackData = {
+            news: [
+                { title: "آخرین تحولات حقوقی و قضایی کشور", summary: "مشروح اخبار و گزارش‌های حقوقی در پایگاه خبری میزان...", link: "https://mizanonline.ir", category: "قضایی", pubDate: new Date().toISOString() },
+                { title: "جزئیات جدید از خدمات الکترونیک قضایی", summary: "راهنمای استفاده از سامانه ثنا و خدمات نوین...", link: "https://mizanonline.ir", category: "حقوقی", pubDate: new Date().toISOString() }
+            ],
+            tabs: [{ tab_name: "سراسری" }, { tab_name: "حقوقی" }],
+            legalSystems: [
+                { title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" },
+                { title: "درگاه ملی قوه قضاییه", description: "خدمات الکترونیک قضایی", url: "https://adliran.ir" }
+            ],
+            files: [{ title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", url: "#" }],
+            faq: [{ question: "چگونه ابلاغیه خود را مشاهده کنیم؟", answer: "از طریق سامانه ثنا با کد ملی و رمز شخصی." }],
+            twitter: [{ author_name: "خبرگزاری میزان", tweet_text: "آخرین بیانیه‌ها و اخبار رسمی قوه قضاییه در توییتر میزان." }],
+            livestream: [{ title: "شبکه خبر", url: "https://live-aburayhan1104.telewebion.net/ek/irinn/live/240p/index.m3u8", description: "پخش زنده شبکه خبر" }],
+            dictionary: [
+                { term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." },
+                { term: "فرجام‌خواهی", definition: "بررسی انطباق رای دادگاه با قانون در دیوان عالی کشور." },
+                { term: "قرار بازداشت موقت", definition: "حکمی برای حبس متهم در جرایم خاص تا زمان صدور رای نهایی." }
+            ],
+            infographics: [{ title: "مراحل ثبت دادخواست", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" }],
+            podcasts: [{ title: "بولتن صوتی حقوقی هفته", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }]
+        };
+
+        let appData = JSON.parse(localStorage.getItem('mizan_cache') || JSON.stringify(fallbackData));
         let activeHlsPlayer = null;
         let currentSelectedNews = null;
         let modalFontMultiplier = 0;
@@ -300,19 +323,6 @@
         let lastSubmitTime = 0;
 
         window.addEventListener('DOMContentLoaded', () => {
-            const cached = localStorage.getItem('mizan_cache');
-            if (cached) {
-                try {
-                    appData = JSON.parse(cached);
-                    renderAll();
-                } catch(e) {}
-            }
-            // فالبک فوری داده‌های نمونه برای جلوگیری از گیر کردن روی حالت بارگذاری
-            if (!appData.news.length) {
-                appData.news = [
-                    { title: "آخرین تحولات حقوقی و قضایی کشور", summary: "مشروح اخبار و گزارش‌های حقوقی در پایگاه خبری میزان...", link: "https://mizanonline.ir", category: "قضایی", pubDate: new Date().toISOString() }
-                ];
-            }
             renderAll();
             initApp();
             updateDateTime();
@@ -342,10 +352,7 @@
 
         async function initApp() {
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 6000); // تایم‌اوت 6 ثانیه‌ای برای جلوگیری از معطلی
-                const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime(), { signal: controller.signal });
-                clearTimeout(timeoutId);
+                const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 const newData = await response.json();
                 if (newData && newData.news && newData.news.length > 0) {
                     appData = newData;
@@ -356,7 +363,7 @@
                     renderAll();
                 }
             } catch (error) {
-                console.log("Using cached or demo data due to fetch limit.");
+                console.log("Using fallback/cached data.");
             }
         }
 
@@ -640,9 +647,10 @@
 
         function renderFiles() {
             const container = document.getElementById('filesContainer');
-            if (!container || !appData.files) return;
-            if (!appData.files.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>'; return; }
-            container.innerHTML = appData.files.map(f => `
+            if (!container) return;
+            let list = appData.files || [];
+            if (!list.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>'; return; }
+            container.innerHTML = list.map(f => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
                     ${f.image ? `<img src="${f.image}" loading="lazy" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
                     <h3 class="font-bold text-sm text-red-500">${f.title}</h3>
@@ -654,9 +662,10 @@
 
         function renderLegalSystems() {
             const container = document.getElementById('legalSystemsContainer');
-            if (!container || !appData.legalSystems) return;
-            if (!appData.legalSystems.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">سامانه‌ای ثبت نشده است.</p>'; return; }
-            container.innerHTML = appData.legalSystems.map(sys => `
+            if (!container) return;
+            let list = appData.legalSystems || [];
+            if (!list.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">سامانه‌ای ثبت نشده است.</p>'; return; }
+            container.innerHTML = list.map(sys => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 flex items-center justify-between">
                     <div><h3 class="font-bold text-xs text-red-500">${sys.title}</h3><p class="text-[11px] opacity-80">${sys.description}</p></div>
                     <a href="${sys.url}" target="_blank" class="bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold">ورود</a>
@@ -666,9 +675,10 @@
 
         function renderTwitterFeed() {
             const container = document.getElementById('twitterFeedContainer');
-            if (!container || !appData.twitter) return;
-            if (!appData.twitter.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پستی یافت نشد.</p>'; return; }
-            container.innerHTML = appData.twitter.map(t => `
+            if (!container) return;
+            let list = appData.twitter || [];
+            if (!list.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پستی یافت نشد.</p>'; return; }
+            container.innerHTML = list.map(t => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 space-y-2">
                     <div class="font-bold text-xs text-red-500">${t.author_name || 'خبرگزاری میزان'}</div>
                     <p class="text-[11px] opacity-95">${t.tweet_text || ''}</p>
@@ -678,8 +688,9 @@
 
         function renderOfficialMessages() {
             const container = document.getElementById('officialMessagesContainer');
-            if (!container || !appData.faq) return;
-            container.innerHTML = appData.faq.map(q => `
+            if (!container) return;
+            let list = appData.faq || [];
+            container.innerHTML = list.map(q => `
                 <div class="ultra-glass p-3 rounded-2xl space-y-1">
                     <h4 class="font-bold text-xs text-red-500">سوال: ${q.question}</h4>
                     <p class="text-[10px] opacity-90">پاسخ: ${q.answer}</p>
@@ -693,11 +704,7 @@
             const clearBtn = document.getElementById('clearDictBtn');
             if (!container) return;
 
-            let list = appData.dictionary || [
-                {term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان."},
-                {term: "فرجام‌خواهی", definition: "بررسی انطباق رای دادگاه با قانون در دیوان عالی کشور."}
-            ];
-
+            let list = appData.dictionary || [];
             const q = filter.trim().toLowerCase();
             if (q.length > 0) {
                 if(clearBtn) clearBtn.classList.remove('hidden');

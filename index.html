@@ -77,7 +77,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات کاملاً شیشه‌ای (Ultra Glass) -->
+        <!-- منوی تنظیمات شیشه‌ای -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نصب مینی‌اپ:</span>
@@ -169,7 +169,7 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده -->
+        <!-- تب پخش زنده (سوییچ آنی و بدون تاخیر) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
@@ -212,7 +212,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با آیکون صحیح شبکه ایکس) -->
+    <!-- ناوبری پایین صفحه با آیکون صحیح و برچسب "توییتر" -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-red-600 transition flex-1 font-bold"><i class="fa-solid fa-newspaper text-sm"></i><span class="text-[8px] mt-1">اخبار</span></button>
         <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-tower-broadcast text-sm"></i><span class="text-[8px] mt-1">پخش زنده</span></button>
@@ -325,7 +325,7 @@
             renderBookmarks();
         }
 
-        // پخش زنده پایدار داخل مینی‌اپ بدون چرخش طولانی
+        // سوییچ آنی و بدون تاخیر بین کانال‌های پخش زنده به همراه پخش خودکار فوری
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -342,7 +342,10 @@
                 </button>
             `).join('');
 
-            setupStreamSource(streams[0]);
+            // در بارگذاری اولیه، فقط کانال اول تنظیم شود تا کاربر به دلخواه پلی کند
+            if (!activeHlsPlayer) {
+                setupStreamSource(streams[0]);
+            }
         }
 
         function setupStreamSource(stream) {
@@ -365,10 +368,13 @@
                 }
 
                 if (Hls.isSupported()) {
-                    const hls = new Hls();
+                    const hls = new Hls({ autoStartLoad: true, startLevel: -1 });
                     activeHlsPlayer = hls;
                     hls.loadSource(streamUrl);
                     hls.attachMedia(videoElem);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        videoElem.play().catch(e => console.log("Autoplay restricted:", e));
+                    });
                     hls.on(Hls.Events.ERROR, function(event, data) {
                         if (data.fatal) {
                             videoElem.src = stream.url;
@@ -376,6 +382,9 @@
                     });
                 } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
                     videoElem.src = streamUrl;
+                    videoElem.addEventListener('loadedmetadata', () => {
+                        videoElem.play().catch(e => console.log("Autoplay restricted:", e));
+                    });
                 }
             }
         }
@@ -384,7 +393,7 @@
             setupStreamSource(stream);
             const videoElem = document.getElementById('liveStreamVideo');
             if(videoElem) {
-                videoElem.play().catch(e => console.log("Play restricted:", e));
+                videoElem.play().catch(e => console.log("Play action restricted:", e));
             }
         }
 

@@ -161,7 +161,7 @@
 
     <!-- بدنه اصلی مینی‌اپ -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
-        <!-- تب اخبار (با قابلیت اسکرول بی‌نهایت برای بارگذاری اخبار قدیمی‌تر) -->
+        <!-- تب اخبار -->
         <section id="news-tab" class="page-section">
             <div id="featuredNewsContainer" class="mb-4"></div>
             <div id="newsListContainer" class="space-y-3">
@@ -173,10 +173,15 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (پخش آنی و سوییچ سریع بین شبکه‌ها) -->
+        <!-- تب پخش زنده (بدون صفحه خاکستری، لودینگ حرفه‌ای و سوییچ آنی) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
-                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
+                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
+                    <!-- لودینگ حرفه‌ای پلیر -->
+                    <div id="videoLoadingSpinner" class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-10 text-white space-y-2">
+                        <i class="fa-solid fa-circle-notch fa-spin text-2xl text-red-500"></i>
+                        <span class="text-[10px] tracking-wide">در حال اتصال به پخش زنده...</span>
+                    </div>
                     <video id="liveStreamVideo" class="w-full h-full object-contain" controls playsinline></video>
                 </div>
                 <div class="p-1 flex items-center justify-between">
@@ -192,7 +197,7 @@
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
-        <!-- تب توییتر (با آیکون شبکه ایکس) -->
+        <!-- تب توییتر (با وکتور رسمی و متن کامل شبکه ایکس) -->
         <section id="twitter-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 flex items-center"><i class="fa-brands fa-x-twitter ml-1.5 text-sm"></i> تایم‌لاین رسمی خبرگزاری میزان (X)</h2>
             <div id="twitterFeedContainer" class="space-y-3"></div>
@@ -216,7 +221,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با آیکون صحیح و برچسب "توییتر") -->
+    <!-- ناوبری پایین صفحه (با وکتور رسمی و برچسب "توییتر") -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-1 flex justify-between items-center z-50 shadow-2xl">
         <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center text-red-600 transition flex-1 font-bold"><i class="fa-solid fa-newspaper text-sm"></i><span class="text-[8px] mt-1">اخبار</span></button>
         <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-1"><i class="fa-solid fa-tower-broadcast text-sm"></i><span class="text-[8px] mt-1">پخش زنده</span></button>
@@ -332,7 +337,6 @@
             renderBookmarks();
         }
 
-        // سیستم بارگذاری اخبار قدیمی‌تر هنگام اسکرول (Infinite Scroll)
         function setupInfiniteScroll() {
             window.addEventListener('scroll', () => {
                 const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -351,7 +355,7 @@
             });
         }
 
-        // پخش زنده آنی و بهینه‌سازی شده بدون تاخیر
+        // پخش زنده فوق‌سریع و بهینه‌سازی شده بدون لودینگ خاکستری طولانی
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -373,13 +377,15 @@
             }
         }
 
-        function setupStreamSource(stream, autoPlay = false) {
+        function setupStreamSource(stream, autoPlay = true) {
             const videoElem = document.getElementById('liveStreamVideo');
             const titleElem = document.getElementById('liveStreamTitle');
             const extBtn = document.getElementById('externalStreamBtn');
+            const spinner = document.getElementById('videoLoadingSpinner');
 
             if(titleElem) titleElem.innerText = stream.title;
             if(extBtn) extBtn.href = stream.url;
+            if(spinner) spinner.style.display = 'flex';
 
             if (videoElem && stream.url) {
                 if (activeHlsPlayer) {
@@ -397,23 +403,28 @@
                     activeHlsPlayer = hls;
                     hls.loadSource(streamUrl);
                     hls.attachMedia(videoElem);
+                    
                     hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        if(spinner) spinner.style.display = 'none';
                         if (autoPlay) {
                             videoElem.play().catch(e => console.log("Autoplay restricted:", e));
                         }
                     });
+
                     hls.on(Hls.Events.ERROR, function(event, data) {
                         if (data.fatal) {
+                            if(spinner) spinner.style.display = 'none';
                             videoElem.src = stream.url;
                         }
                     });
                 } else if (videoElem.canPlayType('application/vnd.apple.mpegurl')) {
                     videoElem.src = streamUrl;
-                    if (autoPlay) {
-                        videoElem.addEventListener('loadedmetadata', () => {
+                    videoElem.addEventListener('loadedmetadata', () => {
+                        if(spinner) spinner.style.display = 'none';
+                        if (autoPlay) {
                             videoElem.play().catch(e => console.log("Autoplay restricted:", e));
-                        });
-                    }
+                        }
+                    });
                 }
             }
         }

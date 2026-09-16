@@ -37,6 +37,8 @@
 
         .glass-tab { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
         .dark .glass-tab { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
+        .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
 
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
@@ -61,7 +63,7 @@
         }
     </script>
 
-    <!-- هدر اپلیکیشن -->
+    <!-- هدر اپلیکیشن همراه با منوی تنظیمات -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
         <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px]">
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -70,11 +72,42 @@
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">
                 <span id="headerWeatherWidget">تهران...</span>
-                <button onclick="manualRefresh()" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
+                <button onclick="manualRefresh()" title="بروزرسانی" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
+                <button onclick="toggleSettingsMenu(event)" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
+
+        <!-- منوی کشویی تنظیمات -->
+        <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">نصب مینی‌اپ:</span>
+                <button onclick="showInstallGuide(); document.getElementById('settingsDropdown').classList.add('hidden');" class="bg-amber-500 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold shadow">راهنمای نصب</button>
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">حالت نمایش:</span>
+                <button onclick="toggleTheme()" class="bg-white/20 px-3 py-1 rounded-xl font-medium border border-white/20"><i id="theme-icon" class="fa-solid fa-moon"></i> تیره / روشن</button>
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">قلم مینی‌اپ:</span>
+                <div class="space-x-1 space-x-reverse">
+                    <button onclick="changeFontFamily('Tahoma')" class="px-2 py-0.5 bg-white/20 rounded-lg">Tahoma</button>
+                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-0.5 bg-white/20 rounded-lg">وزیر</button>
+                </div>
+            </div>
+        </div>
+
         <div id="tabsContainer" class="max-w-md mx-auto px-4 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar py-2"></div>
     </header>
+
+    <!-- مودال راهنمای نصب -->
+    <div id="installGuideModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
+            <button onclick="closeInstallGuide()" class="absolute top-3 left-3 text-slate-400"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-sm text-[#c51b24]">نصب مینی‌اپ میزان</h3>
+            <p class="text-[11px] leading-relaxed opacity-90">منوی مرورگر را باز کرده و گزینه <span class="text-red-500 font-bold">«افزودن به صفحه اصلی»</span> را انتخاب کنید.</p>
+            <button onclick="closeInstallGuide()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold">متوجه شدم</button>
+        </div>
+    </div>
 
     <!-- بدنه اصلی مینی‌اپ -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
@@ -86,15 +119,12 @@
             </div>
         </section>
 
-        <!-- تب پخش زنده (بدون کادر اضافی و دارای منوی شبکه تلویزیونی زیر پلیر) -->
+        <!-- تب پخش زنده -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
-                <!-- پلیر ویدیو -->
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner flex items-center justify-center">
                     <video id="liveStreamVideo" class="w-full h-full object-contain" controls autoplay playsinline></video>
                 </div>
-                
-                <!-- اطلاعات کانال در حال پخش و دکمه تماشای خارجی -->
                 <div class="p-1 flex items-center justify-between">
                     <div>
                         <h3 id="liveStreamTitle" class="font-bold text-xs text-red-500">پخش زنده سراسری</h3>
@@ -105,35 +135,19 @@
                     </a>
                 </div>
             </div>
-
-            <!-- منوی انتخاب کانال‌ها به شکل شبکه تلویزیونی (در پایین پلیر) -->
-            <div class="space-y-2">
-                <h3 class="font-bold text-xs text-slate-700 dark:text-slate-300 px-1"><i class="fa-solid fa-tv ml-1 text-red-600"></i> انتخاب شبکه‌ها و کانال‌های پخش زنده</h3>
-                <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
-            </div>
+            <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
         <!-- تب توییتر -->
-        <section id="twitter-tab" class="page-section hidden space-y-3">
-            <div id="twitterFeedContainer" class="space-y-3"></div>
-        </section>
-
+        <section id="twitter-tab" class="page-section hidden space-y-3"><div id="twitterFeedContainer" class="space-y-3"></div></section>
         <!-- تب ذخیره‌شده‌ها -->
-        <section id="bookmarks-tab" class="page-section hidden space-y-3">
-            <div id="bookmarksListContainer" class="space-y-3"></div>
-        </section>
-
+        <section id="bookmarks-tab" class="page-section hidden space-y-3"><div id="bookmarksListContainer" class="space-y-3"></div></section>
         <!-- تب سامانه‌های قضایی -->
-        <section id="legal-tab" class="page-section hidden">
-            <div id="legalSystemsContainer" class="space-y-3"></div>
-        </section>
+        <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
+        <!-- تب پرونده‌ها -->
+        <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
 
-        <!-- تب پرونده‌های ویژه -->
-        <section id="files-tab" class="page-section hidden">
-            <div id="filesContainer" class="space-y-3"></div>
-        </section>
-
-        <!-- تب مشاوره وکیل آنلاین -->
+        <!-- تب وکیل آنلاین -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
             <div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15">
                 <h2 class="font-bold text-xs text-red-600 flex items-center mb-2"><i class="fa-solid fa-user-tie ml-1.5"></i> پرسش از وکیل آنلاین</h2>
@@ -162,7 +176,28 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initApp();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            fetchTehranWeather();
         });
+
+        function updateDateTime() {
+            const now = new Date();
+            const calElem = document.getElementById('headerCalendarWidget');
+            if(calElem) calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        async function fetchTehranWeather() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current_weather=true');
+                const data = await res.json();
+                if (data && data.current_weather) {
+                    document.getElementById('headerWeatherWidget').innerText = `تهران ${Math.round(data.current_weather.temperature)}°C`;
+                }
+            } catch(e) {
+                document.getElementById('headerWeatherWidget').innerText = `تهران ۲۳°C`;
+            }
+        }
 
         async function initApp() {
             try {
@@ -171,7 +206,36 @@
                 renderAll();
             } catch (error) {
                 console.error("Error loading data:", error);
+                document.getElementById('newsListContainer').innerHTML = '<p class="text-center text-red-500 py-8">خطا در بارگذاری اطلاعات از سرور.</p>';
             }
+        }
+
+        async function manualRefresh() {
+            const icon = document.getElementById('refreshIcon');
+            if(icon) icon.classList.add('fa-spin');
+            await initApp();
+            setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 600);
+        }
+
+        function toggleSettingsMenu(event) {
+            if(event) event.stopPropagation();
+            document.getElementById('settingsDropdown').classList.toggle('hidden');
+        }
+
+        function changeFontFamily(fontName) {
+            document.documentElement.style.setProperty('--selected-font', fontName);
+            localStorage.setItem('mizan_font', fontName);
+            document.getElementById('settingsDropdown').classList.add('hidden');
+        }
+
+        function showInstallGuide() { document.getElementById('installGuideModal').classList.remove('hidden'); }
+        function closeInstallGuide() { document.getElementById('installGuideModal').classList.add('hidden'); }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            document.body.classList.toggle('dark', isDark);
+            localStorage.setItem('mizan_theme', isDark ? 'dark' : 'light');
+            document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
         function renderAll() {
@@ -182,7 +246,6 @@
             renderLiveChannels();
         }
 
-        // بخش پخش زنده چندکاناله بدون کادر اضافی و با قابلیت پروکسی امن برای جلوگیری از خطای CORS
         function renderLiveChannels() {
             const container = document.getElementById('liveChannelsSelector');
             if (!container) return;
@@ -205,11 +268,9 @@
         function playSelectedStream(stream) {
             const videoElem = document.getElementById('liveStreamVideo');
             const titleElem = document.getElementById('liveStreamTitle');
-            const descElem = document.getElementById('liveStreamDesc');
             const extBtn = document.getElementById('externalStreamBtn');
 
             if(titleElem) titleElem.innerText = stream.title;
-            if(descElem) descElem.innerText = stream.description || '';
             if(extBtn) extBtn.href = stream.url;
 
             if (videoElem && stream.url) {
@@ -218,7 +279,6 @@
                     activeHlsPlayer = null;
                 }
 
-                // استفاده از پروکسی امن برای رد کردن محدودیت CORS سرورهای پخش زنده
                 let streamUrl = stream.url;
                 if (streamUrl.includes('.m3u8') && !streamUrl.includes('allorigins')) {
                     streamUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(stream.url);
@@ -250,8 +310,12 @@
         function renderNews() {
             const container = document.getElementById('newsListContainer');
             if (!container || !appData.news) return;
-            container.innerHTML = appData.news.slice(0, 10).map(n => `
-                <div class="ultra-glass p-3 rounded-2xl space-y-1">
+            if (!appData.news.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری یافت نشد.</p>';
+                return;
+            }
+            container.innerHTML = appData.news.slice(0, 15).map(n => `
+                <div class="ultra-glass p-3 rounded-2xl space-y-1 cursor-pointer">
                     <h3 class="font-bold text-xs">${n.title}</h3>
                     <p class="text-[10px] opacity-80">${n.summary || ''}</p>
                 </div>

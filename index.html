@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SIJT | مینی‌اپ خبری پیشرفته</title>
+    <title>SIJT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -155,7 +155,6 @@
                     <i class="fa-solid fa-earth-americas text-sm"></i>
                 </button>
             </div>
-            <!-- کادر پیشنهادات جستجوی آنی با موقعیت‌دهی کاملاً آزاد و عدم تداخل با هدر -->
             <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-full mt-1.5 ultra-glass rounded-2xl shadow-2xl z-[100] max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
     </header>
@@ -222,11 +221,17 @@
             <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
+        <!-- تب جدید سریال‌ها (با ظاهر دایره‌ای مشابه اینفوگرافیک و پخش داخل مینی‌اپ) -->
+        <section id="series-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-film ml-1.5 text-red-600"></i> سریال‌ها</h2>
+            <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
+        </section>
+
         <!-- تب ذخیره‌شده‌ها -->
         <section id="bookmarks-tab" class="page-section hidden space-y-3"><div id="bookmarksListContainer" class="space-y-3"></div></section>
     </main>
 
-    <!-- ناوبری پایین صفحه -->
+    <!-- ناوبری پایین صفحه (با اضافه شدن تب سریال در کنار اینفوگرافیک) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -235,6 +240,7 @@
         <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
         <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
         <button onclick="switchTab('infographics-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
+        <button onclick="switchTab('series-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
         <button onclick="switchTab('bookmarks-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bookmark text-sm mb-0.5"></i><span class="text-[8px]">ذخیره</span></button>
     </nav>
 
@@ -249,6 +255,17 @@
             <a id="downloadInfoBtn" href="#" target="_blank" download class="block bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold shadow transition hover:bg-red-700">
                 <i class="fa-solid fa-download ml-1.5"></i> دانلود تصویر اصلی
             </a>
+        </div>
+    </div>
+
+    <!-- مودال اختصاصی پخش سریال داخل مینی‌اپ -->
+    <div id="seriesModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+            <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 p-2 z-10"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 id="modalSeriesTitle" class="font-bold text-xs text-red-500 pt-1">پخش سریال</h3>
+            <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
+                <iframe id="seriesVideoIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+            </div>
         </div>
     </div>
 
@@ -271,6 +288,9 @@
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             infographics: [
                 { title: "مراحل ثبت دادخواست در دفاتر خدمات الکترونیک", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" }
+            ],
+            series: [
+                { title: "سریال آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www. aparat.com/v/embed/example" }
             ],
             podcasts: [{ title: "بولتن صوتی حقوقی هفته", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }]
         };
@@ -400,6 +420,7 @@
             renderBookmarks();
             renderDictionary();
             renderInfographics();
+            renderSeries();
             renderPodcasts();
         }
 
@@ -544,6 +565,40 @@
             document.getElementById('infographicModal').classList.add('hidden');
         }
 
+        // رندر بخش سریال‌ها (با ظاهر دایره‌ای مشابه اینفوگرافیک)
+        function renderSeries() {
+            const container = document.getElementById('seriesContainer');
+            if (!container) return;
+            let list = appData.series || [];
+            if (!list.length) { container.innerHTML = '<p class="text-center opacity-70 py-4 col-span-2">سریالی ثبت نشده است.</p>'; return; }
+            
+            container.innerHTML = list.map(ser => `
+                <div onclick='openSeriesModal(${JSON.stringify(ser).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 shadow-sm flex flex-col items-center text-center justify-between">
+                    <div class="w-24 h-24 rounded-full overflow-hidden bg-slate-900 border-2 border-red-500/40 flex items-center justify-center shadow-inner relative group">
+                        <img src="${ser.image}" loading="lazy" class="w-full h-full object-cover transition transform group-hover:scale-110" alt="">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-play text-white text-base"></i></div>
+                    </div>
+                    <h4 class="font-bold text-[11px] text-red-500 line-clamp-2">${ser.title}</h4>
+                </div>
+            `).join('');
+        }
+
+        function openSeriesModal(ser) {
+            document.getElementById('modalSeriesTitle').innerText = ser.title;
+            const iframe = document.getElementById('seriesVideoIframe');
+            let videoUrl = ser.url || '';
+            if (videoUrl.includes('aparat.com/v/')) {
+                videoUrl = videoUrl.replace('aparat.com/v/', 'aparat.com/v/embed/');
+            }
+            iframe.src = videoUrl;
+            document.getElementById('seriesModal').classList.remove('hidden');
+        }
+
+        function closeSeriesModal() {
+            document.getElementById('seriesModal').classList.add('hidden');
+            document.getElementById('seriesVideoIframe').src = ''; // توقف پخش ویدیو هنگام بستن مودال
+        }
+
         function renderPodcasts() {
             const container = document.getElementById('podcastsContainer');
             if (!container) return;
@@ -570,7 +625,6 @@
             let resultsHTML = '';
             let resultsCount = 0;
 
-            // 1. جستجو در اصطلاحات حقوقی
             let matchedDict = (appData.dictionary || []).filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q)).slice(0, 3);
             if (matchedDict.length > 0) {
                 resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10">اصطلاحات حقوقی</div>`;
@@ -583,7 +637,6 @@
                 resultsCount += matchedDict.length;
             }
 
-            // 2. جستجو در سامانه‌های قضایی
             let matchedSystems = (appData.legalSystems || []).filter(s => normalizeNumbers(s.title).includes(q) || normalizeNumbers(s.description).includes(q)).slice(0, 3);
             if (matchedSystems.length > 0) {
                 resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10 mt-1">سامانه‌های قضایی</div>`;
@@ -594,31 +647,6 @@
                     </a>
                 `).join('');
                 resultsCount += matchedSystems.length;
-            }
-
-            // 3. جستجو در پرونده‌های ویژه
-            let matchedFiles = (appData.files || []).filter(f => normalizeNumbers(f.title).includes(q) || normalizeNumbers(f.description).includes(q)).slice(0, 3);
-            if (matchedFiles.length > 0) {
-                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10 mt-1">پرونده‌های ویژه</div>`;
-                resultsHTML += matchedFiles.map(f => `
-                    <div onclick="switchTab('files-tab', document.querySelectorAll('nav button')[4]); document.getElementById('liveSuggestionsBox').classList.add('hidden');" class="p-2 hover:bg-white/20 rounded-lg cursor-pointer">
-                        <div class="font-bold text-[11px]">${f.title}</div>
-                        <div class="text-[9px] opacity-70 line-clamp-1">${f.description}</div>
-                    </div>
-                `).join('');
-                resultsCount += matchedFiles.length;
-            }
-
-            // 4. جستجو در پادکست‌ها
-            let matchedPodcasts = (appData.podcasts || []).filter(p => normalizeNumbers(p.title).includes(q)).slice(0, 3);
-            if (matchedPodcasts.length > 0) {
-                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10 mt-1">پادکست‌ها</div>`;
-                resultsHTML += matchedPodcasts.map(p => `
-                    <div onclick="switchTab('podcasts-tab', document.querySelectorAll('nav button')[3]); document.getElementById('liveSuggestionsBox').classList.add('hidden');" class="p-2 hover:bg-white/20 rounded-lg cursor-pointer">
-                        <div class="font-bold text-[11px]">${p.title}</div>
-                    </div>
-                `).join('');
-                resultsCount += matchedPodcasts.length;
             }
 
             if (resultsCount === 0) {

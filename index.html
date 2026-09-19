@@ -164,10 +164,9 @@
         <!-- تب سامانه‌های قضایی -->
         <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
 
-        <!-- تب وکیل آنلاین (مشاور) همراه با تاریخچه پرسش و پاسخ گرافیکی -->
+        <!-- تب وکیل آنلاین (مشاور) -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
             <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-4">
-                <!-- هدر بخش مشاوره -->
                 <div class="flex items-center justify-between border-b border-white/10 pb-3">
                     <div class="flex items-center space-x-3 space-x-reverse">
                         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-red-600/30">
@@ -183,7 +182,6 @@
                     </button>
                 </div>
 
-                <!-- فرم ارسال سوال -->
                 <div class="space-y-2.5">
                     <div class="relative">
                         <textarea id="questionInput" placeholder="سوال حقوقی خود را با جزئیات بنویسید..." class="w-full bg-black/30 dark:bg-black/50 rounded-2xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-24 resize-none border border-white/10 shadow-inner placeholder-slate-400"></textarea>
@@ -201,7 +199,6 @@
                     </button>
                 </div>
 
-                <!-- بخش نمایش لیست سوالات و پاسخ‌های وکیل -->
                 <div class="space-y-2 pt-2 border-t border-white/10">
                     <div class="flex items-center justify-between text-[11px] font-bold text-slate-400 px-1">
                         <span>تاریخچه گفتگوهای شما</span>
@@ -334,7 +331,7 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
             fetchTehranWeather();
-            loadUserFaqs(); // بارگذاری سوالات کاربر در بدو ورود
+            loadUserFaqs();
         });
 
         function normalizeNumbers(str) {
@@ -657,7 +654,6 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // ارسال سوال به گوگل‌اسکریپت
         async function submitQuestion() {
             const now = Date.now();
             if (now - lastSubmitTime < 10000) {
@@ -671,11 +667,10 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...`;
 
             try {
-                const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
-                const result = await res.json();
+                await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
                 document.getElementById('questionInput').value = '';
                 alert('سوال شما ثبت شد و به واحد حقوقی ارسال گردید.');
-                loadUserFaqs(); // بارگذاری مجدد لیست گفتگوها
+                loadUserFaqs();
             } catch(e) {
                 alert('سوال شما ثبت شد.');
                 document.getElementById('questionInput').value = '';
@@ -685,7 +680,6 @@
             }
         }
 
-        // دریافت و نمایش سوالات و پاسخ‌های کاربر از گوگل شیت
         async function loadUserFaqs() {
             const container = document.getElementById('userFaqsContainer');
             const badge = document.getElementById('faqCountBadge');
@@ -707,11 +701,10 @@
                         return;
                     }
 
-                    container.innerHTML = faqs.map((item, index) => `
+                    container.innerHTML = faqs.map((item) => `
                         <div class="bg-black/20 dark:bg-black/40 p-3 rounded-2xl border border-white/10 space-y-2.5">
-                            <!-- سوال کاربر -->
                             <div class="flex items-start space-x-2 space-x-reverse">
-                                <div class="w-6 h-6 rounded-full bg-red-600/30 text-red-400 flex items-center justify-center flex-shrink-0 text-[10px]">
+                                <div class="w-6 h-6 rounded-full bg-red-600/35 text-red-400 flex items-center justify-center flex-shrink-0 text-[10px]">
                                     <i class="fa-solid fa-user"></i>
                                 </div>
                                 <div class="flex-grow space-y-1">
@@ -719,12 +712,13 @@
                                         <span class="font-bold text-[10px] text-red-400">پرسش شما</span>
                                         <span class="text-[8px] opacity-60">${item.date || ''}</span>
                                     </div>
-                                    <p class="text-[11px] leading-relaxed opacity-90">${item.question}</p>
+                                    <p class="text-[11px] leading-relaxed ${item.hasAnswer ? 'opacity-90 font-normal' : 'text-amber-400/90 italic font-medium'}">
+                                        ${item.question}
+                                    </p>
                                 </div>
                             </div>
 
-                            <!-- پاسخ وکیل (در صورتی که ثبت شده باشد) -->
-                            ${item.answer ? `
+                            ${item.hasAnswer ? `
                                 <div class="flex items-start space-x-2 space-x-reverse bg-red-500/10 p-2.5 rounded-xl border border-red-500/20 mr-4">
                                     <div class="w-6 h-6 rounded-full bg-amber-500/30 text-amber-400 flex items-center justify-center flex-shrink-0 text-[10px]">
                                         <i class="fa-solid fa-user-tie"></i>
@@ -735,9 +729,9 @@
                                     </div>
                                 </div>
                             ` : `
-                                <div class="mr-4 flex items-center space-x-1.5 space-x-reverse text-[9px] text-amber-400/80 bg-amber-500/10 px-2.5 py-1 rounded-lg w-fit">
+                                <div class="mr-4 flex items-center space-x-1.5 space-x-reverse text-[9px] text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg w-fit">
                                     <i class="fa-solid fa-clock-rotate-left animate-spin text-[8px]"></i>
-                                    <span>در انتظار بررسی و پاسخ وکیل...</span>
+                                    <span>محرمانه - تا زمان پاسخ‌دهی وکیل پنهان است</span>
                                 </div>
                             `}
                         </div>

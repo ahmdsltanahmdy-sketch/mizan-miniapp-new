@@ -43,6 +43,22 @@
             background-position: center;
             background-repeat: no-repeat;
         }
+
+        /* استایل لوگوی شیشه‌ای، محو و بزرگ SIJT روی هدر */
+        .header-logo-sijt {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            color: rgba(255, 255, 255, 0.18);
+            pointer-events: none;
+            user-select: none;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
     </style>
 </head>
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
@@ -76,9 +92,12 @@
         }
     </script>
 
-    <!-- هدر اپلیکیشن -->
-    <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
-        <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px]">
+    <!-- هدر اپلیکیشن (به همراه لوگوی شیشه‌ای SIJT) -->
+    <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md relative overflow-hidden">
+        <!-- لوگوی بزرگ، شیشه‌ای و محو SIJT -->
+        <div class="header-logo-sijt">SIJT</div>
+
+        <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
             <div class="flex items-center space-x-2 space-x-reverse">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
                 <span id="headerCalendarWidget">تقویم...</span>
@@ -126,7 +145,7 @@
         </div>
 
         <!-- کادر جستجو -->
-        <div class="max-w-md mx-auto px-4 py-2.5 relative">
+        <div class="max-w-md mx-auto px-4 py-2.5 relative z-20">
             <div class="flex space-x-2 space-x-reverse relative items-center">
                 <div class="relative flex-grow">
                     <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در سامانه‌ها، پرونده‌ها، اصطلاحات..." class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/20 shadow-inner">
@@ -143,8 +162,43 @@
 
     <!-- بدنه اصلی مینی‌اپ -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
-        <!-- تب پخش زنده (پیش‌فرض اول) -->
-        <section id="multimedia-tab" class="page-section space-y-3">
+        <!-- تب فرهنگ اصطلاحات حقوقی (پیش‌فرض اول) -->
+        <section id="dictionary-tab" class="page-section space-y-3">
+            <div class="flex items-center justify-between mb-1">
+                <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-book ml-1.5 text-red-600"></i> فرهنگ اصطلاحات حقوقی</h2>
+                <span id="dictCounter" class="text-[9px] opacity-70"></span>
+            </div>
+            <div class="relative">
+                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته در واژگان حقوقی..." class="w-full bg-black/20 dark:bg-black/40 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/20 focus:outline-none shadow-inner text-white">
+                <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-400 text-xs"></i>
+                <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="dictionaryContainer" class="space-y-2 mt-2"></div>
+        </section>
+
+        <!-- تب سامانه‌های قضایی -->
+        <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
+
+        <!-- تب وکیل آنلاین (مشاور) -->
+        <section id="lawyer-tab" class="page-section hidden space-y-4">
+            <div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15">
+                <h2 class="font-bold text-xs text-red-600 flex items-center mb-2"><i class="fa-solid fa-user-tie ml-1.5"></i> پرسش از وکیل آنلاین</h2>
+                <textarea id="questionInput" placeholder="سوال حقوقی خود را بنویسید..." class="w-full bg-black/20 rounded-xl p-3 text-xs focus:outline-none h-24 mb-2 resize-none border border-white/10"></textarea>
+                <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">ارسال سوال</button>
+            </div>
+        </section>
+
+        <!-- تب پادکست‌های خبری -->
+        <section id="podcasts-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-podcast ml-1.5 text-red-600"></i> پادکست‌ها و فایل‌های صوتی</h2>
+            <div id="podcastsContainer" class="space-y-3"></div>
+        </section>
+
+        <!-- تب پرونده‌های ویژه -->
+        <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
+
+        <!-- تب پخش زنده -->
+        <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
                     <iframe id="liveStreamIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
@@ -162,61 +216,26 @@
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
-        <!-- تب اینفوگرافیک‌های حقوقی (با تصاویر اولیه دایره‌ای) -->
+        <!-- تب اینفوگرافیک‌های حقوقی -->
         <section id="infographics-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-image ml-1.5 text-red-600"></i> اینفوگرافیک‌های حقوقی</h2>
             <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
-        <!-- تب فرهنگ اصطلاحات حقوقی -->
-        <section id="dictionary-tab" class="page-section hidden space-y-3">
-            <div class="flex items-center justify-between mb-1">
-                <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-book ml-1.5 text-red-600"></i> فرهنگ اصطلاحات حقوقی</h2>
-                <span id="dictCounter" class="text-[9px] opacity-70"></span>
-            </div>
-            <div class="relative">
-                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته در واژگان حقوقی..." class="w-full bg-black/20 dark:bg-black/40 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/20 focus:outline-none shadow-inner text-white">
-                <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-400 text-xs"></i>
-                <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="dictionaryContainer" class="space-y-2 mt-2"></div>
-        </section>
-
-        <!-- تب پادکست‌های خبری -->
-        <section id="podcasts-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-podcast ml-1.5 text-red-600"></i> پادکست‌ها و فایل‌های صوتی</h2>
-            <div id="podcastsContainer" class="space-y-3"></div>
-        </section>
-
         <!-- تب ذخیره‌شده‌ها -->
         <section id="bookmarks-tab" class="page-section hidden space-y-3"><div id="bookmarksListContainer" class="space-y-3"></div></section>
-        
-        <!-- تب پرونده‌های ویژه -->
-        <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
-
-        <!-- تب سامانه‌های قضایی -->
-        <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
-
-        <!-- تب وکیل آنلاین (بدون بخش نظرات عمومی) -->
-        <section id="lawyer-tab" class="page-section hidden space-y-4">
-            <div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15">
-                <h2 class="font-bold text-xs text-red-600 flex items-center mb-2"><i class="fa-solid fa-user-tie ml-1.5"></i> پرسش از وکیل آنلاین</h2>
-                <textarea id="questionInput" placeholder="سوال حقوقی خود را بنویسید..." class="w-full bg-black/20 rounded-xl p-3 text-xs focus:outline-none h-24 mb-2 resize-none border border-white/10"></textarea>
-                <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">ارسال سوال</button>
-            </div>
-        </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (بدون تب اخبار و توییتر) -->
+    <!-- ناوبری پایین صفحه (با ترتیب دقیق: اصطلاحات، سامانه‌ها، مشاور، پادکست، پرونده‌ها، پخش زنده، اینفوگرافیک، ذخیره) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
-        <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
-        <button onclick="switchTab('infographics-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
-        <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
-        <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
-        <button onclick="switchTab('bookmarks-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bookmark text-sm mb-0.5"></i><span class="text-[8px]">ذخیره</span></button>
-        <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
+        <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
         <button onclick="switchTab('lawyer-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
+        <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
+        <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
+        <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
+        <button onclick="switchTab('infographics-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
+        <button onclick="switchTab('bookmarks-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bookmark text-sm mb-0.5"></i><span class="text-[8px]">ذخیره</span></button>
     </nav>
 
     <!-- مودال اینفوگرافیک -->
@@ -499,7 +518,6 @@
             renderDictionary('');
         }
 
-        // رندر اینفوگرافیک با تصاویر بندانگشتی دایره‌ای شکل
         function renderInfographics() {
             const container = document.getElementById('infographicsContainer');
             if (!container) return;
@@ -553,7 +571,6 @@
             let resultsHTML = '';
             let uniqueMap = new Map();
             
-            // جستجو در واژه‌نامه و سامانه‌ها
             (appData.dictionary || []).forEach(d => {
                 if (normalizeNumbers(d.term).includes(q) && !uniqueMap.has(d.term)) {
                     uniqueMap.set(d.term, { title: d.term, desc: d.definition });

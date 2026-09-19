@@ -8,7 +8,7 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { colors: { brand: { 600: '#c51b24', 700: '#9b131a' } } } }
+            theme: { extend: { colors: { mizan: { 600: '#c51b24', 700: '#9b131a' } } } }
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,51 +43,25 @@
             background-position: center;
             background-repeat: no-repeat;
         }
-
-        /* لوگوی شیک SIJT بالاتر از کادر جستجو */
-        @keyframes headerGlow {
-            0%, 100% { text-shadow: 0 0 15px rgba(239, 68, 68, 0.6), 0 0 30px rgba(197, 27, 36, 0.4); transform: scale(1); }
-            50% { text-shadow: 0 0 25px rgba(239, 68, 68, 0.9), 0 0 45px rgba(197, 27, 36, 0.7); transform: scale(1.02); }
-        }
-
-        .sijt-logo-title {
-            font-size: 2.2rem;
-            font-weight: 900;
-            letter-spacing: 0.3em;
-            background: linear-gradient(135deg, #ffffff 30%, #ff8a8a 70%, #c51b24 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-            animation: headerGlow 4s infinite ease-in-out;
-            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
-            user-select: none;
-        }
-
-        .series-card-glow { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .series-card-glow:hover {
-            transform: translateY(-4px);
-            border-color: rgba(239, 68, 68, 0.6);
-            box-shadow: 0 10px 25px -5px rgba(197, 27, 36, 0.4);
-        }
     </style>
 </head>
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyLAmhCoWqHKBNUUarrgXzXrasbpy7Ygq0V4dJCMwu5EwNJs5dxM_NvcXgzJBW68A4p/exec'; 
-        let userId = localStorage.getItem('sijt_user_id');
+        let userId = localStorage.getItem('mizan_user_id');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('sijt_user_id', userId);
+            localStorage.setItem('mizan_user_id', userId);
         }
-        if (localStorage.getItem('sijt_theme') === 'dark') {
+        if (localStorage.getItem('mizan_theme') === 'dark') {
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
         }
 
-        const savedFont = localStorage.getItem('sijt_font') || 'Tahoma';
+        const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';
         document.documentElement.style.setProperty('--selected-font', savedFont);
-        const savedFontSize = localStorage.getItem('sijt_font_size') || '12px';
+        const savedFontSize = localStorage.getItem('mizan_font_size') || '12px';
         document.documentElement.style.setProperty('--app-font-size', savedFontSize);
 
         let tgSettings = {
@@ -102,13 +76,20 @@
         }
     </script>
 
-    <!-- هدر اپلیکیشن با لوگوی SIJT در بالاترین نقطه بالای نوار سرچ -->
+    <!-- هدر اپلیکیشن -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md relative overflow-visible">
-        <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
+        <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
             <div class="flex items-center space-x-2 space-x-reverse">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
                 <span id="headerCalendarWidget">تقویم...</span>
             </div>
+            
+            <!-- عنوان گرافیکی SIJT بین تاریخ و آب و هوا بدون تغییر ابعاد هدر -->
+            <div class="flex items-center space-x-1.5 space-x-reverse px-2.5 py-0.5 rounded-full bg-gradient-to-r from-red-600/40 via-red-500/20 to-transparent border border-red-500/30 backdrop-blur-md shadow-lg">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                <span class="font-black tracking-widest text-[11px] text-transparent bg-clip-text bg-gradient-to-r from-white via-red-100 to-red-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">SIJT</span>
+            </div>
+
             <div class="flex items-center space-x-2 space-x-reverse">
                 <span id="headerWeatherWidget">تهران...</span>
                 <button onclick="manualRefresh()" title="بروزرسانی" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
@@ -116,13 +97,8 @@
             </div>
         </div>
 
-        <!-- جایگاه جدید و جذاب عنوان SIJT بالای نوار جستجو -->
-        <div class="pt-3 pb-1 text-center relative z-20">
-            <h1 class="sijt-logo-title">SIJT</h1>
-        </div>
-
         <!-- منوی تنظیمات شیشه‌ای -->
-        <div id="settingsDropdown" class="hidden absolute left-4 top-16 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
+        <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
                 <button onclick="toggleTheme()" class="bg-white/20 px-3 py-1 rounded-xl font-medium border border-white/20"><i id="theme-icon" class="fa-solid fa-moon"></i> تیره / روشن</button>
@@ -191,34 +167,38 @@
         <!-- تب سامانه‌های قضایی -->
         <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
 
-        <!-- تب وکیل آنلاین (مشاور) همراه با بخش سوال و جواب‌های ثبت شده در شیت و سیستم ضد اسپم -->
+        <!-- تب وکیل آنلاین (مشاور) با طراحی گرافیکی بسیار مدرن و جذاب -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
-            <div class="ultra-glass p-5 rounded-3xl shadow-xl border border-red-500/30 relative overflow-hidden space-y-4">
-                <div class="absolute -top-10 -left-10 w-32 h-32 bg-red-600/15 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="flex items-center space-x-2 space-x-reverse">
-                    <div class="w-9 h-9 rounded-2xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500 shadow-inner">
-                        <i class="fa-solid fa-user-tie text-sm"></i>
+            <div class="ultra-glass p-5 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden">
+                <div class="absolute -left-10 -top-10 w-32 h-32 bg-red-600/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="flex items-center space-x-3 space-x-reverse mb-4 relative z-10">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-red-600/30">
+                        <i class="fa-solid fa-user-tie text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="font-bold text-xs text-red-500">مشاوره حقوقی تخصصی (وکیل آنلاین)</h2>
-                        <p class="text-[10px] opacity-70">ثبت پرسش و مشاهده پاسخ‌های کارشناسی</p>
+                        <h2 class="font-extrabold text-sm text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-400">مشاور و وکیل آنلاین SIJT</h2>
+                        <p class="text-[10px] opacity-75">پاسخگویی هوشمند به پرسش‌های حقوقی و قضایی</p>
                     </div>
-                </div>
-                
-                <div class="space-y-2">
-                    <textarea id="questionInput" placeholder="متن پرسش حقوقی خود را با جزئیات بنویسید..." class="w-full bg-black/30 dark:bg-black/50 rounded-2xl p-3.5 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-28 resize-none border border-white/15 shadow-inner placeholder-slate-400 transition"></textarea>
-                    <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white py-3 rounded-2xl text-xs font-bold shadow-lg shadow-red-600/30 transition transform active:scale-95 flex items-center justify-center space-x-2 space-x-reverse">
-                        <i class="fa-solid fa-paper-plane ml-1"></i>
-                        <span id="submitBtnText">ارسال امن سوال به وکیل</span>
-                    </button>
                 </div>
 
-                <!-- بخش نمایش سوال و جواب‌های پاسخ‌داده‌شده از گوگل‌شیت -->
-                <div class="pt-2 border-t border-white/10 space-y-3">
-                    <h3 class="font-bold text-xs text-amber-400 flex items-center"><i class="fa-solid fa-clipboard-question ml-1.5"></i> پرسش و پاسخ‌های اخیر حقوقی</h3>
-                    <div id="faqAnsweredContainer" class="space-y-2.5 max-h-72 overflow-y-auto hide-scrollbar">
-                        <p class="text-center text-[10px] opacity-60 py-4">در حال بارگذاری پرسش‌ها...</p>
+                <div class="relative z-10 space-y-3">
+                    <div class="relative">
+                        <textarea id="questionInput" placeholder="سوال حقوقی خود را با جزئیات بنویسید..." class="w-full bg-black/30 dark:bg-black/50 rounded-2xl p-3.5 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-32 resize-none border border-white/10 shadow-inner placeholder-slate-400"></textarea>
+                        <div class="absolute bottom-3 left-3 flex items-center space-x-1 space-x-reverse text-[9px] opacity-60">
+                            <i class="fa-solid fa-shield-halved text-red-500"></i>
+                            <span>کاملاً محرمانه</span>
+                        </div>
                     </div>
+
+                    <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full group relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 to-red-700 p-3 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all duration-300 hover:shadow-red-600/50 hover:scale-[1.01] active:scale-[0.99]">
+                        <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <span class="relative flex items-center justify-center space-x-2 space-x-reverse">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                            <span>ارسال سوال به ربات مشاور</span>
+                        </span>
+                    </button>
                 </div>
             </div>
         </section>
@@ -244,7 +224,7 @@
                 <div class="p-1 flex items-center justify-between">
                     <div>
                         <h3 id="liveStreamTitle" class="font-bold text-xs text-red-500">پخش زنده سراسری</h3>
-                        <p id="liveStreamDesc" class="text-[10px] opacity-80">در حال پخش از سرور تخصصی</p>
+                        <p id="liveStreamDesc" class="text-[10px] opacity-80">در حال پخش از سرور SIJT</p>
                     </div>
                     <a id="externalStreamBtn" href="#" target="_blank" class="bg-red-600/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl text-[10px] font-bold transition hover:bg-red-600 hover:text-white">
                         <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای خارجی
@@ -260,13 +240,10 @@
             <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
-        <!-- تب سریال‌ها با گرافیک فوق‌العاده جذاب و نئونی -->
+        <!-- تب سریال‌ها -->
         <section id="series-tab" class="page-section hidden space-y-3">
-            <div class="flex items-center justify-between mb-1">
-                <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-film ml-1.5 text-red-600"></i> سریال‌های نمایشی</h2>
-                <span class="text-[9px] opacity-70">اختصاصی SIJT</span>
-            </div>
-            <div id="seriesContainer" class="grid grid-cols-2 gap-3.5"></div>
+            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-film ml-1.5 text-red-600"></i> سریال‌ها</h2>
+            <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
         <!-- تب ذخیره‌شده‌ها -->
@@ -300,12 +277,12 @@
         </div>
     </div>
 
-    <!-- مودال پخش سریال -->
+    <!-- مودال اختصاصی پخش سریال -->
     <div id="seriesModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center border border-red-500/40">
-            <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 hover:text-white p-2 z-10"><i class="fa-solid fa-xmark text-base"></i></button>
-            <h3 id="modalSeriesTitle" class="font-bold text-xs text-red-500 pt-1 flex items-center justify-center"><i class="fa-solid fa-clapperboard ml-1.5"></i> پخش ویدیو</h3>
-            <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center border border-white/10">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+            <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 p-2 z-10"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 id="modalSeriesTitle" class="font-bold text-xs text-red-500 pt-1">پخش سریال</h3>
+            <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
                 <iframe id="seriesVideoIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
             </div>
         </div>
@@ -321,15 +298,11 @@
         </div>
     </div>
 
-    <!-- منطق کامل و ایمن جاوااسکریپت -->
+    <!-- منطق جاوااسکریپت -->
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyLAmhCoWqHKBNUUarrgXzXrasbpy7Ygq0V4dJCMwu5EwNJs5dxM_NvcXgzJBW68A4p/exec'; 
-
         let fallbackData = {
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
-            files: [
-                { title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://mizanonline.ir" }
-            ],
+            files: [],
             livestream: [{ title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده شبکه خبر" }],
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             infographics: [
@@ -338,15 +311,11 @@
             series: [
                 { title: "سریال آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com/v/embed/example" }
             ],
-            podcasts: [{ title: "بولتن صوتی حقوقی هفته", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }],
-            faq: [
-                { question: "شرایط مطالبه مهریه چیست؟", answer: "طبق قانون جدید، از طریق اجراثبت یا دادگاه خانواده قابل پیگیری است." }
-            ]
+            podcasts: [{ title: "بولتن صوتی حقوقی هفته", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }]
         };
 
-        let appData = JSON.parse(localStorage.getItem('sijt_cache')) || fallbackData;
+        let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
         let lastSubmitTime = 0;
-        const SPAM_COOLDOWN = 60000;
 
         window.addEventListener('DOMContentLoaded', () => {
             renderAll();
@@ -390,17 +359,8 @@
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 const newData = await response.json();
                 if (newData && Object.keys(newData).length > 0) {
-                    appData = {
-                        legalSystems: newData.legalSystems && newData.legalSystems.length ? newData.legalSystems : fallbackData.legalSystems,
-                        files: newData.files && newData.files.length ? newData.files : fallbackData.files,
-                        livestream: newData.livestream && newData.livestream.length ? newData.livestream : fallbackData.livestream,
-                        dictionary: newData.dictionary && newData.dictionary.length ? newData.dictionary : fallbackData.dictionary,
-                        infographics: newData.infographics && newData.infographics.length ? newData.infographics : fallbackData.infographics,
-                        series: newData.series && newData.series.length ? newData.series : fallbackData.series,
-                        podcasts: newData.podcasts && newData.podcasts.length ? newData.podcasts : fallbackData.podcasts,
-                        faq: newData.faq && newData.faq.length ? newData.faq : fallbackData.faq
-                    };
-                    localStorage.setItem('sijt_cache', JSON.stringify(appData));
+                    appData = { ...fallbackData, ...newData };
+                    localStorage.setItem('mizan_cache', JSON.stringify(appData));
                     renderAll();
                 }
             } catch (error) {
@@ -411,7 +371,7 @@
         async function manualRefresh() {
             const icon = document.getElementById('refreshIcon');
             if(icon) icon.classList.add('fa-spin');
-            localStorage.removeItem('sijt_cache');
+            localStorage.removeItem('mizan_cache');
             await initApp();
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 400);
         }
@@ -428,13 +388,13 @@
 
         function changeFontFamily(fontName) {
             document.documentElement.style.setProperty('--selected-font', fontName);
-            localStorage.setItem('sijt_font', fontName);
+            localStorage.setItem('mizan_font', fontName);
             document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
         function changeAppFontSize(sizeVal) {
             document.documentElement.style.setProperty('--app-font-size', sizeVal);
-            localStorage.setItem('sijt_font_size', sizeVal);
+            localStorage.setItem('mizan_font_size', sizeVal);
             document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
@@ -468,7 +428,7 @@
         function toggleTheme() {
             const isDark = document.documentElement.classList.toggle('dark');
             document.body.classList.toggle('dark', isDark);
-            localStorage.setItem('sijt_theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('mizan_theme', isDark ? 'dark' : 'light');
             document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
@@ -481,7 +441,6 @@
             renderInfographics();
             renderSeries();
             renderPodcasts();
-            renderFaqAnswered();
         }
 
         function renderLiveChannels() {
@@ -525,7 +484,7 @@
             const container = document.getElementById('bookmarksListContainer');
             if(!container) return;
             let bookmarks = [];
-            try { bookmarks = JSON.parse(localStorage.getItem('sijt_bookmarks') || '[]'); } catch(e) {}
+            try { bookmarks = JSON.parse(localStorage.getItem('mizan_bookmarks') || '[]'); } catch(e) {}
             if (!bookmarks.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ موردی ذخیره نشده است.</p>'; return; }
             container.innerHTML = bookmarks.map(item => `
                 <div class="ultra-glass p-3.5 rounded-2xl border border-white/15">
@@ -639,7 +598,7 @@
             if (!container) return;
             let list = appData.series || [];
             if (!list.length) { 
-                container.innerHTML = '<p class="text-center opacity-70 py-4 col-span-2 text-xs">سریالی ثبت نشده است.</p>'; 
+                container.innerHTML = '<p class="text-center opacity-70 py-4 col-span-2">سریالی ثبت نشده است.</p>'; 
                 return; 
             }
             
@@ -650,17 +609,12 @@
                     url: ser.url || ser.link || ''
                 };
                 return `
-                    <div onclick='openSeriesModal(${JSON.stringify(cleanSer).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-3xl space-y-2.5 cursor-pointer series-card-glow border border-white/10 flex flex-col items-center text-center justify-between relative overflow-hidden group">
-                        <div class="absolute -right-12 -top-12 w-24 h-24 bg-red-600/10 rounded-full blur-xl group-hover:bg-red-600/25 transition"></div>
-                        <div class="w-24 h-24 rounded-2xl overflow-hidden bg-slate-900 border-2 border-red-500/50 flex items-center justify-center shadow-2xl relative group">
-                            <img src="${cleanSer.image}" loading="lazy" class="w-full h-full object-cover transition duration-500 transform group-hover:scale-110" alt="">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
-                                <div class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-75 group-hover:scale-100 transition">
-                                    <i class="fa-solid fa-play text-xs pr-0.5"></i>
-                                </div>
-                            </div>
+                    <div onclick='openSeriesModal(${JSON.stringify(cleanSer).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 shadow-sm flex flex-col items-center text-center justify-between">
+                        <div class="w-24 h-24 rounded-full overflow-hidden bg-slate-900 border-2 border-red-500/40 flex items-center justify-center shadow-inner relative group">
+                            <img src="${cleanSer.image}" loading="lazy" class="w-full h-full object-cover transition transform group-hover:scale-110" alt="">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-play text-white text-base"></i></div>
                         </div>
-                        <h4 class="font-bold text-[11px] text-slate-100 group-hover:text-red-400 transition line-clamp-2 px-1">${cleanSer.title}</h4>
+                        <h4 class="font-bold text-[11px] text-red-500 line-clamp-2">${cleanSer.title}</h4>
                     </div>
                 `;
             }).join('');
@@ -690,87 +644,30 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // رندر پرسش و پاسخ‌های وکیل آنلاین از شیت faq
-        function renderFaqAnswered() {
-            const container = document.getElementById('faqAnsweredContainer');
-            if (!container) return;
-            let list = appData.faq || [];
-            if (!list.length) {
-                container.innerHTML = '<p class="text-center text-[10px] opacity-60 py-3">هنوز پرسش و پاسخی ثبت نشده است.</p>';
-                return;
-            }
-            container.innerHTML = list.map(item => `
-                <div class="p-3 bg-black/20 rounded-2xl border border-white/10 space-y-1.5 text-right">
-                    <div class="flex items-center space-x-1.5 space-x-reverse text-amber-400 font-bold text-[11px]">
-                        <i class="fa-solid fa-circle-question"></i>
-                        <span>${item.question || item.q || 'سوال بدون عنوان'}</span>
-                    </div>
-                    <div class="flex items-start space-x-1.5 space-x-reverse text-slate-200 text-[10px] bg-red-950/30 p-2 rounded-xl border border-red-500/20">
-                        <i class="fa-solid fa-user-shield text-red-400 mt-0.5"></i>
-                        <span class="leading-relaxed opacity-90">${item.answer || item.ans || 'در حال بررسی توسط وکیل متخصص...'}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
         async function submitQuestion() {
             const now = Date.now();
-            const elapsed = now - lastSubmitTime;
-            
-            if (elapsed < SPAM_COOLDOWN) {
-                const remainingSecs = Math.ceil((SPAM_COOLDOWN - elapsed) / 1000);
-                alert(`لطفاً برای ارسال پیام بعدی ${remainingSecs} ثانیه صبر کنید (سیستم ضد اسپم).`);
-                return;
+            if (now - lastSubmitTime < 10000) {
+                return alert('لطفاً چند لحظه صبر کنید و سپس دوباره تلاش کنید.');
             }
-
             const q = document.getElementById('questionInput').value.trim();
-            if (!q) return alert('لطفا متن پرسش حقوقی خود را وارد کنید.');
-            if (q.length < 5) return alert('متن سوال بسیار کوتاه است. لطفاً جزئیات بیشتری بنویسید.');
-
+            if (!q) return alert('لطفا سوال حقوقی خود را وارد کنید.');
+            
             lastSubmitTime = now;
-            const btn = document.getElementById('submitQuestionBtn');
-            const btnText = document.getElementById('submitBtnText');
-            btn.disabled = true;
-            btnText.innerText = 'در حال ارسال امن...';
-
-            if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
-                try {
-                    window.Telegram.WebApp.sendData(JSON.stringify({ action: "lawyer_question", question: q, userId: userId }));
-                    btnText.innerText = 'سوال ارسال شد ✓';
-                    document.getElementById('questionInput').value = '';
-                    setTimeout(() => { btn.disabled = false; btnText.innerText = 'ارسال سوال به وکیل'; }, 3000);
-                    return;
-                } catch (e) {
-                    console.log("Telegram sendData error:", e);
-                }
-            }
 
             try {
                 const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
                 const result = await res.json();
                 if(result.status === "success") {
-                    alert('سوال شما با موفقیت ثبت و برای وکیل آنلاین ارسال شد.');
+                    alert('سوال شما با موفقیت ثبت و به ربات تلگرام ارسال شد.');
                     document.getElementById('questionInput').value = '';
                 } else {
                     alert('سوال شما ثبت شد.');
                     document.getElementById('questionInput').value = '';
                 }
             } catch(e) {
-                alert('سوال با موفقیت ارسال شد.');
+                alert('سوال شما ثبت شد.');
                 document.getElementById('questionInput').value = '';
             }
-
-            let countdown = 60;
-            const timer = setInterval(() => {
-                if (countdown > 0) {
-                    btnText.innerText = `ارسال بعدی تا ${countdown} ثانیه`;
-                    countdown--;
-                } else {
-                    clearInterval(timer);
-                    btn.disabled = false;
-                    btnText.innerText = 'ارسال سوال به وکیل';
-                }
-            }, 1000);
         }
 
         function handleLiveSearch(query) {

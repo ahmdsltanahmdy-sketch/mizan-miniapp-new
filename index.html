@@ -161,7 +161,7 @@
 
     <!-- بدنه اصلی مینی‌اپ -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
-        <!-- تب فرهنگ اصطلاحات حقوقی (پیش‌فرض اول) -->
+        <!-- تب فرهنگ اصطلاحات حقوقی (پیش‌فرض اول هنگام بارگذاری) -->
         <section id="dictionary-tab" class="page-section space-y-3">
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-book ml-1.5 text-red-600"></i> فرهنگ اصطلاحات حقوقی</h2>
@@ -378,7 +378,6 @@
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
         function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
         
-        // تابع اتصال به گوگل برای جستجوی عبارت وارد شده در کادر
         function executeAdvancedGoogleSearch() {
             const query = document.getElementById('advSearchInput').value.trim();
             if (!query) return alert('لطفا عبارت مورد نظر را وارد کنید.');
@@ -421,8 +420,8 @@
                     <div class="text-[10px] opacity-80 truncate">${stream.description || 'کانال تلویزیونی'}</div>
                 </button>
             `).join('');
-
-            if (streams.length > 0) playSelectedStream(streams[0]);
+            
+            // عدم پخش خودکار در شروع برنامه (src خالی می‌ماند تا کاربر خودش انتخاب کند)
         }
 
         function playSelectedStream(stream) {
@@ -628,7 +627,7 @@
 
             const iframeElem = document.getElementById('liveStreamIframe');
             if (sectionId !== 'multimedia-tab' && iframeElem) {
-                iframeElem.src = "";
+                iframeElem.src = ""; // قطع کامل پخش زنده هنگام خروج از تب پخش زنده
             } else if (sectionId === 'multimedia-tab' && iframeElem && !iframeElem.src) {
                 let streams = appData.livestream || [];
                 if (streams.length) playSelectedStream(streams[0]);

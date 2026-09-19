@@ -286,9 +286,7 @@
     <script>
         let fallbackData = {
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
-            files: [
-                { title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://mizanonline.ir" }
-            ],
+            files: [],
             livestream: [{ title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده شبکه خبر" }],
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             infographics: [
@@ -346,12 +344,6 @@
                 const newData = await response.json();
                 if (newData && Object.keys(newData).length > 0) {
                     appData = { ...fallbackData, ...newData };
-                    if (!appData.files || !Array.isArray(appData.files) || appData.files.length === 0) {
-                        appData.files = fallbackData.files;
-                    }
-                    if (!appData.series || !Array.isArray(appData.series) || appData.series.length === 0) {
-                        appData.series = fallbackData.series;
-                    }
                     localStorage.setItem('mizan_cache', JSON.stringify(appData));
                     renderAll();
                 }
@@ -485,7 +477,7 @@
             `).join('');
         }
 
-        // رندر جامع و پشتیبانی صددرصد از تمام کلیدهای احتمالی در شیت پرونده‌ها
+        // رندر جامع و پشتیبانی کامل از ستون‌های شیت پرونده‌ها
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             if (!container) return;
@@ -637,7 +629,7 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // ارسال دقیق سوال به ربات تلگرام با متد استاندارد WebApp
+        // ارسال مستقیم و بومی سوال به ربات تلگرام با متد WebApp.sendData
         async function submitQuestion() {
             const now = Date.now();
             if (now - lastSubmitTime < 10000) {
@@ -648,7 +640,6 @@
             
             lastSubmitTime = now;
 
-            // ارسال مستقیم به ربات تلگرام
             if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
                 try {
                     window.Telegram.WebApp.sendData(JSON.stringify({ action: "lawyer_question", question: q, userId: userId }));
@@ -658,19 +649,19 @@
                 }
             }
 
-            // ارسال به گوگل‌اسکریپت به عنوان پشتیبان
+            // فال‌بک ثبت در گوگل شیت
             try {
                 const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
                 const result = await res.json();
                 if(result.status === "success") {
-                    alert('سوال شما با موفقیت برای وکیل آنلاین ارسال شد.');
+                    alert('سوال با موفقیت ارسال شد.');
                     document.getElementById('questionInput').value = '';
                 } else {
-                    alert('سوال شما ثبت شد.');
+                    alert('سوال ثبت شد.');
                     document.getElementById('questionInput').value = '';
                 }
             } catch(e) {
-                alert('سوال شما با موفقیت ثبت شد.');
+                alert('سوال ثبت شد.');
                 document.getElementById('questionInput').value = '';
             }
         }

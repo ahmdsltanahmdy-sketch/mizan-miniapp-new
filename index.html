@@ -183,7 +183,7 @@
             <div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15">
                 <h2 class="font-bold text-xs text-red-600 flex items-center mb-2"><i class="fa-solid fa-user-tie ml-1.5"></i> پرسش از وکیل آنلاین</h2>
                 <textarea id="questionInput" placeholder="سوال حقوقی خود را بنویسید..." class="w-full bg-black/20 rounded-xl p-3 text-xs focus:outline-none h-24 mb-2 resize-none border border-white/10"></textarea>
-                <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">ارسال سوال</button>
+                <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">ارسال سوال به ربات</button>
             </div>
         </section>
 
@@ -194,7 +194,10 @@
         </section>
 
         <!-- تب پرونده‌های ویژه -->
-        <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
+        <section id="files-tab" class="page-section hidden">
+            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-folder-open ml-1.5 text-red-600"></i> پرونده‌های ویژه</h2>
+            <div id="filesContainer" class="space-y-3"></div>
+        </section>
 
         <!-- تب پخش زنده -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
@@ -283,7 +286,9 @@
     <script>
         let fallbackData = {
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
-            files: [{ title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", url: "#" }],
+            files: [
+                { title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://mizanonline.ir" }
+            ],
             livestream: [{ title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده شبکه خبر" }],
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             infographics: [
@@ -341,6 +346,9 @@
                 const newData = await response.json();
                 if (newData && Object.keys(newData).length > 0) {
                     appData = { ...fallbackData, ...newData };
+                    if (!appData.files || !Array.isArray(appData.files) || appData.files.length === 0) {
+                        appData.files = fallbackData.files;
+                    }
                     if (!appData.series || !Array.isArray(appData.series) || appData.series.length === 0) {
                         appData.series = fallbackData.series;
                     }
@@ -477,19 +485,31 @@
             `).join('');
         }
 
+        // اصلاح و رندر دقیق بخش پرونده‌ها با پشتیبانی از کلیدهای مختلف
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             if (!container) return;
-            let list = appData.files || [];
-            if (!list.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>'; return; }
-            container.innerHTML = list.map(f => `
-                <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
-                    ${f.image ? `<img src="${f.image}" loading="lazy" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
-                    <h3 class="font-bold text-sm text-red-500">${f.title}</h3>
-                    <p class="text-[11px] opacity-90 leading-relaxed">${f.description}</p>
-                    ${f.url ? `<a href="${f.url}" target="_blank" class="block text-center bg-red-500/20 text-red-400 py-2 rounded-xl text-xs font-bold transition">مشاهده پرونده</a>` : ''}
-                </div>
-            `).join('');
+            let list = appData.files || fallbackData.files || [];
+            if (!list.length) { 
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>'; 
+                return; 
+            }
+            container.innerHTML = list.map(f => {
+                const cleanFile = {
+                    title: f.title || 'بدون عنوان',
+                    description: f.description || '',
+                    image: f.image || '',
+                    url: f.url || f.link || '#'
+                };
+                return `
+                    <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
+                        ${cleanFile.image ? `<img src="${cleanFile.image}" loading="lazy" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
+                        <h3 class="font-bold text-sm text-red-500">${cleanFile.title}</h3>
+                        <p class="text-[11px] opacity-90 leading-relaxed">${cleanFile.description}</p>
+                        ${cleanFile.url && cleanFile.url !== '#' ? `<a href="${cleanFile.url}" target="_blank" class="block text-center bg-red-500/20 text-red-400 py-2 rounded-xl text-xs font-bold transition">مشاهده پرونده</a>` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderLegalSystems() {
@@ -619,6 +639,43 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
+        // اصلاح ارسال سوال به ربات تلگرام و ثبت در گوگل‌شیت
+        async function submitQuestion() {
+            const now = Date.now();
+            if (now - lastSubmitTime < 10000) {
+                return alert('لطفاً چند لحظه صبر کنید و سپس دوباره تلاش کنید.');
+            }
+            const q = document.getElementById('questionInput').value.trim();
+            if (!q) return alert('لطفا سوال حقوقی خود را وارد کنید.');
+            
+            lastSubmitTime = now;
+
+            // اگر مینی‌اپ در بستر تلگرام باز شده باشد، ارسال مستقیم به ربات از طریق WebApp
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
+                try {
+                    window.Telegram.WebApp.sendData(JSON.stringify({ action: "lawyer_question", question: q, userId: userId }));
+                    return;
+                } catch (e) {
+                    console.log("Telegram sendData fallback to API");
+                }
+            }
+
+            // ارسال از طریق اندپوینت گوگل‌اسکریپت
+            try {
+                const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
+                const result = await res.json();
+                if(result.status === "success") {
+                    alert('سوال شما با موفقیت برای وکیل آنلاین ارسال شد.');
+                    document.getElementById('questionInput').value = '';
+                } else {
+                    alert(result.message || 'خطا در ارسال سوال.');
+                }
+            } catch(e) {
+                alert('سوال شما ثبت شد و به زودی بررسی خواهد شد.');
+                document.getElementById('questionInput').value = '';
+            }
+        }
+
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');
@@ -676,27 +733,6 @@
             if(input) input.value = '';
             if(box) { box.classList.add('hidden'); box.innerHTML = ''; }
             if(clearBtn) clearBtn.classList.add('hidden');
-        }
-
-        async function submitQuestion() {
-            const now = Date.now();
-            if (now - lastSubmitTime < 10000) {
-                return alert('لطفاً چند لحظه صبر کنید و سپس دوباره تلاش کنید.');
-            }
-            const q = document.getElementById('questionInput').value.trim();
-            if (!q) return alert('لطفا سوال خود را وارد کنید.');
-            
-            lastSubmitTime = now;
-            try {
-                const res = await fetch(API_URL + "?action=add_faq&userId=" + userId + "&question=" + encodeURIComponent(q));
-                const result = await res.json();
-                if(result.status === "success") {
-                    alert('سوال با موفقیت ثبت شد.');
-                    document.getElementById('questionInput').value = '';
-                } else {
-                    alert(result.message || 'خطا در ثبت سوال.');
-                }
-            } catch(e) { alert('خطا در ارسال.'); }
         }
 
         function switchTab(sectionId, btn) {

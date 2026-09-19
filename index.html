@@ -485,7 +485,7 @@
             `).join('');
         }
 
-        // رندر جامع و پشتیبانی کامل از تمام کلیدهای احتمالی در شیت پرونده‌ها
+        // رندر کاملاً تطبیقی و هوشمند بخش پرونده‌ها برای خروجی گوگل‌شیت
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             if (!container) return;
@@ -495,15 +495,15 @@
                 return; 
             }
             container.innerHTML = list.map(f => {
-                const title = f.title || f.name || f.subject || 'بدون عنوان';
-                const desc = f.description || f.desc || f.summary || '';
-                const image = f.image || f.img || '';
-                const url = f.url || f.link || '#';
+                const title = f.title || f.name || f.subject || f.TITLE || f.NAME || 'بدون عنوان';
+                const description = f.description || f.desc || f.summary || f.DESCRIPTION || f.DESC || '';
+                const image = f.image || f.img || f.IMAGE || f.IMG || '';
+                const url = f.url || f.link || f.URL || f.LINK || '#';
                 return `
                     <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
                         ${image ? `<img src="${image}" loading="lazy" class="w-full h-40 object-cover rounded-xl shadow-inner" alt="">` : ''}
                         <h3 class="font-bold text-sm text-red-500">${title}</h3>
-                        <p class="text-[11px] opacity-90 leading-relaxed">${desc}</p>
+                        <p class="text-[11px] opacity-90 leading-relaxed">${description}</p>
                         ${url && url !== '#' ? `<a href="${url}" target="_blank" class="block text-center bg-red-500/20 text-red-400 py-2 rounded-xl text-xs font-bold transition">مشاهده پرونده</a>` : ''}
                     </div>
                 `;
@@ -597,8 +597,8 @@
             
             container.innerHTML = list.map(ser => {
                 const cleanSer = {
-                    title: ser.title || 'بدون عنوان',
-                    image: ser.image || 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg',
+                    title: ser.title || ser.name || 'بدون عنوان',
+                    image: ser.image || ser.img || 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg',
                     url: ser.url || ser.link || ''
                 };
                 return `
@@ -637,7 +637,7 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // ارسال کامل و مطمئن سوال به ربات تلگرام و ثبت در گوگل‌شیت
+        // ارسال دقیق و استاندارد سوال به ربات تلگرام از طریق متد اختصاصی WebApp
         async function submitQuestion() {
             const now = Date.now();
             if (now - lastSubmitTime < 10000) {
@@ -648,19 +648,19 @@
             
             lastSubmitTime = now;
 
-            // ارسال مستقیم به ربات تلگرام از طریق WebApp
+            // ارسال مستقیم و بومی به ربات تلگرام
             if (window.Telegram && window.Telegram.WebApp) {
                 try {
-                    if (window.Telegram.WebApp.sendData) {
+                    if (typeof window.Telegram.WebApp.sendData === 'function') {
                         window.Telegram.WebApp.sendData(JSON.stringify({ action: "lawyer_question", question: q, userId: userId }));
                         return;
                     }
                 } catch (e) {
-                    console.log("Telegram sendData error, falling back to API");
+                    console.log("Telegram sendData error:", e);
                 }
             }
 
-            // ارسال از طریق گوگل‌اسکریپت
+            // فال‌بک برای ارسال به گوگل اسکریپت در صورت عدم حضور در بستر تلگرام
             try {
                 const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
                 const result = await res.json();

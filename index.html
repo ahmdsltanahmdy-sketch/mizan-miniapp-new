@@ -36,8 +36,6 @@
 
         .glass-tab { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
         .dark .glass-tab { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .reading-mode-active { background-color: #fdf8f0 !important; color: #1e1b18 !important; }
-        .dark .reading-mode-active { background-color: #0f172a !important; color: #f8fafc !important; }
 
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
@@ -68,8 +66,7 @@
 
         let tgSettings = {
             haptic: localStorage.getItem('tg_haptic') !== 'false',
-            cloudStorage: localStorage.getItem('tg_cloud') !== 'false',
-            forYou: localStorage.getItem('mizan_foryou') === 'true'
+            cloudStorage: localStorage.getItem('tg_cloud') !== 'false'
         };
 
         function triggerHaptic() {
@@ -88,12 +85,6 @@
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">
                 <span id="headerWeatherWidget">تهران...</span>
-                <div class="relative inline-block">
-                    <button onclick="toggleCategoryMenu(event)" title="دسته‌بندی اخبار" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-list-ul text-xs text-amber-300"></i></button>
-                    <div id="categoryDropdown" class="hidden absolute left-0 top-8 z-50 w-44 ultra-glass rounded-2xl shadow-2xl p-2 space-y-1 text-right border border-white/20">
-                        <div id="dynamicCategoryList" class="space-y-1 max-h-48 overflow-y-auto"></div>
-                    </div>
-                </div>
                 <button onclick="manualRefresh()" title="بروزرسانی" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
                 <button onclick="toggleSettingsMenu(event)" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
@@ -101,10 +92,6 @@
 
         <!-- منوی تنظیمات شیشه‌ای -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
-            <div class="flex items-center justify-between pb-2 border-b border-white/20">
-                <span class="font-bold">حالت فید شخصی (For You):</span>
-                <input type="checkbox" id="forYouSettingCheck" onchange="toggleForYouFeedSetting(this.checked)" class="accent-red-600 w-4 h-4">
-            </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
                 <button onclick="toggleTheme()" class="bg-white/20 px-3 py-1 rounded-xl font-medium border border-white/20"><i id="theme-icon" class="fa-solid fa-moon"></i> تیره / روشن</button>
@@ -142,7 +129,7 @@
         <div class="max-w-md mx-auto px-4 py-2.5 relative">
             <div class="flex space-x-2 space-x-reverse relative items-center">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اخبار، سامانه‌ها، پرونده‌ها..." class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/20 shadow-inner">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در سامانه‌ها، پرونده‌ها، اصطلاحات..." class="w-full bg-black/40 backdrop-blur-sm placeholder-red-100 dark:placeholder-slate-400 text-white rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/20 shadow-inner">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs"></i>
                     <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                 </div>
@@ -156,23 +143,8 @@
 
     <!-- بدنه اصلی مینی‌اپ -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
-        <!-- تب اخبار -->
-        <section id="news-tab" class="page-section">
-            <div class="flex justify-between items-center mb-3">
-                <h2 id="currentNewsCategoryTitle" class="font-bold text-xs text-red-600"><i class="fa-solid fa-fire ml-1"></i> آخرین اخبار</h2>
-            </div>
-            <div id="featuredNewsContainer" class="mb-4"></div>
-            <div id="newsListContainer" class="space-y-3">
-                <div class="text-center py-10 opacity-70"><i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i><p>در حال بارگذاری اخبار...</p></div>
-            </div>
-            <div id="loadMoreIndicator" class="text-center py-4 hidden">
-                <i class="fa-solid fa-spinner fa-spin text-red-600 text-base"></i>
-                <p class="text-[10px] opacity-70 mt-1">بارگذاری اخبار قدیمی‌تر...</p>
-            </div>
-        </section>
-
-        <!-- تب پخش زنده -->
-        <section id="multimedia-tab" class="page-section hidden space-y-3">
+        <!-- تب پخش زنده (پیش‌فرض اول) -->
+        <section id="multimedia-tab" class="page-section space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
                     <iframe id="liveStreamIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
@@ -190,23 +162,11 @@
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
-        <!-- تب توییتر (ایکس) -->
-        <section id="twitter-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-3 flex items-center">
-                <span class="w-5 h-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full inline-flex items-center justify-center text-[10px] ml-1.5 shadow-sm">
-                    <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                </span>
-                تایم‌لاین رسمی خبرگزاری میزان (X)
-            </h2>
-            <div id="twitterFeedContainer" class="space-y-3"></div>
+        <!-- تب اینفوگرافیک‌های حقوقی (با تصاویر اولیه دایره‌ای) -->
+        <section id="infographics-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-image ml-1.5 text-red-600"></i> اینفوگرافیک‌های حقوقی</h2>
+            <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
-        
-        <!-- تب ذخیره‌شده‌ها -->
-        <section id="bookmarks-tab" class="page-section hidden space-y-3"><div id="bookmarksListContainer" class="space-y-3"></div></section>
-        <!-- تب سامانه‌های قضایی -->
-        <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
-        <!-- تب پرونده‌های ویژه -->
-        <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
 
         <!-- تب فرهنگ اصطلاحات حقوقی -->
         <section id="dictionary-tab" class="page-section hidden space-y-3">
@@ -222,65 +182,42 @@
             <div id="dictionaryContainer" class="space-y-2 mt-2"></div>
         </section>
 
-        <!-- تب اینفوگرافیک‌های حقوقی -->
-        <section id="infographics-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-image ml-1.5 text-red-600"></i> اینفوگرافیک‌های حقوقی</h2>
-            <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
-        </section>
-
         <!-- تب پادکست‌های خبری -->
         <section id="podcasts-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-podcast ml-1.5 text-red-600"></i> پادکست‌ها و فایل‌های صوتی</h2>
             <div id="podcastsContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب وکیل آنلاین -->
+        <!-- تب ذخیره‌شده‌ها -->
+        <section id="bookmarks-tab" class="page-section hidden space-y-3"><div id="bookmarksListContainer" class="space-y-3"></div></section>
+        
+        <!-- تب پرونده‌های ویژه -->
+        <section id="files-tab" class="page-section hidden"><div id="filesContainer" class="space-y-3"></div></section>
+
+        <!-- تب سامانه‌های قضایی -->
+        <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
+
+        <!-- تب وکیل آنلاین (بدون بخش نظرات عمومی) -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
             <div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15">
                 <h2 class="font-bold text-xs text-red-600 flex items-center mb-2"><i class="fa-solid fa-user-tie ml-1.5"></i> پرسش از وکیل آنلاین</h2>
                 <textarea id="questionInput" placeholder="سوال حقوقی خود را بنویسید..." class="w-full bg-black/20 rounded-xl p-3 text-xs focus:outline-none h-24 mb-2 resize-none border border-white/10"></textarea>
                 <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">ارسال سوال</button>
             </div>
-            <div id="officialMessagesContainer" class="space-y-3"></div>
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه -->
+    <!-- ناوبری پایین صفحه (بدون تب اخبار و توییتر) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
-        <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-newspaper text-sm mb-0.5"></i><span class="text-[8px]">اخبار</span></button>
-        <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
-        <button onclick="switchTab('twitter-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2">
-            <svg class="w-3.5 h-3.5 mb-1 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            <span class="text-[8px]">توییتر</span>
-        </button>
-        <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
+        <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
         <button onclick="switchTab('infographics-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
+        <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
         <button onclick="switchTab('bookmarks-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bookmark text-sm mb-0.5"></i><span class="text-[8px]">ذخیره</span></button>
         <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
         <button onclick="switchTab('lawyer-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
     </nav>
-
-    <!-- مودال نمایش خبر -->
-    <div id="newsModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div id="modalCardContainer" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl max-h-[90vh] overflow-y-auto transition-all">
-            <button onclick="closeNewsModal()" class="absolute top-3 left-3 text-slate-400"><i class="fa-solid fa-xmark text-base"></i></button>
-            <div class="flex justify-between items-center mb-2">
-                <span id="modalCategory" class="bg-red-100 text-red-700 text-[10px] px-2.5 py-0.5 rounded font-bold">دسته‌بندی</span>
-                <div class="flex items-center space-x-1.5 space-x-reverse">
-                    <button onclick="toggleBookmarkCurrentNews()" id="modalBookmarkBtn" class="text-xs bg-black/30 px-2.5 py-1 rounded-xl border border-white/20"><i class="fa-regular fa-bookmark"></i></button>
-                    <button onclick="toggleReadingMode()" class="text-xs bg-black/30 px-2.5 py-1 rounded-xl border border-white/20"><i class="fa-solid fa-book-open"></i></button>
-                </div>
-            </div>
-            <img id="modalImg" src="" loading="lazy" class="w-full h-36 object-cover rounded-2xl mb-3 shadow-md" alt="">
-            <h3 id="modalTitle" class="font-bold text-xs mt-2 leading-relaxed">عنوان خبر</h3>
-            <p id="modalSummary" class="text-[11px] mt-2 leading-relaxed opacity-90">خلاصه...</p>
-            <div class="mt-4">
-                <a id="modalLink" href="#" target="_blank" class="block bg-[#c51b24] text-white text-center py-2.5 rounded-xl text-xs font-bold shadow">مشاهده کامل در سایت میزان</a>
-            </div>
-        </div>
-    </div>
 
     <!-- مودال اینفوگرافیک -->
     <div id="infographicModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
@@ -309,14 +246,8 @@
     <!-- منطق جاوااسکریپت -->
     <script>
         let fallbackData = {
-            news: [
-                { title: "آخرین تحولات حقوقی و قضایی کشور", summary: "مشروح اخبار و گزارش‌های حقوقی در پایگاه خبری میزان...", link: "https://mizanonline.ir", category: "قضایی", pubDate: new Date().toISOString() }
-            ],
-            tabs: [{ tab_name: "سراسری" }, { tab_name: "حقوقی" }],
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
             files: [{ title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", url: "#" }],
-            faq: [{ question: "چگونه ابلاغیه خود را مشاهده کنیم؟", answer: "از طریق سامانه ثنا با کد ملی و رمز شخصی." }],
-            twitter: [{ author_name: "خبرگزاری میزان", tweet_text: "آخرین بیانیه‌ها و اخبار رسمی قوه قضاییه در توییتر میزان.", link: "https://twitter.com" }],
             livestream: [{ title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده شبکه خبر" }],
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             infographics: [
@@ -326,9 +257,7 @@
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
-        let currentSelectedNews = null;
-        let displayedNewsLimit = 15;
-        let selectedCategoryFilter = 'all';
+        let lastSubmitTime = 0;
 
         window.addEventListener('DOMContentLoaded', () => {
             renderAll();
@@ -336,8 +265,6 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
             fetchTehranWeather();
-            setupInfiniteScroll();
-            loadTgSettingsToUI();
         });
 
         function normalizeNumbers(str) {
@@ -373,11 +300,8 @@
             try {
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 const newData = await response.json();
-                if (newData && newData.news && newData.news.length > 0) {
+                if (newData && Object.keys(newData).length > 0) {
                     appData = newData;
-                    if (appData.news && Array.isArray(appData.news)) {
-                        appData.news.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
-                    }
                     localStorage.setItem('mizan_cache', JSON.stringify(appData));
                     renderAll();
                 }
@@ -390,7 +314,6 @@
             const icon = document.getElementById('refreshIcon');
             if(icon) icon.classList.add('fa-spin');
             localStorage.removeItem('mizan_cache');
-            displayedNewsLimit = 15;
             await initApp();
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 400);
         }
@@ -398,20 +321,11 @@
         function toggleSettingsMenu(event) {
             if(event) event.stopPropagation();
             document.getElementById('settingsDropdown').classList.toggle('hidden');
-            document.getElementById('categoryDropdown').classList.add('hidden');
-        }
-
-        function toggleCategoryMenu(event) {
-            if(event) event.stopPropagation();
-            document.getElementById('categoryDropdown').classList.toggle('hidden');
-            document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
         window.addEventListener('click', () => {
             const setDrop = document.getElementById('settingsDropdown');
-            const catDrop = document.getElementById('categoryDropdown');
             if(setDrop) setDrop.classList.add('hidden');
-            if(catDrop) catDrop.classList.add('hidden');
         });
 
         function changeFontFamily(fontName) {
@@ -437,23 +351,10 @@
             document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
-        function toggleForYouFeedSetting(isChecked) {
-            tgSettings.forYou = isChecked;
-            localStorage.setItem('mizan_foryou', isChecked);
-            renderNews();
-            triggerHaptic();
-        }
-
         function updateTgSetting(key, val) {
             tgSettings[key] = val;
             localStorage.setItem('tg_' + (key === 'haptic' ? 'haptic' : 'cloud'), val);
             triggerHaptic();
-        }
-
-        function loadTgSettingsToUI() {
-            document.getElementById('tgHapticCheck').checked = tgSettings.haptic;
-            document.getElementById('tgCloudCheck').checked = tgSettings.cloudStorage;
-            document.getElementById('forYouSettingCheck').checked = tgSettings.forYou;
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -473,60 +374,13 @@
         }
 
         function renderAll() {
-            renderCategoryDropdown();
-            renderNews();
             renderFiles();
             renderLegalSystems();
-            renderOfficialMessages();
             renderLiveChannels();
-            renderTwitterFeed();
             renderBookmarks();
             renderDictionary();
             renderInfographics();
             renderPodcasts();
-        }
-
-        function setupInfiniteScroll() {
-            window.addEventListener('scroll', () => {
-                const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
-                const currentScroll = window.scrollY;
-                if (currentScroll >= scrollableHeight - 150) {
-                    if (appData.news && displayedNewsLimit < appData.news.length) {
-                        const indicator = document.getElementById('loadMoreIndicator');
-                        if(indicator) indicator.classList.add('hidden');
-                        setTimeout(() => {
-                            displayedNewsLimit += 10;
-                            renderNews();
-                        }, 300);
-                    }
-                }
-            });
-        }
-
-        function renderCategoryDropdown() {
-            const container = document.getElementById('dynamicCategoryList');
-            if (!container) return;
-
-            let html = `<button onclick="filterNewsCategory('all')" class="w-full text-right px-3 py-1.5 rounded-xl transition hover:bg-white/20 text-[10px] font-bold ${selectedCategoryFilter === 'all' ? 'text-red-500 bg-white/10' : ''}">همه اخبار</button>`;
-            
-            if (appData.tabs && Array.isArray(appData.tabs)) {
-                appData.tabs.forEach(t => {
-                    const tName = t.tab_name ? String(t.tab_name).trim() : '';
-                    if (tName) {
-                        const isSel = selectedCategoryFilter === tName;
-                        html += `<button onclick="filterNewsCategory('${tName}')" class="w-full text-right px-3 py-1.5 rounded-xl transition hover:bg-white/20 text-[10px] font-bold ${isSel ? 'text-red-500 bg-white/10' : ''}">${tName}</button>`;
-                    }
-                });
-            }
-            container.innerHTML = html;
-        }
-
-        function filterNewsCategory(catName) {
-            selectedCategoryFilter = catName;
-            document.getElementById('categoryDropdown').classList.add('hidden');
-            renderCategoryDropdown();
-            renderNews();
-            triggerHaptic();
         }
 
         function renderLiveChannels() {
@@ -547,6 +401,8 @@
                     <div class="text-[10px] opacity-80 truncate">${stream.description || 'کانال تلویزیونی'}</div>
                 </button>
             `).join('');
+
+            if (streams.length > 0) playSelectedStream(streams[0]);
         }
 
         function playSelectedStream(stream) {
@@ -566,105 +422,15 @@
             }
         }
 
-        function renderNews() {
-            const container = document.getElementById('newsListContainer');
-            const featuredContainer = document.getElementById('featuredNewsContainer');
-            if (!container || !featuredContainer) return;
-
-            let allNews = appData.news || [];
-
-            if (tgSettings.forYou) {
-                allNews = allNews.filter(n => String(n.category || '').includes('حقوقی') || String(n.category || '').includes('قضایی'));
-            }
-
-            if (selectedCategoryFilter !== 'all') {
-                allNews = allNews.filter(n => String(n.category || '').trim() === selectedCategoryFilter.trim() || String(n.tabId || '').trim() === selectedCategoryFilter.trim());
-            }
-
-            if (!allNews.length) {
-                featuredContainer.innerHTML = '';
-                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری در این دسته‌بندی یافت نشد.</p>';
-                return;
-            }
-
-            const firstNews = allNews[0];
-            const featuredImg = (firstNews.image && firstNews.image.startsWith('http')) ? firstNews.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
-
-            featuredContainer.innerHTML = `
-                <div onclick='openNewsModal(${JSON.stringify(firstNews).replace(/'/g, "&apos;")})' class="block ultra-glass rounded-2xl overflow-hidden shadow-sm border border-red-500/50 cursor-pointer">
-                    <img src="${featuredImg}" loading="lazy" class="w-full h-44 object-cover" alt="">
-                    <div class="p-3.5">
-                        <span class="bg-red-100 text-red-600 text-[10px] px-2.5 py-0.5 rounded-full font-bold">خبر ویژه</span>
-                        <h2 class="font-bold text-xs mt-2 line-clamp-2 leading-relaxed">${firstNews.title}</h2>
-                        <p class="text-[11px] opacity-90 mt-1 line-clamp-2">${firstNews.summary || ''}</p>
-                    </div>
-                </div>
-            `;
-
-            container.innerHTML = allNews.slice(1, displayedNewsLimit).map(n => `
-                <div onclick='openNewsModal(${JSON.stringify(n).replace(/'/g, "&apos;")})' class="ultra-glass p-3 rounded-2xl space-y-1 cursor-pointer hover:border-red-500 transition">
-                    <h3 class="font-bold text-xs">${n.title}</h3>
-                    <p class="text-[10px] opacity-80 line-clamp-2">${n.summary || ''}</p>
-                </div>
-            `).join('');
-        }
-
-        function openNewsModal(news) {
-            currentSelectedNews = news;
-            modalFontMultiplier = 0;
-            const titleElem = document.getElementById('modalTitle');
-            const summaryElem = document.getElementById('modalSummary');
-
-            titleElem.innerText = news.title;
-            titleElem.style.fontSize = '12px';
-            summaryElem.innerText = news.summary || 'مشروح کامل خبر در پایگاه خبری میزان.';
-            summaryElem.style.fontSize = '11px';
-
-            document.getElementById('modalCategory').innerText = news.category || 'عمومی';
-            document.getElementById('modalImg').src = (news.image && news.image.startsWith('http')) ? news.image : 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg';
-            document.getElementById('modalLink').href = news.link;
-
-            const bookmarks = getLocalBookmarks();
-            const isBookmarked = bookmarks.some(b => b.link === news.link);
-            const btnIcon = document.querySelector('#modalBookmarkBtn i');
-            if(btnIcon) btnIcon.className = isBookmarked ? "fa-solid fa-bookmark text-red-600" : "fa-regular fa-bookmark";
-
-            document.getElementById('newsModal').classList.remove('hidden');
-        }
-
-        function closeNewsModal() { document.getElementById('newsModal').classList.add('hidden'); }
-        function toggleReadingMode() { document.getElementById('modalCardContainer').classList.toggle('reading-mode-active'); }
-
-        function getLocalBookmarks() {
-            try { return JSON.parse(localStorage.getItem('mizan_bookmarks') || '[]'); } catch(e) { return []; }
-        }
-
-        function toggleBookmarkCurrentNews() {
-            if (!currentSelectedNews) return;
-            let bookmarks = getLocalBookmarks();
-            const index = bookmarks.findIndex(b => b.link === currentSelectedNews.link);
-            const btnIcon = document.querySelector('#modalBookmarkBtn i');
-            if (index > -1) {
-                bookmarks.splice(index, 1);
-                if(btnIcon) btnIcon.className = "fa-regular fa-bookmark";
-                alert('از ذخیره‌شده‌ها حذف شد.');
-            } else {
-                bookmarks.push(currentSelectedNews);
-                if(btnIcon) btnIcon.className = "fa-solid fa-bookmark text-red-600";
-                alert('خبر ذخیره شد.');
-            }
-            localStorage.setItem('mizan_bookmarks', JSON.stringify(bookmarks));
-            renderBookmarks();
-        }
-
         function renderBookmarks() {
             const container = document.getElementById('bookmarksListContainer');
             if(!container) return;
-            let bookmarks = getLocalBookmarks();
-            if (!bookmarks.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ خبری ذخیره نشده است.</p>'; return; }
+            let bookmarks = [];
+            try { bookmarks = JSON.parse(localStorage.getItem('mizan_bookmarks') || '[]'); } catch(e) {}
+            if (!bookmarks.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ موردی ذخیره نشده است.</p>'; return; }
             container.innerHTML = bookmarks.map(item => `
-                <div onclick='openNewsModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="ultra-glass p-3.5 rounded-2xl border border-white/15 cursor-pointer">
-                    <h3 class="font-bold text-xs">${item.title}</h3>
+                <div class="ultra-glass p-3.5 rounded-2xl border border-white/15">
+                    <h3 class="font-bold text-xs">${item.title || 'مورد ذخیره شده'}</h3>
                 </div>
             `).join('');
         }
@@ -693,39 +459,6 @@
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 flex items-center justify-between">
                     <div><h3 class="font-bold text-xs text-red-500">${sys.title}</h3><p class="text-[11px] opacity-80">${sys.description}</p></div>
                     <a href="${sys.url}" target="_blank" class="bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold">ورود</a>
-                </div>
-            `).join('');
-        }
-
-        // رندر توییتر با پشتیبانی از کلیدهای مختلف لینک پست در ایکس
-        function renderTwitterFeed() {
-            const container = document.getElementById('twitterFeedContainer');
-            if (!container) return;
-            let list = appData.twitter || [];
-            if (!list.length) { container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">پستی یافت نشد.</p>'; return; }
-            
-            container.innerHTML = list.map(t => {
-                const tweetUrl = t.link || t.url || 'https://twitter.com';
-                return `
-                    <a href="${tweetUrl}" target="_blank" class="block ultra-glass p-4 rounded-2xl border border-white/15 space-y-2 transition hover:border-red-500">
-                        <div class="font-bold text-xs text-red-500 flex items-center justify-between">
-                            <span>${t.author_name || 'خبرگزاری میزان'}</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70"></i>
-                        </div>
-                        <p class="text-[11px] opacity-95 leading-relaxed">${t.tweet_text || ''}</p>
-                    </a>
-                `;
-            }).join('');
-        }
-
-        function renderOfficialMessages() {
-            const container = document.getElementById('officialMessagesContainer');
-            if (!container) return;
-            let list = appData.faq || [];
-            container.innerHTML = list.map(q => `
-                <div class="ultra-glass p-3 rounded-2xl space-y-1">
-                    <h4 class="font-bold text-xs text-red-500">سوال: ${q.question}</h4>
-                    <p class="text-[10px] opacity-90">پاسخ: ${q.answer}</p>
                 </div>
             `).join('');
         }
@@ -766,6 +499,7 @@
             renderDictionary('');
         }
 
+        // رندر اینفوگرافیک با تصاویر بندانگشتی دایره‌ای شکل
         function renderInfographics() {
             const container = document.getElementById('infographicsContainer');
             if (!container) return;
@@ -773,11 +507,11 @@
             if (!list.length) { container.innerHTML = '<p class="text-center opacity-70 py-4 col-span-2">اینفوگرافیکی ثبت نشده است.</p>'; return; }
             
             container.innerHTML = list.map(inf => `
-                <div onclick='openInfographicModal(${JSON.stringify(inf).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-2.5 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 shadow-sm flex flex-col justify-between">
-                    <div class="w-full aspect-square rounded-xl overflow-hidden bg-slate-900 flex items-center justify-center">
-                        <img src="${inf.image}" loading="lazy" class="w-full h-full object-cover transition transform hover:scale-105" alt="">
+                <div onclick='openInfographicModal(${JSON.stringify(inf).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 shadow-sm flex flex-col items-center text-center justify-between">
+                    <div class="w-24 h-24 rounded-full overflow-hidden bg-slate-900 border-2 border-red-500/40 flex items-center justify-center shadow-inner">
+                        <img src="${inf.image}" loading="lazy" class="w-full h-full object-cover transition transform hover:scale-110" alt="">
                     </div>
-                    <h4 class="font-bold text-[11px] text-red-500 line-clamp-2 text-right">${inf.title}</h4>
+                    <h4 class="font-bold text-[11px] text-red-500 line-clamp-2">${inf.title}</h4>
                 </div>
             `).join('');
         }
@@ -818,18 +552,18 @@
 
             let resultsHTML = '';
             let uniqueMap = new Map();
-            (appData.news || []).forEach(n => {
-                const titleNorm = normalizeNumbers(n.title);
-                const summaryNorm = normalizeNumbers(n.summary);
-                if ((titleNorm.includes(q) || summaryNorm.includes(q)) && !uniqueMap.has(n.link)) {
-                    uniqueMap.set(n.link, n);
+            
+            // جستجو در واژه‌نامه و سامانه‌ها
+            (appData.dictionary || []).forEach(d => {
+                if (normalizeNumbers(d.term).includes(q) && !uniqueMap.has(d.term)) {
+                    uniqueMap.set(d.term, { title: d.term, desc: d.definition });
                 }
             });
 
-            let matchedNews = Array.from(uniqueMap.values()).slice(0, 4);
-            if (matchedNews.length > 0) {
-                resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1">اخبار</div>`;
-                resultsHTML += matchedNews.map(m => `<div onclick='openNewsModal(${JSON.stringify(m).replace(/'/g, "&apos;")}); document.getElementById("liveSuggestionsBox").classList.add("hidden");' class="p-2 hover:bg-white/20 rounded-lg cursor-pointer"><div class="font-bold line-clamp-1">${m.title}</div></div>`).join('');
+            let matched = Array.from(uniqueMap.values()).slice(0, 4);
+            if (matched.length > 0) {
+                resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1">نتایج جستجو</div>`;
+                resultsHTML += matched.map(m => `<div class="p-2 hover:bg-white/20 rounded-lg cursor-pointer"><div class="font-bold line-clamp-1">${m.title}</div><div class="text-[9px] opacity-70 line-clamp-1">${m.desc}</div></div>`).join('');
             }
 
             if (!resultsHTML) {
@@ -864,7 +598,6 @@
                 if(result.status === "success") {
                     alert('سوال با موفقیت ثبت شد.');
                     document.getElementById('questionInput').value = '';
-                    initApp();
                 } else {
                     alert(result.message || 'خطا در ثبت سوال.');
                 }

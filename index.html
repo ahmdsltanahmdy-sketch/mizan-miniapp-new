@@ -84,7 +84,6 @@
                 <span id="headerCalendarWidget">تقویم...</span>
             </div>
             
-            <!-- عنوان گرافیکی SIJT بین تاریخ و آب و هوا بدون تغییر ابعاد هدر -->
             <div class="flex items-center space-x-1.5 space-x-reverse px-2.5 py-0.5 rounded-full bg-gradient-to-r from-red-600/40 via-red-500/20 to-transparent border border-red-500/30 backdrop-blur-md shadow-lg">
                 <span class="inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
                 <span class="font-black tracking-widest text-[11px] text-transparent bg-clip-text bg-gradient-to-r from-white via-red-100 to-red-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">SIJT</span>
@@ -97,7 +96,6 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
@@ -132,7 +130,6 @@
             </div>
         </div>
 
-        <!-- کادر جستجو -->
         <div class="max-w-md mx-auto px-4 py-2.5 relative z-20">
             <div class="flex space-x-2 space-x-reverse relative items-center">
                 <div class="relative flex-grow">
@@ -167,38 +164,52 @@
         <!-- تب سامانه‌های قضایی -->
         <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
 
-        <!-- تب وکیل آنلاین (مشاور) با طراحی گرافیکی بسیار مدرن و جذاب -->
+        <!-- تب وکیل آنلاین (مشاور) همراه با تاریخچه پرسش و پاسخ گرافیکی -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
-            <div class="ultra-glass p-5 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden">
-                <div class="absolute -left-10 -top-10 w-32 h-32 bg-red-600/10 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-                <div class="flex items-center space-x-3 space-x-reverse mb-4 relative z-10">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-red-600/30">
-                        <i class="fa-solid fa-user-tie text-lg"></i>
+            <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-4">
+                <!-- هدر بخش مشاوره -->
+                <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-red-600/30">
+                            <i class="fa-solid fa-user-tie text-base"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-extrabold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-400">مشاور و وکیل آنلاین SIJT</h2>
+                            <p class="text-[9px] opacity-75">ثبت پرسش و دریافت پاسخ رسمی وکلای مجموعه</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="font-extrabold text-sm text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-400">مشاور و وکیل آنلاین SIJT</h2>
-                        <p class="text-[10px] opacity-75">پاسخگویی هوشمند به پرسش‌های حقوقی و قضایی</p>
-                    </div>
+                    <button onclick="loadUserFaqs()" title="بروزرسانی پاسخ‌ها" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition text-red-400 text-xs">
+                        <i id="faqRefreshIcon" class="fa-solid fa-rotate"></i>
+                    </button>
                 </div>
 
-                <div class="relative z-10 space-y-3">
+                <!-- فرم ارسال سوال -->
+                <div class="space-y-2.5">
                     <div class="relative">
-                        <textarea id="questionInput" placeholder="سوال حقوقی خود را با جزئیات بنویسید..." class="w-full bg-black/30 dark:bg-black/50 rounded-2xl p-3.5 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-32 resize-none border border-white/10 shadow-inner placeholder-slate-400"></textarea>
-                        <div class="absolute bottom-3 left-3 flex items-center space-x-1 space-x-reverse text-[9px] opacity-60">
+                        <textarea id="questionInput" placeholder="سوال حقوقی خود را با جزئیات بنویسید..." class="w-full bg-black/30 dark:bg-black/50 rounded-2xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-24 resize-none border border-white/10 shadow-inner placeholder-slate-400"></textarea>
+                        <div class="absolute bottom-2.5 left-3 flex items-center space-x-1 space-x-reverse text-[9px] opacity-60">
                             <i class="fa-solid fa-shield-halved text-red-500"></i>
                             <span>کاملاً محرمانه</span>
                         </div>
                     </div>
 
-                    <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full group relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 to-red-700 p-3 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all duration-300 hover:shadow-red-600/50 hover:scale-[1.01] active:scale-[0.99]">
-                        <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full group relative overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
                         <span class="relative flex items-center justify-center space-x-2 space-x-reverse">
                             <i class="fa-solid fa-paper-plane text-xs"></i>
                             <span>ارسال سوال به ربات مشاور</span>
                         </span>
                     </button>
+                </div>
+
+                <!-- بخش نمایش لیست سوالات و پاسخ‌های وکیل -->
+                <div class="space-y-2 pt-2 border-t border-white/10">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-slate-400 px-1">
+                        <span>تاریخچه گفتگوهای شما</span>
+                        <span id="faqCountBadge" class="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">0 مورد</span>
+                    </div>
+                    <div id="userFaqsContainer" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+                        <div class="text-center py-6 text-slate-400 text-xs">در حال بارگذاری پرسش‌ها...</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -254,7 +265,7 @@
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
-        <button onclick="switchTab('lawyer-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
+        <button onclick="switchTab('lawyer-tab', this); triggerHaptic(); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
         <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
         <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
         <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
@@ -323,6 +334,7 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
             fetchTehranWeather();
+            loadUserFaqs(); // بارگذاری سوالات کاربر در بدو ورود
         });
 
         function normalizeNumbers(str) {
@@ -373,6 +385,7 @@
             if(icon) icon.classList.add('fa-spin');
             localStorage.removeItem('mizan_cache');
             await initApp();
+            loadUserFaqs();
             setTimeout(() => { if(icon) icon.classList.remove('fa-spin'); }, 400);
         }
 
@@ -644,6 +657,7 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
+        // ارسال سوال به گوگل‌اسکریپت
         async function submitQuestion() {
             const now = Date.now();
             if (now - lastSubmitTime < 10000) {
@@ -653,20 +667,85 @@
             if (!q) return alert('لطفا سوال حقوقی خود را وارد کنید.');
             
             lastSubmitTime = now;
+            const btn = document.getElementById('submitQuestionBtn');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...`;
 
             try {
                 const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
                 const result = await res.json();
-                if(result.status === "success") {
-                    alert('سوال شما با موفقیت ثبت و به ربات تلگرام ارسال شد.');
-                    document.getElementById('questionInput').value = '';
-                } else {
-                    alert('سوال شما ثبت شد.');
-                    document.getElementById('questionInput').value = '';
-                }
+                document.getElementById('questionInput').value = '';
+                alert('سوال شما ثبت شد و به واحد حقوقی ارسال گردید.');
+                loadUserFaqs(); // بارگذاری مجدد لیست گفتگوها
             } catch(e) {
                 alert('سوال شما ثبت شد.');
                 document.getElementById('questionInput').value = '';
+                loadUserFaqs();
+            } finally {
+                btn.innerHTML = `<span class="relative flex items-center justify-center space-x-2 space-x-reverse"><i class="fa-solid fa-paper-plane text-xs"></i><span>ارسال سوال به ربات مشاور</span></span>`;
+            }
+        }
+
+        // دریافت و نمایش سوالات و پاسخ‌های کاربر از گوگل شیت
+        async function loadUserFaqs() {
+            const container = document.getElementById('userFaqsContainer');
+            const badge = document.getElementById('faqCountBadge');
+            const icon = document.getElementById('faqRefreshIcon');
+            if(icon) icon.classList.add('fa-spin');
+
+            try {
+                const res = await fetch(API_URL + "?action=get_user_faqs&userId=" + encodeURIComponent(userId) + "&t=" + new Date().getTime());
+                const data = await res.json();
+                
+                if (icon) setTimeout(() => icon.classList.remove('fa-spin'), 400);
+
+                if (data && data.status === "success" && data.faqs) {
+                    const faqs = data.faqs;
+                    if(badge) badge.innerText = `${faqs.length} مورد`;
+
+                    if (faqs.length === 0) {
+                        container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">هنوز سوالی ثبت نکرده‌اید.</div>`;
+                        return;
+                    }
+
+                    container.innerHTML = faqs.map((item, index) => `
+                        <div class="bg-black/20 dark:bg-black/40 p-3 rounded-2xl border border-white/10 space-y-2.5">
+                            <!-- سوال کاربر -->
+                            <div class="flex items-start space-x-2 space-x-reverse">
+                                <div class="w-6 h-6 rounded-full bg-red-600/30 text-red-400 flex items-center justify-center flex-shrink-0 text-[10px]">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div class="flex-grow space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-[10px] text-red-400">پرسش شما</span>
+                                        <span class="text-[8px] opacity-60">${item.date || ''}</span>
+                                    </div>
+                                    <p class="text-[11px] leading-relaxed opacity-90">${item.question}</p>
+                                </div>
+                            </div>
+
+                            <!-- پاسخ وکیل (در صورتی که ثبت شده باشد) -->
+                            ${item.answer ? `
+                                <div class="flex items-start space-x-2 space-x-reverse bg-red-500/10 p-2.5 rounded-xl border border-red-500/20 mr-4">
+                                    <div class="w-6 h-6 rounded-full bg-amber-500/30 text-amber-400 flex items-center justify-center flex-shrink-0 text-[10px]">
+                                        <i class="fa-solid fa-user-tie"></i>
+                                    </div>
+                                    <div class="flex-grow space-y-1">
+                                        <span class="font-bold text-[10px] text-amber-400">پاسخ وکیل مشاور</span>
+                                        <p class="text-[11px] leading-relaxed text-slate-200">${item.answer}</p>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="mr-4 flex items-center space-x-1.5 space-x-reverse text-[9px] text-amber-400/80 bg-amber-500/10 px-2.5 py-1 rounded-lg w-fit">
+                                    <i class="fa-solid fa-clock-rotate-left animate-spin text-[8px]"></i>
+                                    <span>در انتظار بررسی و پاسخ وکیل...</span>
+                                </div>
+                            `}
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                if(icon) icon.classList.remove('fa-spin');
+                container.innerHTML = `<div class="text-center py-6 text-red-400 text-xs">خطا در بارگذاری تاریخچه گفتگوها.</div>`;
             }
         }
 

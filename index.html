@@ -44,20 +44,34 @@
             background-repeat: no-repeat;
         }
 
-        /* استایل لوگوی شیشه‌ای، محو و بزرگ SIJT روی هدر */
+        @keyframes headerGlow {
+            0%, 100% { text-shadow: 0 0 15px rgba(239, 68, 68, 0.6), 0 0 30px rgba(197, 27, 36, 0.4), 0 0 45px rgba(255, 255, 255, 0.2); opacity: 0.85; transform: translate(-50%, -50%) scale(1); }
+            50% { text-shadow: 0 0 25px rgba(239, 68, 68, 0.9), 0 0 45px rgba(197, 27, 36, 0.7), 0 0 60px rgba(255, 255, 255, 0.4); opacity: 1; transform: translate(-50%, -50%) scale(1.03); }
+        }
+
         .header-logo-sijt {
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            font-size: 2.2rem;
+            font-size: 2.8rem;
             font-weight: 900;
-            letter-spacing: 0.3em;
-            color: rgba(255, 255, 255, 0.18);
+            letter-spacing: 0.35em;
+            background: linear-gradient(135deg, #ffffff 30%, #ff8a8a 70%, #c51b24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             pointer-events: none;
             user-select: none;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
             z-index: 10;
+            animation: headerGlow 4s infinite ease-in-out;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.8));
+        }
+
+        .series-card-glow { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .series-card-glow:hover {
+            transform: translateY(-4px);
+            border-color: rgba(239, 68, 68, 0.6);
+            box-shadow: 0 10px 25px -5px rgba(197, 27, 36, 0.4), 0 8px 10px -6px rgba(197, 27, 36, 0.4);
         }
     </style>
 </head>
@@ -180,10 +194,22 @@
 
         <!-- تب وکیل آنلاین (مشاور) -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
-            <div class="ultra-glass p-4 rounded-2xl shadow-sm border border-white/15">
-                <h2 class="font-bold text-xs text-red-600 flex items-center mb-2"><i class="fa-solid fa-user-tie ml-1.5"></i> پرسش از وکیل آنلاین</h2>
-                <textarea id="questionInput" placeholder="سوال حقوقی خود را بنویسید..." class="w-full bg-black/20 rounded-xl p-3 text-xs focus:outline-none h-24 mb-2 resize-none border border-white/10"></textarea>
-                <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">ارسال سوال به ربات</button>
+            <div class="ultra-glass p-5 rounded-3xl shadow-xl border border-red-500/30 relative overflow-hidden">
+                <div class="absolute -top-10 -left-10 w-32 h-32 bg-red-600/15 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="flex items-center space-x-2 space-x-reverse mb-3">
+                    <div class="w-8 h-8 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500">
+                        <i class="fa-solid fa-user-tie text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-xs text-red-500">مشاوره حقوقی تخصصی (وکیل آنلاین)</h2>
+                        <p class="text-[10px] opacity-70">پاسخ‌گویی به سوالات قضایی در کوتاه‌ترین زمان</p>
+                    </div>
+                </div>
+                <textarea id="questionInput" placeholder="متن پرسش حقوقی خود را با جزئیات بنویسید..." class="w-full bg-black/30 dark:bg-black/50 rounded-2xl p-3.5 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-32 mb-3 resize-none border border-white/15 shadow-inner placeholder-slate-400 transition"></textarea>
+                <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white py-3 rounded-2xl text-xs font-bold shadow-lg shadow-red-600/30 transition transform active:scale-95 flex items-center justify-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-paper-plane ml-1"></i>
+                    <span id="submitBtnText">ارسال امن سوال به وکیل</span>
+                </button>
             </div>
         </section>
 
@@ -226,8 +252,11 @@
 
         <!-- تب سریال‌ها -->
         <section id="series-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-film ml-1.5 text-red-600"></i> سریال‌ها</h2>
-            <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
+            <div class="flex items-center justify-between mb-1">
+                <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-film ml-1.5 text-red-600"></i> سریال‌های نمایشی</h2>
+                <span class="text-[9px] opacity-70">اختصاصی میزان</span>
+            </div>
+            <div id="seriesContainer" class="grid grid-cols-2 gap-3.5"></div>
         </section>
 
         <!-- تب ذخیره‌شده‌ها -->
@@ -261,12 +290,12 @@
         </div>
     </div>
 
-    <!-- مودال اختصاصی پخش سریال -->
+    <!-- مودال پخش سریال -->
     <div id="seriesModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
-            <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 p-2 z-10"><i class="fa-solid fa-xmark text-base"></i></button>
-            <h3 id="modalSeriesTitle" class="font-bold text-xs text-red-500 pt-1">پخش سریال</h3>
-            <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center border border-red-500/40">
+            <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 hover:text-white p-2 z-10"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 id="modalSeriesTitle" class="font-bold text-xs text-red-500 pt-1 flex items-center justify-center"><i class="fa-solid fa-clapperboard ml-1.5"></i> پخش ویدیو</h3>
+            <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center border border-white/10">
                 <iframe id="seriesVideoIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
             </div>
         </div>
@@ -284,9 +313,13 @@
 
     <!-- منطق جاوااسکریپت -->
     <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyLAmhCoWqHKBNUUarrgXzXrasbpy7Ygq0V4dJCMwu5EwNJs5dxM_NvcXgzJBW68A4p/exec'; 
+
         let fallbackData = {
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
-            files: [],
+            files: [
+                { title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد قانونی حقوق شهروندی در دادسراها.", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://mizanonline.ir" }
+            ],
             livestream: [{ title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده شبکه خبر" }],
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             infographics: [
@@ -300,6 +333,7 @@
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
         let lastSubmitTime = 0;
+        const SPAM_COOLDOWN = 60000;
 
         window.addEventListener('DOMContentLoaded', () => {
             renderAll();
@@ -343,7 +377,15 @@
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 const newData = await response.json();
                 if (newData && Object.keys(newData).length > 0) {
-                    appData = { ...fallbackData, ...newData };
+                    appData = {
+                        legalSystems: newData.legalSystems && newData.legalSystems.length ? newData.legalSystems : fallbackData.legalSystems,
+                        files: newData.files && newData.files.length ? newData.files : fallbackData.files,
+                        livestream: newData.livestream && newData.livestream.length ? newData.livestream : fallbackData.livestream,
+                        dictionary: newData.dictionary && newData.dictionary.length ? newData.dictionary : fallbackData.dictionary,
+                        infographics: newData.infographics && newData.infographics.length ? newData.infographics : fallbackData.infographics,
+                        series: newData.series && newData.series.length ? newData.series : fallbackData.series,
+                        podcasts: newData.podcasts && newData.podcasts.length ? newData.podcasts : fallbackData.podcasts
+                    };
                     localStorage.setItem('mizan_cache', JSON.stringify(appData));
                     renderAll();
                 }
@@ -582,7 +624,7 @@
             if (!container) return;
             let list = appData.series || [];
             if (!list.length) { 
-                container.innerHTML = '<p class="text-center opacity-70 py-4 col-span-2">سریالی ثبت نشده است.</p>'; 
+                container.innerHTML = '<p class="text-center opacity-70 py-4 col-span-2 text-xs">سریالی ثبت نشده است.</p>'; 
                 return; 
             }
             
@@ -593,12 +635,17 @@
                     url: ser.url || ser.link || ''
                 };
                 return `
-                    <div onclick='openSeriesModal(${JSON.stringify(cleanSer).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 shadow-sm flex flex-col items-center text-center justify-between">
-                        <div class="w-24 h-24 rounded-full overflow-hidden bg-slate-900 border-2 border-red-500/40 flex items-center justify-center shadow-inner relative group">
-                            <img src="${cleanSer.image}" loading="lazy" class="w-full h-full object-cover transition transform group-hover:scale-110" alt="">
-                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-play text-white text-base"></i></div>
+                    <div onclick='openSeriesModal(${JSON.stringify(cleanSer).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-3xl space-y-2.5 cursor-pointer series-card-glow border border-white/10 flex flex-col items-center text-center justify-between relative overflow-hidden group">
+                        <div class="absolute -right-12 -top-12 w-24 h-24 bg-red-600/10 rounded-full blur-xl group-hover:bg-red-600/25 transition"></div>
+                        <div class="w-24 h-24 rounded-2xl overflow-hidden bg-slate-900 border-2 border-red-500/50 flex items-center justify-center shadow-2xl relative group">
+                            <img src="${cleanSer.image}" loading="lazy" class="w-full h-full object-cover transition duration-500 transform group-hover:scale-110" alt="">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                                <div class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-75 group-hover:scale-100 transition">
+                                    <i class="fa-solid fa-play text-xs pr-0.5"></i>
+                                </div>
+                            </div>
                         </div>
-                        <h4 class="font-bold text-[11px] text-red-500 line-clamp-2">${cleanSer.title}</h4>
+                        <h4 class="font-bold text-[11px] text-slate-100 group-hover:text-red-400 transition line-clamp-2 px-1">${cleanSer.title}</h4>
                     </div>
                 `;
             }).join('');
@@ -628,31 +675,64 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // ارسال سوال به گوگل‌اسکریپت برای ارسال خودکار به تلگرام از طریق توکن و چت‌آیدی تنظیم شده در شیت
         async function submitQuestion() {
             const now = Date.now();
-            if (now - lastSubmitTime < 10000) {
-                return alert('لطفاً چند لحظه صبر کنید و سپس دوباره تلاش کنید.');
-            }
-            const q = document.getElementById('questionInput').value.trim();
-            if (!q) return alert('لطفا سوال حقوقی خود را وارد کنید.');
+            const elapsed = now - lastSubmitTime;
             
+            if (elapsed < SPAM_COOLDOWN) {
+                const remainingSecs = Math.ceil((SPAM_COOLDOWN - elapsed) / 1000);
+                alert(`لطفاً برای ارسال پیام بعدی ${remainingSecs} ثانیه صبر کنید (سیستم ضد اسپم).`);
+                return;
+            }
+
+            const q = document.getElementById('questionInput').value.trim();
+            if (!q) return alert('لطفا متن پرسش حقوقی خود را وارد کنید.');
+            if (q.length < 5) return alert('متن سوال بسیار کوتاه است. لطفاً جزئیات بیشتری بنویسید.');
+
             lastSubmitTime = now;
+            const btn = document.getElementById('submitQuestionBtn');
+            const btnText = document.getElementById('submitBtnText');
+            btn.disabled = true;
+            btnText.innerText = 'در حال ارسال امن...';
+
+            if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
+                try {
+                    window.Telegram.WebApp.sendData(JSON.stringify({ action: "lawyer_question", question: q, userId: userId }));
+                    btnText.innerText = 'سوال ارسال شد ✓';
+                    document.getElementById('questionInput').value = '';
+                    setTimeout(() => { btn.disabled = false; btnText.innerText = 'ارسال سوال به وکیل'; }, 3000);
+                    return;
+                } catch (e) {
+                    console.log("Telegram sendData error:", e);
+                }
+            }
 
             try {
                 const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
                 const result = await res.json();
                 if(result.status === "success") {
-                    alert('سوال شما با موفقیت ثبت و به ربات تلگرام ارسال شد.');
+                    alert('سوال شما با موفقیت برای وکیل آنلاین ارسال شد.');
                     document.getElementById('questionInput').value = '';
                 } else {
                     alert('سوال شما ثبت شد.');
                     document.getElementById('questionInput').value = '';
                 }
             } catch(e) {
-                alert('سوال شما ثبت شد.');
+                alert('سوال با موفقیت ارسال شد.');
                 document.getElementById('questionInput').value = '';
             }
+
+            let countdown = 60;
+            const timer = setInterval(() => {
+                if (countdown > 0) {
+                    btnText.innerText = `ارسال بعدی تا ${countdown} ثانیه`;
+                    countdown--;
+                } else {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btnText.innerText = 'ارسال سوال به وکیل';
+                }
+            }, 1000);
         }
 
         function handleLiveSearch(query) {

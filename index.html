@@ -485,18 +485,18 @@
             `).join('');
         }
 
-        // رندر کاملاً تطبیقی و هوشمند بخش پرونده‌ها برای خروجی گوگل‌شیت
+        // رندر جامع و پشتیبانی صددرصد از تمام کلیدهای احتمالی در شیت پرونده‌ها
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             if (!container) return;
-            let list = appData.files || fallbackData.files || [];
+            let list = appData.files || [];
             if (!list.length) { 
                 container.innerHTML = '<p class="text-center text-slate-400 py-8 text-xs">هیچ پرونده‌ای ثبت نشده است.</p>'; 
                 return; 
             }
             container.innerHTML = list.map(f => {
-                const title = f.title || f.name || f.subject || f.TITLE || f.NAME || 'بدون عنوان';
-                const description = f.description || f.desc || f.summary || f.DESCRIPTION || f.DESC || '';
+                const title = f.title || f.name || f.subject || f.TITLE || f.NAME || f.SUBJECT || 'بدون عنوان';
+                const description = f.description || f.desc || f.summary || f.DESCRIPTION || f.DESC || f.SUMMARY || '';
                 const image = f.image || f.img || f.IMAGE || f.IMG || '';
                 const url = f.url || f.link || f.URL || f.LINK || '#';
                 return `
@@ -637,7 +637,7 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // ارسال دقیق و استاندارد سوال به ربات تلگرام از طریق متد اختصاصی WebApp
+        // ارسال دقیق سوال به ربات تلگرام با متد استاندارد WebApp
         async function submitQuestion() {
             const now = Date.now();
             if (now - lastSubmitTime < 10000) {
@@ -648,19 +648,17 @@
             
             lastSubmitTime = now;
 
-            // ارسال مستقیم و بومی به ربات تلگرام
-            if (window.Telegram && window.Telegram.WebApp) {
+            // ارسال مستقیم به ربات تلگرام
+            if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
                 try {
-                    if (typeof window.Telegram.WebApp.sendData === 'function') {
-                        window.Telegram.WebApp.sendData(JSON.stringify({ action: "lawyer_question", question: q, userId: userId }));
-                        return;
-                    }
+                    window.Telegram.WebApp.sendData(JSON.stringify({ action: "lawyer_question", question: q, userId: userId }));
+                    return;
                 } catch (e) {
                     console.log("Telegram sendData error:", e);
                 }
             }
 
-            // فال‌بک برای ارسال به گوگل اسکریپت در صورت عدم حضور در بستر تلگرام
+            // ارسال به گوگل‌اسکریپت به عنوان پشتیبان
             try {
                 const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
                 const result = await res.json();

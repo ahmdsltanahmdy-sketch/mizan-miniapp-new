@@ -94,7 +94,6 @@
 
     <!-- هدر اپلیکیشن (به همراه لوگوی شیشه‌ای SIJT) -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md relative overflow-hidden">
-        <!-- لوگوی بزرگ، شیشه‌ای و محو SIJT -->
         <div class="header-logo-sijt">SIJT</div>
 
         <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
@@ -152,7 +151,7 @@
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-400 text-xs"></i>
                     <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته در سایت میزان" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
+                <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته در گوگل" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
                     <i class="fa-solid fa-earth-americas text-sm"></i>
                 </button>
             </div>
@@ -226,7 +225,7 @@
         <section id="bookmarks-tab" class="page-section hidden space-y-3"><div id="bookmarksListContainer" class="space-y-3"></div></section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با ترتیب دقیق: اصطلاحات، سامانه‌ها، مشاور، پادکست، پرونده‌ها، پخش زنده، اینفوگرافیک، ذخیره) -->
+    <!-- ناوبری پایین صفحه -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -252,13 +251,13 @@
         </div>
     </div>
 
-    <!-- مودال جستجوی پیشرفته -->
+    <!-- مودال جستجوی پیشرفته (متصل به گوگل) -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
             <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400"><i class="fa-solid fa-xmark text-base"></i></button>
-            <h3 class="font-bold text-sm text-[#c51b24]">جستجوی پیشرفته در سایت میزان</h3>
-            <input type="text" id="advSearchInput" placeholder="عبارت جستجو..." class="w-full bg-black/30 rounded-xl px-3 py-2.5 text-xs border border-white/20 text-white">
-            <button onclick="executeAdvancedGoogleSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow">جستجو در گوگل</button>
+            <h3 class="font-bold text-sm text-[#c51b24]">جستجوی پیشرفته در گوگل</h3>
+            <input type="text" id="advSearchInput" placeholder="عبارت مورد نظر را برای جستجو در گوگل بنویسید..." class="w-full bg-black/30 rounded-xl px-3 py-2.5 text-xs border border-white/20 text-white focus:outline-none">
+            <button onclick="executeAdvancedGoogleSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow transition hover:bg-red-700">جستجو در گوگل</button>
         </div>
     </div>
 
@@ -378,10 +377,12 @@
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
         function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
+        
+        // تابع اتصال به گوگل برای جستجوی عبارت وارد شده در کادر
         function executeAdvancedGoogleSearch() {
             const query = document.getElementById('advSearchInput').value.trim();
             if (!query) return alert('لطفا عبارت مورد نظر را وارد کنید.');
-            window.open(`https://www.google.com/search?q=site:mizanonline.ir+${encodeURIComponent(query)}`, '_blank');
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
             closeAdvancedSearchModal();
         }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خبرگزاری میزان | مینی‌اپ خبری پیشرفته</title>
+    <title>SIJT | مینی‌اپ خبری پیشرفته</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -93,7 +93,7 @@
     </script>
 
     <!-- هدر اپلیکیشن -->
-    <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md relative overflow-hidden">
+    <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md relative overflow-visible">
         <div class="header-logo-sijt">SIJT</div>
 
         <div class="max-w-md mx-auto px-4 py-2 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
@@ -155,7 +155,8 @@
                     <i class="fa-solid fa-earth-americas text-sm"></i>
                 </button>
             </div>
-            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-12 ultra-glass rounded-3xl shadow-2xl z-50 max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
+            <!-- کادر پیشنهادات جستجوی آنی با موقعیت‌دهی کاملاً آزاد و عدم تداخل با هدر -->
+            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-full mt-1.5 ultra-glass rounded-2xl shadow-2xl z-[100] max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
     </header>
 
@@ -551,7 +552,6 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // جستجوی هوشمند و جامع در تمام بخش‌های مینی‌اپ (اصطلاحات، سامانه‌ها، پرونده‌ها و پادکست‌ها)
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');

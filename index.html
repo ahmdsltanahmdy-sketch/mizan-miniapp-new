@@ -92,7 +92,7 @@
         }
     </script>
 
-    <!-- هدر اپلیکیشن (به همراه لوگوی شیشه‌ای SIJT) -->
+    <!-- هدر اپلیکیشن -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md relative overflow-hidden">
         <div class="header-logo-sijt">SIJT</div>
 
@@ -161,7 +161,7 @@
 
     <!-- بدنه اصلی مینی‌اپ -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
-        <!-- تب فرهنگ اصطلاحات حقوقی (پیش‌فرض اول هنگام بارگذاری) -->
+        <!-- تب فرهنگ اصطلاحات حقوقی -->
         <section id="dictionary-tab" class="page-section space-y-3">
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-book ml-1.5 text-red-600"></i> فرهنگ اصطلاحات حقوقی</h2>
@@ -420,8 +420,6 @@
                     <div class="text-[10px] opacity-80 truncate">${stream.description || 'کانال تلویزیونی'}</div>
                 </button>
             `).join('');
-            
-            // عدم پخش خودکار در شروع برنامه (src خالی می‌ماند تا کاربر خودش انتخاب کند)
         }
 
         function playSelectedStream(stream) {
@@ -553,6 +551,7 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
+        // جستجوی هوشمند و جامع در تمام بخش‌های مینی‌اپ (اصطلاحات، سامانه‌ها، پرونده‌ها و پادکست‌ها)
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');
@@ -569,21 +568,60 @@
             }
 
             let resultsHTML = '';
-            let uniqueMap = new Map();
-            
-            (appData.dictionary || []).forEach(d => {
-                if (normalizeNumbers(d.term).includes(q) && !uniqueMap.has(d.term)) {
-                    uniqueMap.set(d.term, { title: d.term, desc: d.definition });
-                }
-            });
+            let resultsCount = 0;
 
-            let matched = Array.from(uniqueMap.values()).slice(0, 4);
-            if (matched.length > 0) {
-                resultsHTML += `<div class="text-[10px] font-bold text-red-500 px-2 py-1">نتایج جستجو</div>`;
-                resultsHTML += matched.map(m => `<div class="p-2 hover:bg-white/20 rounded-lg cursor-pointer"><div class="font-bold line-clamp-1">${m.title}</div><div class="text-[9px] opacity-70 line-clamp-1">${m.desc}</div></div>`).join('');
+            // 1. جستجو در اصطلاحات حقوقی
+            let matchedDict = (appData.dictionary || []).filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q)).slice(0, 3);
+            if (matchedDict.length > 0) {
+                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10">اصطلاحات حقوقی</div>`;
+                resultsHTML += matchedDict.map(d => `
+                    <div onclick="switchTab('dictionary-tab', document.querySelector('nav button')); document.getElementById('liveSuggestionsBox').classList.add('hidden');" class="p-2 hover:bg-white/20 rounded-lg cursor-pointer">
+                        <div class="font-bold text-[11px]">${d.term}</div>
+                        <div class="text-[9px] opacity-70 line-clamp-1">${d.definition}</div>
+                    </div>
+                `).join('');
+                resultsCount += matchedDict.length;
             }
 
-            if (!resultsHTML) {
+            // 2. جستجو در سامانه‌های قضایی
+            let matchedSystems = (appData.legalSystems || []).filter(s => normalizeNumbers(s.title).includes(q) || normalizeNumbers(s.description).includes(q)).slice(0, 3);
+            if (matchedSystems.length > 0) {
+                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10 mt-1">سامانه‌های قضایی</div>`;
+                resultsHTML += matchedSystems.map(s => `
+                    <a href="${s.url}" target="_blank" class="block p-2 hover:bg-white/20 rounded-lg cursor-pointer">
+                        <div class="font-bold text-[11px]">${s.title}</div>
+                        <div class="text-[9px] opacity-70 line-clamp-1">${s.description}</div>
+                    </a>
+                `).join('');
+                resultsCount += matchedSystems.length;
+            }
+
+            // 3. جستجو در پرونده‌های ویژه
+            let matchedFiles = (appData.files || []).filter(f => normalizeNumbers(f.title).includes(q) || normalizeNumbers(f.description).includes(q)).slice(0, 3);
+            if (matchedFiles.length > 0) {
+                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10 mt-1">پرونده‌های ویژه</div>`;
+                resultsHTML += matchedFiles.map(f => `
+                    <div onclick="switchTab('files-tab', document.querySelectorAll('nav button')[4]); document.getElementById('liveSuggestionsBox').classList.add('hidden');" class="p-2 hover:bg-white/20 rounded-lg cursor-pointer">
+                        <div class="font-bold text-[11px]">${f.title}</div>
+                        <div class="text-[9px] opacity-70 line-clamp-1">${f.description}</div>
+                    </div>
+                `).join('');
+                resultsCount += matchedFiles.length;
+            }
+
+            // 4. جستجو در پادکست‌ها
+            let matchedPodcasts = (appData.podcasts || []).filter(p => normalizeNumbers(p.title).includes(q)).slice(0, 3);
+            if (matchedPodcasts.length > 0) {
+                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1 border-b border-white/10 mt-1">پادکست‌ها</div>`;
+                resultsHTML += matchedPodcasts.map(p => `
+                    <div onclick="switchTab('podcasts-tab', document.querySelectorAll('nav button')[3]); document.getElementById('liveSuggestionsBox').classList.add('hidden');" class="p-2 hover:bg-white/20 rounded-lg cursor-pointer">
+                        <div class="font-bold text-[11px]">${p.title}</div>
+                    </div>
+                `).join('');
+                resultsCount += matchedPodcasts.length;
+            }
+
+            if (resultsCount === 0) {
                 box.innerHTML = '<div class="p-3 text-center text-slate-400">موردی یافت نشد</div>';
             } else {
                 box.innerHTML = resultsHTML;
@@ -627,7 +665,7 @@
 
             const iframeElem = document.getElementById('liveStreamIframe');
             if (sectionId !== 'multimedia-tab' && iframeElem) {
-                iframeElem.src = ""; // قطع کامل پخش زنده هنگام خروج از تب پخش زنده
+                iframeElem.src = "";
             } else if (sectionId === 'multimedia-tab' && iframeElem && !iframeElem.src) {
                 let streams = appData.livestream || [];
                 if (streams.length) playSelectedStream(streams[0]);

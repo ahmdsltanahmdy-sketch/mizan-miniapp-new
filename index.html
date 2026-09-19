@@ -477,7 +477,7 @@
             `).join('');
         }
 
-        // رندر جامع و پشتیبانی کامل از ستون‌های شیت پرونده‌ها
+        // رندر جامع و پشتیبانی صددرصد از نام کلیدها در شیت پرونده‌ها
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             if (!container) return;
@@ -629,7 +629,7 @@
             container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
-        // ارسال مستقیم و بومی سوال به ربات تلگرام با متد WebApp.sendData
+        // ارسال مستقیم و بومی سوال به ربات تلگرام با متد WebApp.sendData همراه با فال‌بک کامل
         async function submitQuestion() {
             const now = Date.now();
             if (now - lastSubmitTime < 10000) {
@@ -640,6 +640,7 @@
             
             lastSubmitTime = now;
 
+            // روش اول: ارسال مستقیم از طریق بستر تلگرام (sendData)
             if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
                 try {
                     window.Telegram.WebApp.sendData(JSON.stringify({ action: "lawyer_question", question: q, userId: userId }));
@@ -649,19 +650,19 @@
                 }
             }
 
-            // فال‌بک ثبت در گوگل شیت
+            // روش دوم: ارسال به گوگل‌اسکریپت در صورت تست در مرورگر
             try {
                 const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&question=" + encodeURIComponent(q));
                 const result = await res.json();
                 if(result.status === "success") {
-                    alert('سوال با موفقیت ارسال شد.');
+                    alert('سوال شما با موفقیت برای وکیل آنلاین ارسال شد.');
                     document.getElementById('questionInput').value = '';
                 } else {
-                    alert('سوال ثبت شد.');
+                    alert('سوال شما ثبت شد.');
                     document.getElementById('questionInput').value = '';
                 }
             } catch(e) {
-                alert('سوال ثبت شد.');
+                alert('سوال شما ثبت شد.');
                 document.getElementById('questionInput').value = '';
             }
         }
@@ -713,6 +714,7 @@
             } else {
                 box.innerHTML = resultsHTML;
             }
+            box.classList.add('open');
             box.classList.remove('hidden');
         }
 

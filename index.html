@@ -94,21 +94,61 @@
                 </button>
                 <span id="headerWeatherWidget">تهران...</span>
                 <button onclick="manualRefresh()" title="بروزرسانی" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
-                <button onclick="toggleSettingsMenu(event)" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
+                <button onclick="toggleSettingsMenu(event)" title="تنظیمات پیشرفته" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
 
-        <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-72 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30">
+        <!-- منوی تنظیمات پیشرفته کامل -->
+        <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-80 p-4 ultra-glass rounded-3xl space-y-3 text-xs shadow-2xl border border-white/30 max-h-[75vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
                 <button onclick="toggleTheme()" class="bg-white/20 px-3 py-1 rounded-xl font-medium border border-white/20"><i class="fa-solid fa-moon"></i> تیره / روشن</button>
             </div>
+            
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
-                <span class="font-bold">قلم مینی‌اپ:</span>
+                <span class="font-bold">حالت تمام‌صفحه هوشمند:</span>
+                <button onclick="toggleFullScreen()" class="bg-red-600/30 text-red-300 px-3 py-1 rounded-xl font-bold"><i class="fa-solid fa-expand ml-1"></i> ورود/خروج</button>
+            </div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">قلم تخصصی مینی‌اپ:</span>
+                <select id="fontSelect" onchange="changeFontFamily(this.value)" class="bg-slate-900 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20">
+                    <option value="Tahoma">Tahoma</option>
+                    <option value="Vazirmatn">وزیر (Vazirmatn)</option>
+                    <option value="Shabnam">شبنم (Shabnam)</option>
+                    <option value="Sahel">ساحل (Sahel)</option>
+                </select>
+            </div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">اندازه متن:</span>
                 <div class="space-x-1 space-x-reverse">
-                    <button onclick="changeFontFamily('Tahoma')" class="px-2 py-0.5 bg-white/20 rounded-lg">Tahoma</button>
-                    <button onclick="changeFontFamily('Vazirmatn')" class="px-2 py-0.5 bg-white/20 rounded-lg">وزیر</button>
+                    <button onclick="changeAppFontSize('11px')" class="px-2 py-0.5 bg-white/20 rounded-lg">کوچک</button>
+                    <button onclick="changeAppFontSize('12px')" class="px-2 py-0.5 bg-white/20 rounded-lg">متوسط</button>
+                    <button onclick="changeAppFontSize('14px')" class="px-2 py-0.5 bg-white/20 rounded-lg">بزرگ</button>
                 </div>
+            </div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">نوع تقویم نمایشی:</span>
+                <select id="calendarSelect" onchange="changeCalendarType(this.value)" class="bg-slate-900 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20">
+                    <option value="persian">هجری شمسی (جلالی)</option>
+                    <option value="gregorian">میلادی</option>
+                </select>
+            </div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">بازخورد لرزشی (Haptic):</span>
+                <input type="checkbox" id="tgHapticCheck" onchange="updateTgSetting('haptic', this.checked)" checked class="accent-red-600 w-4 h-4">
+            </div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">حافظه موقت و کش:</span>
+                <button onclick="localStorage.removeItem('mizan_cache'); location.reload();" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش</button>
+            </div>
+
+            <div class="pt-1 text-center">
+                <button onclick="openAboutModal()" class="text-amber-400 font-bold hover:underline text-[11px]"><i class="fa-solid fa-circle-info ml-1"></i> اطلاعات و پشتیبانی (درباره ما)</button>
             </div>
         </div>
 
@@ -215,28 +255,25 @@
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-bullhorn ml-1.5 text-red-600"></i> اطلاعیه‌ها و اخبار رسمی</h2>
             <div id="newsContainer" class="space-y-3"></div>
             
-            <!-- بخش نکات کوتاه و ترفندهای روز حقوقی (رفع مشکل خوانایی و تداخل رنگ) -->
             <div class="pt-3 border-t border-white/10 space-y-2">
                 <h3 class="font-bold text-xs flex items-center text-red-500 dark:text-red-400"><i class="fa-solid fa-lightbulb ml-1.5"></i> نکات کوتاه و ترفندهای روز حقوقی</h3>
                 <div id="quickTipsContainer" class="space-y-2"></div>
             </div>
         </section>
 
-        <!-- تب ۵: ابزارهای پیشرفته حقوقی (محاسبه‌گرها با نرخ به‌روز و هوش مصنوعی) -->
+        <!-- تب ۵: ابزارهای پیشرفته حقوقی -->
         <section id="tools-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-toolbox ml-1.5 text-red-600"></i> ابزارهای هوشمند حقوقی</h2>
             
-            <!-- محاسبه‌گر هزینه دادرسی (نرخ جدید) -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی (بروزرسانی جدید)</h3>
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی</h3>
                 <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                 <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
                 <div id="feeResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
             </div>
 
-            <!-- محاسبه‌گر مهریه به نرخ روز (بروزرسانی جدید) -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز (شاخص بانک مرکزی)</h3>
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز</h3>
                 <div class="grid grid-cols-2 gap-2">
                     <input type="number" id="mahariyehAmount" placeholder="تعداد سکه / مبلغ..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                     <input type="number" id="marriageYear" placeholder="سال عقد (مثلا 1395)..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
@@ -245,9 +282,8 @@
                 <div id="mahariyehResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
             </div>
 
-            <!-- محاسبه‌گر دیه (نرخ مصوب جدید) -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر دیه (نرخ مصوب سال)</h3>
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر دیه</h3>
                 <select id="diyehType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none">
                     <option value="complete">دیه کامل یک مرد مسلمان (ماه غیرحرام)</option>
                     <option value="haram">دیه کامل در ماه‌های حرام (تغلیظ دیه)</option>
@@ -258,7 +294,6 @@
                 <div id="diyehResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
             </div>
 
-            <!-- دستیار هوش مصنوعی حقوقی -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
                 <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-robot ml-1"></i> دستیار هوش مصنوعی حقوقی (RAG)</h3>
                 <textarea id="aiPromptInput" placeholder="سوال حقوقی خود را بپرسید..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl p-3 text-xs border border-white/20 focus:outline-none h-20 resize-none"></textarea>
@@ -339,7 +374,18 @@
         <button onclick="switchTab('series-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
     </nav>
 
-    <!-- مودال اختصاصی پخش سریال داخل خود مینی‌اپ با پلیر جذاب -->
+    <!-- مودال اطلاعات و پشتیبانی (تنظیم شده از گوگل شیت) -->
+    <div id="aboutModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+            <button onclick="closeAboutModal()" class="absolute top-3 left-3 text-slate-400 p-2"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-xs text-red-500 pt-1"><i class="fa-solid fa-circle-info ml-1"></i> درباره مینی‌اپ و پشتیبانی</h3>
+            <div id="aboutContentBox" class="text-[11px] opacity-90 leading-relaxed text-right bg-slate-900 p-3 rounded-xl border border-white/20">
+                در حال بارگذاری اطلاعات پشتیبانی...
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال پخش سریال -->
     <div id="seriesModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -353,7 +399,7 @@
         </div>
     </div>
 
-    <!-- مودال اعلان‌ها (User Notifications) -->
+    <!-- مودال اعلان‌ها -->
     <div id="notificationsModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3">
             <button onclick="toggleNotificationsModal()" class="absolute top-3 left-3 text-slate-400 p-2"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -375,7 +421,7 @@
         </div>
     </div>
 
-    <!-- توست پیام کپی سریع (One-Tap Copy Toast) -->
+    <!-- توست پیام کپی -->
     <div id="copyToast" class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs shadow-2xl border border-white/20 hidden z-[200] transition-all">
         <i class="fa-solid fa-check text-emerald-400 ml-1"></i> متن با موفقیت کپی شد!
     </div>
@@ -387,7 +433,8 @@
             news: [{ title: "اطلاعیه مهم حقوقی", summary: "تغییرات جدید در نحوه ابلاغ الکترونیک قضایی", date: "۱۴۰۵/۰۶/۲۸" }],
             quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
             publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
-            series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com/v/example" }]
+            series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com/v/example" }],
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.5.0\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -400,7 +447,39 @@
             setInterval(updateDateTime, 1000);
             fetchTehranWeather();
             loadUserFaqs();
+            applySavedSettings();
         });
+
+        function applySavedSettings() {
+            const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';
+            document.getElementById('fontSelect').value = savedFont;
+            const savedCalendar = localStorage.getItem('mizan_calendar') || 'persian';
+            document.getElementById('calendarSelect').value = savedCalendar;
+        }
+
+        function changeCalendarType(type) {
+            localStorage.setItem('mizan_calendar', type);
+            updateDateTime();
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {});
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        function openAboutModal() {
+            document.getElementById('settingsDropdown').classList.add('hidden');
+            const aboutList = appData.about || [{ text: "مینی‌اپ تخصصی حقوقی SIJT" }];
+            document.getElementById('aboutContentBox').innerText = aboutList[0].text;
+            document.getElementById('aboutModal').classList.remove('hidden');
+        }
+
+        function closeAboutModal() {
+            document.getElementById('aboutModal').classList.add('hidden');
+        }
 
         function normalizeNumbers(str) {
             if (!str) return '';
@@ -412,8 +491,15 @@
 
         function updateDateTime() {
             const now = new Date();
+            const calType = localStorage.getItem('mizan_calendar') || 'persian';
             const calElem = document.getElementById('headerCalendarWidget');
-            if(calElem) calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
+            if(calElem) {
+                if(calType === 'gregorian') {
+                    calElem.innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                } else {
+                    calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
+                }
+            }
         }
 
         async function fetchTehranWeather() {
@@ -464,7 +550,17 @@
         function changeFontFamily(fontName) {
             document.documentElement.style.setProperty('--selected-font', fontName);
             localStorage.setItem('mizan_font', fontName);
-            document.getElementById('settingsDropdown').classList.add('hidden');
+        }
+
+        function changeAppFontSize(sizeVal) {
+            document.documentElement.style.setProperty('--app-font-size', sizeVal);
+            localStorage.setItem('mizan_font_size', sizeVal);
+        }
+
+        function updateTgSetting(key, val) {
+            tgSettings[key] = val;
+            localStorage.setItem('tg_' + key, val);
+            triggerHaptic();
         }
 
         function toggleTheme() {
@@ -475,8 +571,7 @@
         }
 
         function toggleNotificationsModal() {
-            const modal = document.getElementById('notificationsModal');
-            modal.classList.toggle('hidden');
+            document.getElementById('notificationsModal').classList.toggle('hidden');
         }
 
         function copyToClipboard(text) {
@@ -488,8 +583,7 @@
         }
 
         function copyAiResponse() {
-            const text = document.getElementById('aiResponseText').innerText;
-            copyToClipboard(text);
+            copyToClipboard(document.getElementById('aiResponseText').innerText);
         }
 
         function shareContent(title, text) {
@@ -668,7 +762,6 @@
             const iframe = document.getElementById('seriesVideoIframe');
             const extBtn = document.getElementById('externalSeriesBtn');
             let videoUrl = ser.url || '';
-            
             if (videoUrl.includes('aparat.com/v/')) {
                 videoUrl = videoUrl.replace('aparat.com/v/', 'aparat.com/v/embed/');
             }
@@ -723,11 +816,9 @@
         }
         function closeInfographicModal() { document.getElementById('infographicModal').classList.add('hidden'); }
 
-        // ابزارهای پیشرفته حقوقی با نرخ‌های کاملاً به‌روز
         function calculateCourtFee() {
             const amount = parseFloat(document.getElementById('claimAmountInput').value) || 0;
             if(amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
-            // فرمول به‌روز هزینه دادرسی بدوی (۳.۵ درصد دعوای مالی)
             let fee = amount * 0.035;
             document.getElementById('feeResult').innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(fee).toLocaleString()} ریال`;
         }
@@ -736,22 +827,20 @@
             const count = parseFloat(document.getElementById('mahariyehAmount').value) || 0;
             const year = parseInt(document.getElementById('marriageYear').value) || 1400;
             if(count <= 0) return alert('مقدار مهریه را وارد کنید.');
-            // فرمول به‌روز ارزش روز مهریه بر اساس تورم و شاخص بانک مرکزی
             let estimatedValue = count * 55000000 * Math.pow(1.30, (2026 - year));
             document.getElementById('mahariyehResult').innerText = `ارزش تقریبی روز: حدود ${Math.round(estimatedValue).toLocaleString()} ریال`;
         }
 
         function calculateDiyeh() {
             const type = document.getElementById('diyehType').value;
-            let baseDiyeh = 1600000000; // نرخ به‌روز دیه کامل
+            let baseDiyeh = 1600000000;
             let finalDiyeh = baseDiyeh;
-            if(type === 'haram') finalDiyeh = baseDiyeh * 1.33; // تغلیظ دیه در ماه‌های حرام (یک‌سوم اضافه‌تر)
+            if(type === 'haram') finalDiyeh = baseDiyeh * 1.33;
             if(type === 'finger') finalDiyeh = baseDiyeh * 0.1;
             if(type === 'eye') finalDiyeh = baseDiyeh * 0.5;
             document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;
         }
 
-        // هوش مصنوعی حقوقی
         async function runAiAssistant() {
             const prompt = document.getElementById('aiPromptInput').value.trim();
             const box = document.getElementById('aiResponseBox');
@@ -764,7 +853,6 @@
             try {
                 const res = await fetch(API_URL + "?action=ai_search&query=" + encodeURIComponent(prompt) + "&t=" + new Date().getTime());
                 const data = await res.json();
-                
                 if (data && data.status === "success" && data.result) {
                     resText.innerHTML = data.result.replace(/\n/g, '<br>');
                 } else {

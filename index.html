@@ -399,6 +399,19 @@
     </nav>
 
     <!-- مودال‌ها -->
+    <!-- مودال جستجوی پیشرفته در گوگل -->
+    <div id="advancedSearchModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+            <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-xs text-red-500 pt-1"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته در گوگل</h3>
+            <p class="text-[10px] opacity-80 text-right">عبارت مورد نظر خود را برای جستجو در گوگل و سایت‌های حقوقی وارد کنید:</p>
+            <div class="space-y-2">
+                <input type="text" id="googleSearchInput" placeholder="عبارت جستجو..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2.5 text-xs border border-white/20 focus:outline-none">
+                <button onclick="executeGoogleSearch()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl text-xs font-bold shadow">جستجو در گوگل</button>
+            </div>
+        </div>
+    </div>
+
     <div id="aboutModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeAboutModal()" class="absolute top-3 left-3 text-slate-400 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -470,6 +483,31 @@
             loadUserFaqs();
             applySavedSettings();
         });
+
+        // توابع جستجوی پیشرفته (هدر)
+        function openAdvancedSearchModal() {
+            const modal = document.getElementById('advancedSearchModal');
+            if(modal) modal.classList.remove('hidden');
+            triggerHaptic();
+        }
+
+        function closeAdvancedSearchModal() {
+            const modal = document.getElementById('advancedSearchModal');
+            if(modal) modal.classList.add('hidden');
+        }
+
+        function executeGoogleSearch() {
+            const input = document.getElementById('googleSearchInput');
+            if(!input) return;
+            const query = input.value.trim();
+            if (!query) {
+                alert('لطفاً عبارتی را برای جستجو وارد کنید.');
+                return;
+            }
+            const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            window.open(googleUrl, '_blank');
+            closeAdvancedSearchModal();
+        }
 
         function applySavedSettings() {
             const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';

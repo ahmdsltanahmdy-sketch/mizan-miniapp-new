@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SIJT | مینی‌اپ خبری و حقوقی پیشرفته</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -48,7 +49,6 @@
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
 
     <script>
-        // آدرس جدید وب‌اپ گوگل اسکریپت شما
         const API_URL = 'https://script.google.com/macros/s/AKfycbyrMOSKpL5rwv5C9okpDQvbKE07-1JFP2ZE5xt7Xt4Y9sSvIUwbXZWU6ssTbBgQRgSZ/exec'; 
         let userId = localStorage.getItem('mizan_user_id');
         if (!userId) {
@@ -163,8 +163,8 @@
 
                 <div class="space-y-2.5">
                     <div>
-                        <label class="block text-[10px] font-bold mb-1 opacity-80">دسته‌بندی موضوعی سوال:</label>
-                        <select id="questionCategory" class="w-full bg-black/10 dark:bg-black/40 text-slate-900 dark:text-slate-100 rounded-xl p-2.5 text-xs border border-black/10 dark:border-white/10 focus:outline-none">
+                        <label class="block text-[10px] font-bold mb-1 opacity-90">دسته‌بندی موضوعی سوال:</label>
+                        <select id="questionCategory" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none">
                             <option value="حقوقی عمومی">حقوقی عمومی / قراردادها</option>
                             <option value="کیفری و جرایم">کیفری و جرایم</option>
                             <option value="خانواده و مهریه">خانواده و مهریه</option>
@@ -174,7 +174,7 @@
                     </div>
 
                     <div class="relative">
-                        <textarea id="questionInput" placeholder="سوال حقوقی خود را با جزئیات کامل بنویسید..." class="w-full bg-black/10 dark:bg-black/40 text-slate-900 dark:text-slate-100 rounded-2xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-24 resize-none border border-black/10 dark:border-white/10 shadow-inner placeholder-slate-500 dark:placeholder-slate-400"></textarea>
+                        <textarea id="questionInput" placeholder="سوال حقوقی خود را با جزئیات کامل بنویسید..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-2xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-24 resize-none border border-white/20 shadow-inner"></textarea>
                     </div>
 
                     <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full group relative overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
@@ -185,22 +185,22 @@
                     </button>
                 </div>
 
-                <div class="pt-2 border-t border-black/10 dark:border-white/10 space-y-2">
-                    <span class="font-bold text-[11px] opacity-80 block">پیگیری سریع با کد رهگیری:</span>
+                <div class="pt-2 border-t border-white/10 space-y-2">
+                    <span class="font-bold text-[11px] opacity-90 block">پیگیری سریع با کد رهگیری:</span>
                     <div class="flex space-x-2 space-x-reverse">
-                        <input type="text" id="trackingCodeInput" placeholder="کد رهگیری (مثلاً TRK-...)" class="flex-grow bg-black/10 dark:bg-black/40 rounded-xl px-3 py-2 text-xs border border-white/10 text-white focus:outline-none">
+                        <input type="text" id="trackingCodeInput" placeholder="کد رهگیری (مثلاً TRK-...)" class="flex-grow bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                         <button onclick="trackByCode()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">پیگیری</button>
                     </div>
-                    <div id="trackingResultBox" class="hidden text-[11px] p-2.5 rounded-xl bg-black/20 border border-white/10 space-y-1"></div>
+                    <div id="trackingResultBox" class="hidden text-[11px] p-2.5 rounded-xl bg-slate-900 text-white border border-white/20 space-y-1"></div>
                 </div>
 
-                <div class="space-y-2 pt-2 border-t border-black/10 dark:border-white/10">
-                    <div class="flex items-center justify-between text-[11px] font-bold opacity-75 px-1">
+                <div class="space-y-2 pt-2 border-t border-white/10">
+                    <div class="flex items-center justify-between text-[11px] font-bold opacity-90 px-1">
                         <span>تاریخچه گفتگوهای شما</span>
-                        <span id="faqCountBadge" class="text-[9px] bg-red-500/20 text-red-500 dark:text-red-400 px-2 py-0.5 rounded-full">0 مورد</span>
+                        <span id="faqCountBadge" class="text-[9px] bg-red-500/30 text-red-300 px-2 py-0.5 rounded-full">0 مورد</span>
                     </div>
                     <div id="userFaqsContainer" class="space-y-3 max-h-60 overflow-y-auto pr-1">
-                        <div class="text-center py-6 opacity-60 text-xs">در حال بارگذاری پرسش‌ها...</div>
+                        <div class="text-center py-6 opacity-70 text-xs">در حال بارگذاری پرسش‌ها...</div>
                     </div>
                 </div>
             </div>
@@ -218,9 +218,9 @@
             
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
                 <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی و تعرفه</h3>
-                <p class="text-[10px] opacity-80 leading-relaxed">راهنما: مبلغ خواسته یا ارزش مالی دعوا را بر اساس ریال وارد کنید. هزینه دادرسی دعاوی مالی در مرحله بدوی بر اساس نرخ مصوب قوه قضاییه محاسبه می‌گردد.</p>
+                <p class="text-[10px] opacity-90 leading-relaxed">راهنما: مبلغ خواسته یا ارزش مالی دعوا را بر اساس ریال وارد کنید. هزینه دادرسی دعاوی مالی در مرحله بدوی بر اساس نرخ مصوب قوه قضاییه محاسبه می‌گردد.</p>
                 <div class="space-y-2">
-                    <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال (مثلا 50000000)..." class="w-full bg-black/30 rounded-xl px-3 py-2 text-xs border border-white/20 text-white focus:outline-none">
+                    <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال (مثلا 50000000)..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                     <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
                     <div id="feeResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
                 </div>
@@ -228,10 +228,10 @@
 
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
                 <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-robot ml-1"></i> دستیار هوش مصنوعی حقوقی (RAG & Rules)</h3>
-                <p class="text-[10px] opacity-80">هرگونه سوال حقوقی خود (درباره چک، مهریه، اجاره، دیه، قراردادها و...) را بپرسید:</p>
-                <textarea id="aiPromptInput" placeholder="مثلاً: شرایط مطالبه وجه چک صیادی و مسدودی حساب چگونه است؟" class="w-full bg-black/30 rounded-xl p-3 text-xs border border-white/20 text-white focus:outline-none h-20 resize-none"></textarea>
+                <p class="text-[10px] opacity-90">هرگونه سوال حقوقی خود (درباره چک، مهریه، اجاره، دیه، قراردادها و...) را بپرسید:</p>
+                <textarea id="aiPromptInput" placeholder="مثلاً: شرایط مطالبه وجه چک صیادی و مسدودی حساب چگونه است؟" class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl p-3 text-xs border border-white/20 focus:outline-none h-20 resize-none"></textarea>
                 <button onclick="runAiAssistant()" class="w-full bg-gradient-to-r from-red-600 to-amber-600 text-white py-2 rounded-xl text-xs font-bold shadow">استعلام هوشمند قوانین</button>
-                <div id="aiResponseBox" class="text-[11px] opacity-90 p-3 rounded-xl bg-black/40 border border-white/10 hidden leading-relaxed space-y-1"></div>
+                <div id="aiResponseBox" class="text-[11px] text-white p-3 rounded-xl bg-slate-900 border border-white/20 hidden leading-relaxed space-y-1"></div>
             </div>
         </section>
 
@@ -258,12 +258,19 @@
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
                     <iframe id="liveStreamIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                    <div id="liveStreamPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-400 text-center p-4">
+                        <i class="fa-solid fa-tv text-3xl mb-2 text-red-500"></i>
+                        <span class="text-xs font-bold text-white">لطفاً یک شبکه را برای پخش زنده انتخاب کنید</span>
+                    </div>
                 </div>
                 <div class="p-1 flex items-center justify-between">
                     <div>
                         <h3 id="liveStreamTitle" class="font-bold text-xs text-red-500">پخش زنده سراسری</h3>
-                        <p id="liveStreamDesc" class="text-[10px] opacity-80">در حال پخش از سرور SIJT</p>
+                        <p id="liveStreamDesc" class="text-[10px] opacity-80">انتخاب از لیست زیر</p>
                     </div>
+                    <a id="externalStreamBtn" href="#" target="_blank" class="hidden bg-red-600/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl text-[10px] font-bold transition hover:bg-red-600 hover:text-white">
+                        <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای خارجی
+                    </a>
                 </div>
             </div>
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
@@ -561,13 +568,23 @@
                     <div class="text-[10px] opacity-80 truncate">${stream.description || 'پخش زنده'}</div>
                 </button>
             `).join('');
-            if(streams.length > 0) playSelectedStream(streams[0]);
         }
 
         function playSelectedStream(stream) {
             const iframe = document.getElementById('liveStreamIframe');
             const titleElem = document.getElementById('liveStreamTitle');
+            const descElem = document.getElementById('liveStreamDesc');
+            const placeholder = document.getElementById('liveStreamPlaceholder');
+            const extBtn = document.getElementById('externalStreamBtn');
+
             if(titleElem) titleElem.innerText = stream.title;
+            if(descElem) descElem.innerText = stream.description || 'در حال پخش زنده';
+            if(placeholder) placeholder.classList.add('hidden');
+            if(extBtn) {
+                extBtn.classList.remove('hidden');
+                extBtn.href = stream.url;
+            }
+
             if(iframe && stream.url) {
                 let url = stream.url;
                 if(url.includes('telewebion.com/live/')) url = url.replace('telewebion.com/live/', 'telewebion.com/embed/live/');
@@ -590,23 +607,31 @@
             document.getElementById('feeResult').innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(fee).toLocaleString()} ریال`;
         }
 
-        // هوش مصنوعی حقوقی پیشرفته (RAG شبیه‌سازی‌شده بر اساس کلمات کلیدی)
+        // هوش مصنوعی حقوقی پیشرفته و هوشمند (RAG & Rules)
         function runAiAssistant() {
-            const prompt = document.getElementById('aiPromptInput').value.trim().toLowerCase();
+            const prompt = document.getElementById('aiPromptInput').value.trim();
             const box = document.getElementById('aiResponseBox');
             if(!prompt) return alert('لطفاً سوال حقوقی خود را بنویسید.');
+            
             box.classList.remove('hidden');
             box.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال تحلیل حقوقی و استعلام قوانین...';
             
             setTimeout(() => {
-                let reply = "بر اساس قوانین موضوعه و رویه قضایی، برای موضوع مطرح‌شده لازم است از طریق دفاتر خدمات الکترونیک قضایی دادخواست یا شکواییه تنظیم نمایید.";
-                if(prompt.includes('چک')) {
-                    reply = "<b>تحلیل هوش مصنوعی (قانون صدور چک):</b> با گواهی عدم پرداخت صادره از بانک، می‌توانید مستقیماً از طریق اجراییه ثبت یا دادگاه حقوقی بدون تشریفات طویل دادرسی، تقاضای توقیف اموال و صدور اجراییه نمایید.";
-                } else if(prompt.includes('مهریه') || prompt.includes('طلاق')) {
-                    reply = "<b>تحلیل هوش مصنوعی (قوانین خانواده):</b> مطالبه مهریه بدوآً از طریق اجرای ثبت (اداره ثبت اسناد) و سپس دادگاه خانواده امکان‌پذیر است. در صورت اعسار زوج، تقسیط مهریه صادر می‌گردد.";
-                } else if(prompt.includes('اجاره') || prompt.includes('مستاجر')) {
-                    reply = "<b>تحلیل هوش مصنوعی (قانون روابط موجر و مستاجر):</b> پس از پایان مدت اجاره یا عدم پرداخت اجاره‌بها، با داشتن سند رسمی یا قرارداد اجاره دارای ۲ شاهد، امکان درخواست تخلیه فوری وجود دارد.";
+                const text = prompt.toLowerCase();
+                let reply = "بر اساس اصول کلی حقوق مدنی و آیین دادرسی، برای پیگیری این موضوع تنظیم دادخواست یا شکواییه از طریق دفاتر خدمات الکترونیک قضایی توصیه می‌شود.";
+                
+                if (text.includes('سلام') || text.includes('درود') || text.length < 5) {
+                    reply = "سلام! من دستیار هوشمند حقوقی SIJT هستم. سوال حقوقی خود را پیرامون قراردادها، چک، مهریه، مسائل کیفری یا ملکی بپرسید تا قوانین مرتبط را برای شما استخراج کنم.";
+                } else if (text.includes('چک') || text.includes('برگشت')) {
+                    reply = "<b>تحلیل هوش مصنوعی (قانون صدور چک):</b> با دریافت گواهی عدم پرداخت از بانک، می‌توانید مستقیماً از طریق اجرای ثبت یا دادگاه حقوقی تقاضای صدور اجراییه و توقیف اموال صادرکننده را بدون حکم قطعی دادگاه مطرح کنید.";
+                } else if (text.includes('مهریه') || text.includes('طلاق') || text.includes('ازدواج')) {
+                    reply = "<b>تحلیل هوش مصنوعی (قوانین خانواده):</b> مطالبه مهریه نخست از طریق اجرای ثبت اسناد و املاک و سپس در صورت عدم وصول از طریق دادگاه خانواده انجام می‌شود. زوج می‌تواند تقاضای اعسار و تقسیط بدهد.";
+                } else if (text.includes('اجاره') || text.includes('مستاجر') || text.includes('تخلیه')) {
+                    reply = "<b>تحلیل هوش مصنوعی (قانون روابط موجر و مستاجر):</b> پس از پایان مدت قرارداد یا بروز تخلف عدم پرداخت اجاره‌بها، با در دست داشتن سند رسمی یا سند عادی دارای دو شاهد، امکان درخواست دستور تخلیه فوری وجود دارد.";
+                } else if (text.includes('دیه') || text.includes('تصادف') || text.includes('جرم')) {
+                    reply = "<b>تحلیل هوش مصنوعی (قوانین کیفری):</b> در دعاوی ناشی از تصادفات و صدمات بدنی، تشکیل پرونده در کلانتری و ارجاع به پزشکی قانونی جهت تعیین میزان دیه و خسارت الزامی است.";
                 }
+
                 box.innerHTML = `<strong>پاسخ تخصصی هوش مصنوعی:</strong><br>${reply}`;
             }, 800);
         }
@@ -655,17 +680,17 @@
                     const faqs = data.faqs;
                     if(badge) badge.innerText = `${faqs.length} مورد`;
                     if (faqs.length === 0) {
-                        container.innerHTML = `<div class="text-center py-4 opacity-60 text-xs">هنوز سوالی ثبت نکرده‌اید.</div>`;
+                        container.innerHTML = `<div class="text-center py-4 opacity-70 text-xs">هنوز سوالی ثبت نکرده‌اید.</div>`;
                         return;
                     }
                     container.innerHTML = faqs.map(item => `
-                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 space-y-1.5">
-                            <div class="flex justify-between items-center text-[9px] opacity-70">
-                                <span class="bg-red-500/20 text-red-400 px-2 py-0.5 rounded">${item.category || 'عمومی'}</span>
+                        <div class="bg-slate-900 p-3 rounded-xl border border-white/20 space-y-1.5 text-white">
+                            <div class="flex justify-between items-center text-[9px] opacity-80">
+                                <span class="bg-red-500/30 text-red-300 px-2 py-0.5 rounded">${item.category || 'عمومی'}</span>
                                 <span class="text-amber-400 font-bold">کد: ${item.trackingCode || '-'}</span>
                             </div>
-                            <p class="text-[11px] font-bold">${item.question}</p>
-                            <div class="text-[10px] ${item.answer ? 'text-emerald-400' : 'text-amber-300'}">
+                            <p class="text-[11px] font-bold text-white">${item.question}</p>
+                            <div class="text-[10px] font-medium ${item.answer ? 'text-emerald-400' : 'text-amber-300'}">
                                 ${item.answer ? 'پاسخ وکیل: ' + item.answer : 'وضعیت: در حال بررسی توسط کارشناس...'}
                             </div>
                         </div>
@@ -724,6 +749,13 @@
         function switchTab(sectionId, btn) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(sectionId).classList.remove('hidden');
+
+            // اگر کاربر از بخش پخش زنده خارج شد، ویدیو متوقف شود
+            if (sectionId !== 'multimedia-tab') {
+                const iframe = document.getElementById('liveStreamIframe');
+                if(iframe) iframe.src = "";
+            }
+
             if (btn) {
                 document.querySelectorAll('nav button').forEach(b => {
                     b.classList.remove('text-red-600', 'font-bold');

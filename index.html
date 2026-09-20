@@ -328,21 +328,37 @@
             <div id="publicFaqContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۷: آرشیو آرای وحدت رویه (جدید) -->
+        <!-- تب ۷: آرشیو آرای وحدت رویه -->
         <section id="unity-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-3 flex items-center text-amber-500"><i class="fa-solid fa-scale-balanced ml-1.5 text-sm"></i> آرشیو آرای وحدت رویه و قوانین خاص</h2>
+            <h2 class="font-bold text-xs mb-3 flex items-center text-amber-600 dark:text-amber-400"><i class="fa-solid fa-scale-balanced ml-1.5 text-sm"></i> آرشیو آرای وحدت رویه و قوانین خاص</h2>
             <div id="unityContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۸: بازی‌ها و کوئیزهای حقوقی - Gamification (جدید) -->
-        <section id="games-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-3 flex items-center text-indigo-500"><i class="fa-solid fa-gamepad ml-1.5 text-sm"></i> چالش و بازی‌های حقوقی</h2>
+        <!-- تب ۸: چالش و بازی‌های حقوقی (Gamification جدید) -->
+        <section id="games-tab" class="page-section hidden space-y-4">
+            <div class="flex items-center justify-between mb-1">
+                <h2 class="font-bold text-xs flex items-center text-indigo-600 dark:text-indigo-400">
+                    <i class="fa-solid fa-gamepad ml-1.5 text-sm"></i> دادگاه شبکه‌ای: قاضی شو!
+                </h2>
+                <span class="text-[9px] bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full font-bold">چالش روزانه</span>
+            </div>
+
+            <div class="ultra-glass p-3 rounded-2xl border border-indigo-500/30 flex items-center space-x-3 space-x-reverse">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg flex-shrink-0">
+                    <i class="fa-solid fa-gavel"></i>
+                </div>
+                <div class="text-[11px] leading-relaxed text-slate-800 dark:text-slate-200">
+                    <span class="font-bold block text-indigo-600 dark:text-indigo-400">سناریوی قضاوت:</span>
+                    پرونده را با دقت بخوانید، ماده قانونی را حدس بزنید و رای صحیح را صادر کنید تا امتیاز بگیرید!
+                </div>
+            </div>
+
             <div id="gamesContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۹: پرونده‌های جنایی و معماهای حقوقی (جدید) -->
+        <!-- تب ۹: پرونده‌های جنایی و معماهای حقوقی -->
         <section id="criminal-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-3 flex items-center text-red-600"><i class="fa-solid fa-user-secret ml-1.5 text-sm"></i> پرونده‌های جنایی و تحلیل حقوقی</h2>
+            <h2 class="font-bold text-xs mb-3 flex items-center text-red-600 dark:text-red-400"><i class="fa-solid fa-user-secret ml-1.5 text-sm"></i> پرونده‌های جنایی و تحلیل حقوقی</h2>
             <div id="criminalContainer" class="space-y-3"></div>
         </section>
 
@@ -400,7 +416,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با اضافه شدن تب‌های جدید) -->
+    <!-- ناوبری پایین صفحه -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -479,7 +495,7 @@
             legalGames: [{ question: "اگر صادرکننده چک قبل از سررسید فوت کند، مسئولیت پرداخت با کیست؟", option1: "ورثه از محل ترکه مسئولند", option2: "دین ساقط می‌شود", correct: "1", explanation: "با فوت صادرکننده، تعهدات مالی از ترکه متوفی پرداخت می‌گردد." }],
             criminalCases: [{ title: "پرونده معمای اتاق سر بسته", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", description: "تحلیل حقوقی و جنایی پیرامون جرم قتل غیرعمد و بررسی ارکان مادی و معنوی جرم." }],
             series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com/v/example" }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.7.0\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.7.1\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -612,7 +628,7 @@
         }
 
         function toggleTheme() {
-            const isDark = document.documentElement.classList.add('dark');
+            const isDark = document.documentElement.classList.toggle('dark');
             document.body.classList.toggle('dark', isDark);
             localStorage.setItem('mizan_theme', isDark ? 'dark' : 'light');
             document.getElementById('settingsDropdown').classList.add('hidden');
@@ -757,7 +773,6 @@
             `).join('');
         }
 
-        // رندر بخش جدید: آرشیو آرای وحدت رویه
         function renderUnityVotes() {
             const container = document.getElementById('unityContainer');
             if (!container) return;
@@ -773,49 +788,69 @@
             `).join('');
         }
 
-        // رندر بخش جدید: بازی‌ها و کوئیزهای حقوقی (Gamification)
         function renderLegalGames() {
             const container = document.getElementById('gamesContainer');
             if (!container) return;
             let list = appData.legalGames || [];
-            if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">کوئیزی ثبت نشده است.</div>'; return; }
+            if(!list.length) { 
+                container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">در حال حاضر چالش جدیدی ثبت نشده است.</div>'; 
+                return; 
+            }
             
             container.innerHTML = list.map((g, index) => `
-                <div class="ultra-glass p-4 rounded-3xl border border-indigo-500/30 space-y-3 shadow-xl">
-                    <div class="font-bold text-xs text-indigo-600 dark:text-indigo-400 flex items-center">
-                        <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] ml-2">${index + 1}</span>
+                <div class="ultra-glass p-4 rounded-3xl border border-indigo-500/30 space-y-3 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-1.5 h-full bg-indigo-500"></div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9px] bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 px-2.5 py-0.5 rounded-full font-bold">پرونده شماره #0${index + 1}</span>
+                        <span class="text-[9px] opacity-70"><i class="fa-solid fa-clock ml-1"></i> مهلت: ۲۴ ساعت</span>
+                    </div>
+
+                    <div class="font-bold text-xs text-slate-900 dark:text-white leading-relaxed pr-1">
                         ${g.question}
                     </div>
-                    <div class="grid grid-cols-2 gap-2 pt-1">
-                        <button onclick="checkGameAnswer(this, '1', '${g.correct}', '${g.explanation.replace(/'/g, "&apos;")}')" class="p-2 rounded-xl bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10 text-[11px] font-bold text-slate-800 dark:text-slate-200 transition hover:border-indigo-500">الف) ${g.option1}</button>
-                        <button onclick="checkGameAnswer(this, '2', '${g.correct}', '${g.explanation.replace(/'/g, "&apos;")}')" class="p-2 rounded-xl bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10 text-[11px] font-bold text-slate-800 dark:text-slate-200 transition hover:border-indigo-500">ب) ${g.option2}</button>
+
+                    <div class="grid grid-cols-1 gap-2 pt-1">
+                        <button onclick="checkGameAnswer(this, '1', '${g.correct}', '${(g.explanation || 'توضیحی ثبت نشده است').replace(/'/g, "&apos;")}')" class="w-full text-right p-3 rounded-2xl bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10 text-[11px] font-bold text-slate-800 dark:text-slate-200 transition hover:border-indigo-500 flex items-center justify-between group">
+                            <span>الف) ${g.option1}</span>
+                            <i class="fa-solid fa-circle-chevron-left text-slate-400 group-hover:text-indigo-500 transition"></i>
+                        </button>
+                        <button onclick="checkGameAnswer(this, '2', '${g.correct}', '${(g.explanation || 'توضیحی ثبت نشده است').replace(/'/g, "&apos;")}')" class="w-full text-right p-3 rounded-2xl bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10 text-[11px] font-bold text-slate-800 dark:text-slate-200 transition hover:border-indigo-500 flex items-center justify-between group">
+                            <span>ب) ${g.option2}</span>
+                            <i class="fa-solid fa-circle-chevron-left text-slate-400 group-hover:text-indigo-500 transition"></i>
+                        </button>
                     </div>
-                    <div class="game-result hidden text-[11px] p-2.5 rounded-xl mt-2 leading-relaxed"></div>
+
+                    <div class="game-result hidden text-[11px] p-3 rounded-2xl mt-2 leading-relaxed space-y-1"></div>
                 </div>
             `).join('');
         }
 
         function checkGameAnswer(btn, selected, correct, explanation) {
             triggerHaptic();
-            const parent = btn.closest('div').parentElement;
+            const parent = btn.closest('.ultra-glass');
             const resultBox = parent.querySelector('.game-result');
             resultBox.classList.remove('hidden');
             
             const buttons = parent.querySelectorAll('button');
-            buttons.forEach(b => b.disabled = true);
+            buttons.forEach(b => {
+                b.disabled = true;
+                b.classList.add('opacity-60', 'cursor-not-allowed');
+            });
 
             if (selected === correct) {
-                btn.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-500');
-                resultBox.className = "game-result text-[11px] p-2.5 rounded-xl mt-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-medium";
-                resultBox.innerHTML = `<i class="fa-solid fa-circle-check ml-1"></i> <strong>پاسخ صحیح است!</strong><br>${explanation}`;
+                btn.classList.remove('opacity-60');
+                btn.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-600', 'dark:text-emerald-400');
+                resultBox.className = "game-result text-[11px] p-3 rounded-2xl mt-2 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-medium space-y-1";
+                resultBox.innerHTML = `<div class="font-bold flex items-center"><i class="fa-solid fa-circle-check ml-1.5 text-base"></i> احسنت! قضاوت شما کاملاً درست بود.</div><div class="opacity-90 text-[10px] pt-1 border-t border-emerald-500/20">${explanation}</div>`;
             } else {
-                btn.classList.add('bg-red-500/20', 'border-red-500', 'text-red-500');
-                resultBox.className = "game-result text-[11px] p-2.5 rounded-xl mt-2 bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-medium";
-                resultBox.innerHTML = `<i class="fa-solid fa-circle-xmark ml-1"></i> <strong>پاسخ اشتباه است.</strong><br>${explanation}`;
+                btn.classList.remove('opacity-60');
+                btn.classList.add('bg-red-500/20', 'border-red-500', 'text-red-600', 'dark:text-red-400');
+                resultBox.className = "game-result text-[11px] p-3 rounded-2xl mt-2 bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/30 font-medium space-y-1";
+                resultBox.innerHTML = `<div class="font-bold flex items-center"><i class="fa-solid fa-circle-xmark ml-1.5 text-base"></i> متأسفانه رای صادر شده اشتباه بود.</div><div class="opacity-90 text-[10px] pt-1 border-t border-red-500/20">${explanation}</div>`;
             }
         }
 
-        // رندر بخش جدید: پرونده‌های جنایی و معماهای حقوقی
         function renderCriminalCases() {
             const container = document.getElementById('criminalContainer');
             if (!container) return;

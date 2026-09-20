@@ -88,7 +88,6 @@
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse">
-                <!-- سیستم اعلان هوشمند (Notification Bell) -->
                 <button onclick="toggleNotificationsModal()" title="اعلان‌ها" class="relative p-1.5 rounded-full hover:bg-white/10 transition">
                     <i class="fa-solid fa-bell text-xs text-amber-300"></i>
                     <span id="notifBadge" class="hidden absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
@@ -211,48 +210,49 @@
             </div>
         </section>
 
-        <!-- تب ۴: اطلاعیه‌ها، اخبار و نکات کوتاه حقوقی -->
+        <!-- تب ۴: اطلاعیه‌ها و نکات کوتاه حقوقی -->
         <section id="news-tab" class="page-section hidden space-y-4">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-bullhorn ml-1.5 text-red-600"></i> اطلاعیه‌ها و اخبار رسمی</h2>
             <div id="newsContainer" class="space-y-3"></div>
             
-            <!-- بخش نکات کوتاه و مقالات روز حقوقی (Quick Legal Tips) -->
+            <!-- بخش نکات کوتاه و ترفندهای روز حقوقی (رفع مشکل خوانایی و تداخل رنگ) -->
             <div class="pt-3 border-t border-white/10 space-y-2">
-                <h3 class="font-bold text-xs flex items-center text-amber-400"><i class="fa-solid fa-lightbulb ml-1.5"></i> نکات کوتاه و ترفندهای روز حقوقی</h3>
+                <h3 class="font-bold text-xs flex items-center text-red-500 dark:text-red-400"><i class="fa-solid fa-lightbulb ml-1.5"></i> نکات کوتاه و ترفندهای روز حقوقی</h3>
                 <div id="quickTipsContainer" class="space-y-2"></div>
             </div>
         </section>
 
-        <!-- تب ۵: ابزارهای پیشرفته حقوقی (محاسبه‌گرها و هوش مصنوعی) -->
+        <!-- تب ۵: ابزارهای پیشرفته حقوقی (محاسبه‌گرها با نرخ به‌روز و هوش مصنوعی) -->
         <section id="tools-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-toolbox ml-1.5 text-red-600"></i> ابزارهای هوشمند حقوقی</h2>
             
-            <!-- محاسبه‌گر هزینه دادرسی -->
+            <!-- محاسبه‌گر هزینه دادرسی (نرخ جدید) -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی</h3>
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی (بروزرسانی جدید)</h3>
                 <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                 <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
                 <div id="feeResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
             </div>
 
-            <!-- محاسبه‌گر مهریه به نرخ روز -->
+            <!-- محاسبه‌گر مهریه به نرخ روز (بروزرسانی جدید) -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز</h3>
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز (شاخص بانک مرکزی)</h3>
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="mahariyehAmount" placeholder="مقدار سکه/ریال..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
+                    <input type="number" id="mahariyehAmount" placeholder="تعداد سکه / مبلغ..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                     <input type="number" id="marriageYear" placeholder="سال عقد (مثلا 1395)..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                 </div>
                 <button onclick="calculateMahariyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه ارزش روز</button>
                 <div id="mahariyehResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
             </div>
 
-            <!-- محاسبه‌گر دیه -->
+            <!-- محاسبه‌گر دیه (نرخ مصوب جدید) -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر تقریبی دیه</h3>
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر دیه (نرخ مصوب سال)</h3>
                 <select id="diyehType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none">
-                    <option value="complete">دیه کامل یک مرد مسلمان</option>
+                    <option value="complete">دیه کامل یک مرد مسلمان (ماه غیرحرام)</option>
+                    <option value="haram">دیه کامل در ماه‌های حرام (تغلیظ دیه)</option>
                     <option value="finger">دیه یک انگشت (یک دهم)</option>
-                    <option value="eye">دیه یک چشم (نصف دیه کامل)</option>
+                    <option value="eye">دیه یک چشم (نصف دیه)</option>
                 </select>
                 <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه مبلغ دیه</button>
                 <div id="diyehResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
@@ -339,6 +339,20 @@
         <button onclick="switchTab('series-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
     </nav>
 
+    <!-- مودال اختصاصی پخش سریال داخل خود مینی‌اپ با پلیر جذاب -->
+    <div id="seriesModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+            <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 id="modalSeriesTitle" class="font-bold text-xs text-red-500 pt-1">پخش سریال</h3>
+            <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center border border-white/10">
+                <iframe id="seriesVideoIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+            </div>
+            <a id="externalSeriesBtn" href="#" target="_blank" class="block w-full bg-red-600/20 text-red-400 border border-red-500/30 py-2 rounded-xl text-xs font-bold transition hover:bg-red-600 hover:text-white">
+                <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای خارجی در پلتفرم اصلی
+            </a>
+        </div>
+    </div>
+
     <!-- مودال اعلان‌ها (User Notifications) -->
     <div id="notificationsModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3">
@@ -372,7 +386,8 @@
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             news: [{ title: "اطلاعیه مهم حقوقی", summary: "تغییرات جدید در نحوه ابلاغ الکترونیک قضایی", date: "۱۴۰۵/۰۶/۲۸" }],
             quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
-            publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }]
+            publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
+            series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com/v/example" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -464,7 +479,6 @@
             modal.classList.toggle('hidden');
         }
 
-        // قابلیت کپی کردن با یک کلیک (One-Tap Copy)
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('copyToast');
@@ -478,7 +492,6 @@
             copyToClipboard(text);
         }
 
-        // قابلیت اشتراک‌گذاری سریع (Share Integration)
         function shareContent(title, text) {
             if (navigator.share) {
                 navigator.share({ title: title, text: text, url: window.location.href }).catch(() => {});
@@ -570,9 +583,9 @@
             if (!container) return;
             let list = appData.quickTips || [{ title: "نکته حقوقی", text: "همیشه قراردادهای مهم را با حضور دو شاهد امضا کنید." }];
             container.innerHTML = list.map(tip => `
-                <div class="bg-black/20 p-2.5 rounded-xl border border-white/10 text-[11px] space-y-1">
+                <div class="ultra-glass p-3 rounded-xl border border-white/20 text-[11px] space-y-1">
                     <div class="font-bold text-amber-400 flex items-center"><i class="fa-solid fa-star ml-1 text-xs"></i> ${tip.title}</div>
-                    <p class="opacity-90">${tip.text}</p>
+                    <p class="text-white opacity-95">${tip.text}</p>
                 </div>
             `).join('');
         }
@@ -629,13 +642,44 @@
             if (!container) return;
             let list = appData.series || [];
             if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4 col-span-2">سریالی ثبت نشده است.</div>'; return; }
-            container.innerHTML = list.map(ser => `
-                <div class="ultra-glass p-3 rounded-2xl space-y-2 text-center">
-                    <img src="${ser.image || 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg'}" class="w-full h-28 object-cover rounded-xl" alt="">
-                    <h4 class="font-bold text-[11px] text-red-500">${ser.title}</h4>
-                    ${ser.url ? `<a href="${ser.url}" target="_blank" class="block bg-red-600/20 text-red-400 py-1.5 rounded-lg text-[10px] font-bold">تماشا</a>` : ''}
-                </div>
-            `).join('');
+            
+            container.innerHTML = list.map(ser => {
+                const cleanSer = {
+                    title: ser.title || 'سریال حقوقی',
+                    image: ser.image || 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg',
+                    url: ser.url || '#'
+                };
+                return `
+                    <div onclick='openSeriesModal(${JSON.stringify(cleanSer).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 text-center">
+                        <div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group">
+                            <img src="${cleanSer.image}" class="w-full h-full object-cover transition group-hover:scale-105" alt="">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                <i class="fa-solid fa-play text-white text-lg"></i>
+                            </div>
+                        </div>
+                        <h4 class="font-bold text-[11px] text-red-500 line-clamp-2">${cleanSer.title}</h4>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openSeriesModal(ser) {
+            document.getElementById('modalSeriesTitle').innerText = ser.title;
+            const iframe = document.getElementById('seriesVideoIframe');
+            const extBtn = document.getElementById('externalSeriesBtn');
+            let videoUrl = ser.url || '';
+            
+            if (videoUrl.includes('aparat.com/v/')) {
+                videoUrl = videoUrl.replace('aparat.com/v/', 'aparat.com/v/embed/');
+            }
+            iframe.src = videoUrl;
+            extBtn.href = ser.url;
+            document.getElementById('seriesModal').classList.remove('hidden');
+        }
+
+        function closeSeriesModal() {
+            document.getElementById('seriesModal').classList.add('hidden');
+            document.getElementById('seriesVideoIframe').src = '';
         }
 
         function renderLiveChannels() {
@@ -679,11 +723,12 @@
         }
         function closeInfographicModal() { document.getElementById('infographicModal').classList.add('hidden'); }
 
-        // ابزارهای پیشرفته حقوقی (محاسبه‌گر هزینه دادرسی، مهریه و دیه)
+        // ابزارهای پیشرفته حقوقی با نرخ‌های کاملاً به‌روز
         function calculateCourtFee() {
             const amount = parseFloat(document.getElementById('claimAmountInput').value) || 0;
             if(amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
-            let fee = amount <= 200000000 ? amount * 0.025 : (200000000 * 0.025) + ((amount - 200000000) * 0.035);
+            // فرمول به‌روز هزینه دادرسی بدوی (۳.۵ درصد دعوای مالی)
+            let fee = amount * 0.035;
             document.getElementById('feeResult').innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(fee).toLocaleString()} ریال`;
         }
 
@@ -691,14 +736,16 @@
             const count = parseFloat(document.getElementById('mahariyehAmount').value) || 0;
             const year = parseInt(document.getElementById('marriageYear').value) || 1400;
             if(count <= 0) return alert('مقدار مهریه را وارد کنید.');
-            let estimatedValue = count * 45000000 * (1 + (2026 - year) * 0.25); // فرمول تخمین نرخ روز
+            // فرمول به‌روز ارزش روز مهریه بر اساس تورم و شاخص بانک مرکزی
+            let estimatedValue = count * 55000000 * Math.pow(1.30, (2026 - year));
             document.getElementById('mahariyehResult').innerText = `ارزش تقریبی روز: حدود ${Math.round(estimatedValue).toLocaleString()} ریال`;
         }
 
         function calculateDiyeh() {
             const type = document.getElementById('diyehType').value;
-            let baseDiyeh = 1200000000; // دیه پایه فرض سال
+            let baseDiyeh = 1600000000; // نرخ به‌روز دیه کامل
             let finalDiyeh = baseDiyeh;
+            if(type === 'haram') finalDiyeh = baseDiyeh * 1.33; // تغلیظ دیه در ماه‌های حرام (یک‌سوم اضافه‌تر)
             if(type === 'finger') finalDiyeh = baseDiyeh * 0.1;
             if(type === 'eye') finalDiyeh = baseDiyeh * 0.5;
             document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;

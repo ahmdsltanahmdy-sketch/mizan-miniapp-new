@@ -24,7 +24,7 @@
             -webkit-backdrop-filter: blur(35px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
-            color: #f8fafc !important;
+            color: #f8fafc;
         }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
             background: rgba(255, 255, 255, 0.96);
@@ -32,7 +32,7 @@
             -webkit-backdrop-filter: blur(35px);
             border: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
-            color: #0f172a !important;
+            color: #0f172a;
         }
 
         .settings-glass {
@@ -271,7 +271,7 @@
             <div id="newsContainer" class="space-y-3"></div>
             
             <div class="pt-3 border-t border-white/10 space-y-2">
-                <h3 class="font-bold text-xs flex items-center text-red-500 dark:text-red-400"><i class="fa-solid fa-lightbulb ml-1.5"></i> نکات کوتاه و ترفندهای روز حقوقی</h3>
+                <h3 class="font-bold text-xs flex items-center text-red-600 dark:text-red-400"><i class="fa-solid fa-lightbulb ml-1.5"></i> نکات کوتاه و ترفندهای روز حقوقی</h3>
                 <div id="quickTipsContainer" class="space-y-2"></div>
             </div>
         </section>
@@ -281,24 +281,24 @@
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-toolbox ml-1.5 text-red-600"></i> ابزارهای هوشمند حقوقی</h2>
             
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی</h3>
+                <h3 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی</h3>
                 <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                 <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
-                <div id="feeResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
+                <div id="feeResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1"></div>
             </div>
 
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز</h3>
+                <h3 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز</h3>
                 <div class="grid grid-cols-2 gap-2">
                     <input type="number" id="mahariyehAmount" placeholder="تعداد سکه..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                     <input type="number" id="marriageYear" placeholder="سال عقد (مثلا 1395)..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                 </div>
                 <button onclick="calculateMahariyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه ارزش روز</button>
-                <div id="mahariyehResult" class="text-[11px] font-bold text-amber-400 pt-1 leading-relaxed"></div>
+                <div id="mahariyehResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1 leading-relaxed"></div>
             </div>
 
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر دیه</h3>
+                <h3 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر دیه</h3>
                 <select id="diyehType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none">
                     <option value="complete">دیه کامل یک مرد مسلمان (ماه غیرحرام)</option>
                     <option value="haram">دیه کامل در ماه‌های حرام (تغلیظ دیه)</option>
@@ -306,21 +306,21 @@
                     <option value="eye">دیه یک چشم (نصف دیه)</option>
                 </select>
                 <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه مبلغ دیه</button>
-                <div id="diyehResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
+                <div id="diyehResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1"></div>
             </div>
 
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-robot ml-1"></i> دستیار هوش مصنوعی حقوقی (RAG)</h3>
+                <h3 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-robot ml-1"></i> دستیار هوش مصنوعی حقوقی (RAG)</h3>
                 <textarea id="aiPromptInput" placeholder="سوال حقوقی خود را بپرسید..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl p-3 text-xs border border-white/20 focus:outline-none h-20 resize-none"></textarea>
                 <button onclick="runAiAssistant()" class="w-full bg-gradient-to-r from-red-600 to-amber-600 text-white py-2 rounded-xl text-xs font-bold shadow">استعلام هوشمند قوانین</button>
-                <div id="aiResponseBox" class="text-[11px] text-white p-3 rounded-xl bg-slate-900 border border-white/20 hidden leading-relaxed space-y-1 relative">
+                <div id="aiResponseBox" class="text-[11px] p-3 rounded-xl bg-slate-900 text-white border border-white/20 hidden leading-relaxed space-y-1 relative">
                     <button onclick="copyAiResponse()" class="absolute top-2 left-2 bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded text-[9px]"><i class="fa-solid fa-copy"></i> کپی</button>
                     <div id="aiResponseText"></div>
                 </div>
             </div>
         </section>
 
-        <!-- تب ۶: بانک سوالات عمومی (طراحی گرافیکی جدید) -->
+        <!-- تب ۶: بانک سوالات عمومی -->
         <section id="public-faq-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-clipboard-question ml-1.5 text-red-600"></i> بانک سوالات عمومی و تاییدشده</h2>
@@ -328,9 +328,9 @@
             <div id="publicFaqContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۷: اینستاگرام حقوقی (کارت‌های دایره‌ای جذاب) -->
+        <!-- تب ۷: اینستاگرام حقوقی -->
         <section id="instagram-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-3 flex items-center text-pink-500"><i class="fa-brands fa-instagram ml-1.5 text-sm"></i> کانال‌ها و پست‌های اینستاگرام حقوقی</h2>
+            <h2 class="font-bold text-xs mb-3 flex items-center text-pink-600 dark:text-pink-400"><i class="fa-brands fa-instagram ml-1.5 text-sm"></i> کانال‌ها و پست‌های اینستاگرام حقوقی</h2>
             <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center"></div>
         </section>
 
@@ -403,7 +403,7 @@
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeAboutModal()" class="absolute top-3 left-3 text-slate-400 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-red-500 pt-1"><i class="fa-solid fa-circle-info ml-1"></i> درباره مینی‌اپ و پشتیبانی</h3>
-            <div id="aboutContentBox" class="text-[11px] opacity-95 leading-relaxed text-right bg-slate-900 p-3 rounded-xl border border-white/20 text-white">
+            <div id="aboutContentBox" class="text-[11px] leading-relaxed text-right bg-slate-900 dark:bg-slate-900 p-3 rounded-xl border border-white/20 text-white">
                 در حال بارگذاری اطلاعات پشتیبانی...
             </div>
         </div>
@@ -455,7 +455,7 @@
             publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
             instagram: [{ title: "مشاوره کیفری", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://instagram.com" }],
             series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com/v/example" }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.6.0\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.6.1\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -639,8 +639,8 @@
             let list = appData.legalSystems || [];
             container.innerHTML = list.map(sys => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 flex items-center justify-between">
-                    <div><h3 class="font-bold text-xs text-red-500">${sys.title}</h3><p class="text-[11px] opacity-80">${sys.description}</p></div>
-                    <a href="${sys.url}" target="_blank" class="bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold">ورود</a>
+                    <div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${sys.title}</h3><p class="text-[11px] opacity-80">${sys.description}</p></div>
+                    <a href="${sys.url}" target="_blank" class="bg-red-500/20 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold">ورود</a>
                 </div>
             `).join('');
         }
@@ -662,13 +662,13 @@
             container.innerHTML = list.map(d => `
                 <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1 relative">
                     <div class="flex justify-between items-center">
-                        <div class="font-bold text-red-500 text-xs">${d.term}</div>
+                        <div class="font-bold text-red-600 dark:text-red-400 text-xs">${d.term}</div>
                         <div class="space-x-1 space-x-reverse">
-                            <button onclick="copyToClipboard('${d.term}: ${d.definition}')" title="کپی" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
-                            <button onclick="shareContent('${d.term}', '${d.definition}')" title="اشتراک‌گذاری" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-share-nodes"></i></button>
+                            <button onclick="copyToClipboard('${d.term}: ${d.definition}')" title="کپی" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
+                            <button onclick="shareContent('${d.term}', '${d.definition}')" title="اشتراک‌گذاری" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[10px]"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
                     </div>
-                    <p class="text-[11px] opacity-90 leading-relaxed">${d.definition}</p>
+                    <p class="text-[11px] leading-relaxed text-slate-800 dark:text-slate-200">${d.definition}</p>
                 </div>
             `).join('');
         }
@@ -687,12 +687,12 @@
                     <div class="flex justify-between items-center text-[9px] opacity-70">
                         <span>${n.date || ''}</span>
                         <div class="space-x-1 space-x-reverse">
-                            <button onclick="copyToClipboard('${n.title}\n${n.summary}')" title="کپی" class="text-slate-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
-                            <button onclick="shareContent('${n.title}', '${n.summary}')" title="اشتراک‌گذاری" class="text-slate-400 hover:text-white"><i class="fa-solid fa-share-nodes"></i></button>
+                            <button onclick="copyToClipboard('${n.title}\n${n.summary}')" title="کپی" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-copy"></i></button>
+                            <button onclick="shareContent('${n.title}', '${n.summary}')" title="اشتراک‌گذاری" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
                     </div>
-                    <h3 class="font-bold text-xs text-red-500">${n.title}</h3>
-                    <p class="text-[11px] opacity-90">${n.summary}</p>
+                    <h3 class="font-bold text-xs text-red-600 dark:text-red-400">${n.title}</h3>
+                    <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed">${n.summary}</p>
                 </div>
             `).join('');
         }
@@ -703,8 +703,8 @@
             let list = appData.quickTips || [{ title: "نکته حقوقی", text: "همیشه قراردادهای مهم را با حضور دو شاهد امضا کنید." }];
             container.innerHTML = list.map(tip => `
                 <div class="ultra-glass p-3.5 rounded-2xl border border-white/20 text-[11px] space-y-1.5 shadow-md">
-                    <div class="font-bold text-amber-400 flex items-center text-xs"><i class="fa-solid fa-star ml-1 text-xs"></i> ${tip.title || tip.name || ''}</div>
-                    <p class="text-slate-200 dark:text-slate-200 leading-relaxed">${tip.text || tip.description || tip.summary || ''}</p>
+                    <div class="font-bold text-amber-600 dark:text-amber-400 flex items-center text-xs"><i class="fa-solid fa-star ml-1 text-xs"></i> ${tip.title || tip.name || ''}</div>
+                    <p class="text-slate-800 dark:text-slate-200 leading-relaxed">${tip.text || tip.description || tip.summary || ''}</p>
                 </div>
             `).join('');
         }
@@ -716,14 +716,14 @@
             container.innerHTML = list.map(pf => `
                 <div class="ultra-glass p-4 rounded-3xl border border-red-500/20 space-y-2.5 shadow-xl relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-red-600 to-amber-500"></div>
-                    <div class="font-bold text-xs text-red-500 dark:text-red-400 flex items-center pr-2">
-                        <div class="w-6 h-6 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center ml-2 flex-shrink-0 text-xs">
+                    <div class="font-bold text-xs text-red-600 dark:text-red-400 flex items-center pr-2">
+                        <div class="w-6 h-6 rounded-full bg-red-600/20 text-red-600 dark:text-red-400 flex items-center justify-center ml-2 flex-shrink-0 text-xs">
                             <i class="fa-solid fa-question"></i>
                         </div>
                         ${pf.question}
                     </div>
-                    <div class="text-[11px] leading-relaxed opacity-95 bg-black/30 dark:bg-black/50 p-3 rounded-2xl border border-white/10 pr-2">
-                        <div class="font-bold text-emerald-400 mb-1 flex items-center"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ تاییدشده کارشناس:</div>
+                    <div class="text-[11px] leading-relaxed bg-black/5 dark:bg-black/50 p-3 rounded-2xl border border-black/10 dark:border-white/10 pr-2 text-slate-800 dark:text-slate-200">
+                        <div class="font-bold text-emerald-600 dark:text-emerald-400 mb-1 flex items-center"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ تاییدشده کارشناس:</div>
                         ${pf.answer}
                     </div>
                 </div>
@@ -753,7 +753,7 @@
             if (!container) return;
             let list = appData.podcasts || [];
             if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">پادکستی ثبت نشده است.</div>'; return; }
-            container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-500">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
+            container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-600 dark:text-red-400">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
         function renderFiles() {
@@ -764,9 +764,9 @@
             container.innerHTML = list.map(f => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
                     ${f.image ? `<img src="${f.image}" class="w-full h-36 object-cover rounded-xl" alt="">` : ''}
-                    <h3 class="font-bold text-sm text-red-500">${f.title || f.name}</h3>
-                    <p class="text-[11px] opacity-90">${f.description || f.desc || ''}</p>
-                    ${f.url && f.url !== '#' ? `<a href="${f.url}" target="_blank" class="block text-center bg-red-500/20 text-red-400 py-2 rounded-xl text-xs font-bold">مشاهده فایل</a>` : ''}
+                    <h3 class="font-bold text-sm text-red-600 dark:text-red-400">${f.title || f.name}</h3>
+                    <p class="text-[11px] text-slate-800 dark:text-slate-200">${f.description || f.desc || ''}</p>
+                    ${f.url && f.url !== '#' ? `<a href="${f.url}" target="_blank" class="block text-center bg-red-500/20 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold">مشاهده فایل</a>` : ''}
                 </div>
             `).join('');
         }
@@ -778,7 +778,7 @@
             container.innerHTML = list.map(inf => `
                 <div onclick='openInfographicModal(${JSON.stringify(inf).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 text-center">
                     <img src="${inf.image}" class="w-full h-24 object-cover rounded-xl" alt="">
-                    <h4 class="font-bold text-[11px] text-red-500">${inf.title}</h4>
+                    <h4 class="font-bold text-[11px] text-red-600 dark:text-red-400">${inf.title}</h4>
                 </div>
             `).join('');
         }
@@ -803,7 +803,7 @@
                                 <i class="fa-solid fa-play text-white text-lg"></i>
                             </div>
                         </div>
-                        <h4 class="font-bold text-[11px] text-red-500 line-clamp-2">${cleanSer.title}</h4>
+                        <h4 class="font-bold text-[11px] text-red-600 dark:text-red-400 line-clamp-2">${cleanSer.title}</h4>
                     </div>
                 `;
             }).join('');
@@ -833,7 +833,7 @@
             let streams = appData.livestream || [];
             container.innerHTML = streams.map(stream => `
                 <button onclick='playSelectedStream(${JSON.stringify(stream).replace(/'/g, "&apos;")}); triggerHaptic();' class="p-3 ultra-glass rounded-2xl text-right transition border hover:border-red-500 space-y-1 shadow-sm">
-                    <div class="font-bold text-xs text-red-500"><i class="fa-solid fa-tv ml-1"></i> ${stream.title}</div>
+                    <div class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${stream.title}</div>
                     <div class="text-[10px] opacity-80 truncate">${stream.description || 'پخش زنده'}</div>
                 </button>
             `).join('');
@@ -1037,26 +1037,26 @@
             
             let matchedDict = (appData.dictionary || []).filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q)).slice(0, 3);
             if (matchedDict.length > 0) {
-                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1">اصطلاحات حقوقی</div>`;
+                resultsHTML += `<div class="text-[9px] font-bold text-red-600 dark:text-red-400 px-2 py-1">اصطلاحات حقوقی</div>`;
                 resultsHTML += matchedDict.map(d => `
-                    <div onclick="navigateToSection('dictionary-tab', '${d.term}')" class="p-2 hover:bg-white/20 rounded cursor-pointer transition">
-                        <div class="font-bold text-[11px] text-white">${d.term}</div>
-                        <div class="text-[9px] opacity-75 truncate text-slate-300">${d.definition}</div>
+                    <div onclick="navigateToSection('dictionary-tab', '${d.term}')" class="p-2 hover:bg-black/10 dark:hover:bg-white/20 rounded cursor-pointer transition">
+                        <div class="font-bold text-[11px] text-slate-900 dark:text-white">${d.term}</div>
+                        <div class="text-[9px] opacity-75 truncate text-slate-600 dark:text-slate-300">${d.definition}</div>
                     </div>
                 `).join('');
             }
 
             let matchedNews = (appData.news || []).filter(n => normalizeNumbers(n.title).includes(q) || normalizeNumbers(n.summary).includes(q)).slice(0, 2);
             if (matchedNews.length > 0) {
-                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2.5 pt-2 pb-1">اخبار و اطلاعیه‌ها</div>`;
+                resultsHTML += `<div class="text-[9px] font-bold text-red-600 dark:text-red-400 px-2.5 pt-2 pb-1">اخبار و اطلاعیه‌ها</div>`;
                 resultsHTML += matchedNews.map(n => `
-                    <div onclick="navigateToSection('news-tab', '')" class="p-2 hover:bg-white/20 rounded cursor-pointer transition">
-                        <div class="font-bold text-[11px] text-white">${n.title}</div>
+                    <div onclick="navigateToSection('news-tab', '')" class="p-2 hover:bg-black/10 dark:hover:bg-white/20 rounded cursor-pointer transition">
+                        <div class="font-bold text-[11px] text-slate-900 dark:text-white">${n.title}</div>
                     </div>
                 `).join('');
             }
 
-            box.innerHTML = resultsHTML || '<div class="p-3 text-center text-slate-400 text-xs">موردی با این کلیدواژه یافت نشد</div>';
+            box.innerHTML = resultsHTML || '<div class="p-3 text-center text-slate-500 dark:text-slate-400 text-xs">موردی با این کلیدواژه یافت نشد</div>';
         }
 
         function navigateToSection(sectionId, keyword) {

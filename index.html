@@ -211,11 +211,11 @@
                             <i class="fa-solid fa-user-tie text-base"></i>
                         </div>
                         <div>
-                            <h2 class="font-extrabold text-xs text-red-500 dark:text-red-400">مشاور و وکیل آنلاین SIJT</h2>
+                            <h2 class="font-extrabold text-xs text-red-600 dark:text-red-400">مشاور و وکیل آنلاین SIJT</h2>
                             <p class="text-[9px] opacity-75">ثبت پرسش، انتخاب دسته‌بندی و پیگیری با کد رهگیری</p>
                         </div>
                     </div>
-                    <button onclick="loadUserFaqs()" title="بروزرسانی وضعیت" class="p-2 rounded-xl bg-black/20 dark:bg-white/10 hover:bg-black/30 transition text-red-500 dark:text-red-400 text-xs">
+                    <button onclick="loadUserFaqs()" title="بروزرسانی وضعیت" class="p-2 rounded-xl bg-black/20 dark:bg-white/10 hover:bg-black/30 transition text-red-600 dark:text-red-400 text-xs">
                         <i id="faqRefreshIcon" class="fa-solid fa-rotate"></i>
                     </button>
                 </div>
@@ -328,25 +328,43 @@
             <div id="publicFaqContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۷: اینستاگرام حقوقی -->
+        <!-- تب ۷: آرشیو آرای وحدت رویه (جدید) -->
+        <section id="unity-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-3 flex items-center text-amber-500"><i class="fa-solid fa-scale-balanced ml-1.5 text-sm"></i> آرشیو آرای وحدت رویه و قوانین خاص</h2>
+            <div id="unityContainer" class="space-y-3"></div>
+        </section>
+
+        <!-- تب ۸: بازی‌ها و کوئیزهای حقوقی - Gamification (جدید) -->
+        <section id="games-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-3 flex items-center text-indigo-500"><i class="fa-solid fa-gamepad ml-1.5 text-sm"></i> چالش و بازی‌های حقوقی</h2>
+            <div id="gamesContainer" class="space-y-3"></div>
+        </section>
+
+        <!-- تب ۹: پرونده‌های جنایی و معماهای حقوقی (جدید) -->
+        <section id="criminal-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-3 flex items-center text-red-600"><i class="fa-solid fa-user-secret ml-1.5 text-sm"></i> پرونده‌های جنایی و تحلیل حقوقی</h2>
+            <div id="criminalContainer" class="space-y-3"></div>
+        </section>
+
+        <!-- تب ۱۰: اینستاگرام حقوقی -->
         <section id="instagram-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 flex items-center text-pink-600 dark:text-pink-400"><i class="fa-brands fa-instagram ml-1.5 text-sm"></i> کانال‌ها و پست‌های اینستاگرام حقوقی</h2>
             <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center"></div>
         </section>
 
-        <!-- تب ۸: پادکست‌های خبری -->
+        <!-- تب ۱۱: پادکست‌های خبری -->
         <section id="podcasts-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-podcast ml-1.5 text-red-600"></i> پادکست‌ها و فایل‌های صوتی</h2>
             <div id="podcastsContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۹: پرونده‌های ویژه -->
+        <!-- تب ۱۲: پرونده‌های ویژه -->
         <section id="files-tab" class="page-section hidden">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-folder-open ml-1.5 text-red-600"></i> پرونده‌های ویژه</h2>
             <div id="filesContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۱۰: پخش زنده -->
+        <!-- تب ۱۳: پخش زنده -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
@@ -369,20 +387,20 @@
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
-        <!-- تب ۱۱: اینفوگرافیک‌ها -->
+        <!-- تب ۱۴: اینفوگرافیک‌ها -->
         <section id="infographics-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-image ml-1.5 text-red-600"></i> اینفوگرافیک‌های حقوقی</h2>
             <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
-        <!-- تب ۱۲: سریال‌ها -->
+        <!-- تب ۱۵: سریال‌ها -->
         <section id="series-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-film ml-1.5 text-red-600"></i> سریال‌ها و ویدیوهای آموزشی</h2>
             <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه -->
+    <!-- ناوبری پایین صفحه (با اضافه شدن تب‌های جدید) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -390,6 +408,9 @@
         <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
         <button onclick="switchTab('tools-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
         <button onclick="switchTab('public-faq-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
+        <button onclick="switchTab('unity-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-landmark text-sm mb-0.5 text-amber-500"></i><span class="text-[8px]">آرای وحدت رویه</span></button>
+        <button onclick="switchTab('games-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-gamepad text-sm mb-0.5 text-indigo-500"></i><span class="text-[8px]">بازی حقوقی</span></button>
+        <button onclick="switchTab('criminal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-secret text-sm mb-0.5 text-red-600"></i><span class="text-[8px]">پرونده جنایی</span></button>
         <button onclick="switchTab('instagram-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-brands fa-instagram text-sm mb-0.5 text-pink-500"></i><span class="text-[8px]">اینستاگرام</span></button>
         <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
         <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
@@ -454,8 +475,11 @@
             quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
             publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
             instagram: [{ title: "مشاوره کیفری", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://instagram.com" }],
+            unityVotes: [{ title: "رای شماره ۷۳۴ دیوان عالی کشور", summary: "پیرامون نحوه محاسبه خسارت دیرکرد تادیه بر اساس نرخ تورم سالیانه.", url: "#" }],
+            legalGames: [{ question: "اگر صادرکننده چک قبل از سررسید فوت کند، مسئولیت پرداخت با کیست؟", option1: "ورثه از محل ترکه مسئولند", option2: "دین ساقط می‌شود", correct: "1", explanation: "با فوت صادرکننده، تعهدات مالی از ترکه متوفی پرداخت می‌گردد." }],
+            criminalCases: [{ title: "پرونده معمای اتاق سر بسته", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", description: "تحلیل حقوقی و جنایی پیرامون جرم قتل غیرعمد و بررسی ارکان مادی و معنوی جرم." }],
             series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com/v/example" }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.6.1\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.7.0\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -588,7 +612,7 @@
         }
 
         function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.add('dark');
             document.body.classList.toggle('dark', isDark);
             localStorage.setItem('mizan_theme', isDark ? 'dark' : 'light');
             document.getElementById('settingsDropdown').classList.add('hidden');
@@ -625,6 +649,9 @@
             renderNews();
             renderQuickTips();
             renderPublicFaqs();
+            renderUnityVotes();
+            renderLegalGames();
+            renderCriminalCases();
             renderInstagram();
             renderPodcasts();
             renderFiles();
@@ -726,6 +753,80 @@
                         <div class="font-bold text-emerald-600 dark:text-emerald-400 mb-1 flex items-center"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ تاییدشده کارشناس:</div>
                         ${pf.answer}
                     </div>
+                </div>
+            `).join('');
+        }
+
+        // رندر بخش جدید: آرشیو آرای وحدت رویه
+        function renderUnityVotes() {
+            const container = document.getElementById('unityContainer');
+            if (!container) return;
+            let list = appData.unityVotes || [];
+            if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">رایی ثبت نشده است.</div>'; return; }
+            container.innerHTML = list.map(v => `
+                <div class="ultra-glass p-4 rounded-2xl border border-amber-500/30 space-y-2 shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-1.5 h-full bg-amber-500"></div>
+                    <h3 class="font-bold text-xs text-amber-600 dark:text-amber-400 pr-2"><i class="fa-solid fa-scale-balanced ml-1"></i> ${v.title}</h3>
+                    <p class="text-[11px] text-slate-800 dark:text-slate-200 pr-2 leading-relaxed">${v.summary}</p>
+                    ${v.url && v.url !== '#' ? `<div class="pr-2 pt-1"><a href="${v.url}" target="_blank" class="text-xs font-bold text-red-600 dark:text-red-400 hover:underline">مشاهده متن کامل رای <i class="fa-solid fa-arrow-left text-[9px]"></i></a></div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // رندر بخش جدید: بازی‌ها و کوئیزهای حقوقی (Gamification)
+        function renderLegalGames() {
+            const container = document.getElementById('gamesContainer');
+            if (!container) return;
+            let list = appData.legalGames || [];
+            if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">کوئیزی ثبت نشده است.</div>'; return; }
+            
+            container.innerHTML = list.map((g, index) => `
+                <div class="ultra-glass p-4 rounded-3xl border border-indigo-500/30 space-y-3 shadow-xl">
+                    <div class="font-bold text-xs text-indigo-600 dark:text-indigo-400 flex items-center">
+                        <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] ml-2">${index + 1}</span>
+                        ${g.question}
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button onclick="checkGameAnswer(this, '1', '${g.correct}', '${g.explanation.replace(/'/g, "&apos;")}')" class="p-2 rounded-xl bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10 text-[11px] font-bold text-slate-800 dark:text-slate-200 transition hover:border-indigo-500">الف) ${g.option1}</button>
+                        <button onclick="checkGameAnswer(this, '2', '${g.correct}', '${g.explanation.replace(/'/g, "&apos;")}')" class="p-2 rounded-xl bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10 text-[11px] font-bold text-slate-800 dark:text-slate-200 transition hover:border-indigo-500">ب) ${g.option2}</button>
+                    </div>
+                    <div class="game-result hidden text-[11px] p-2.5 rounded-xl mt-2 leading-relaxed"></div>
+                </div>
+            `).join('');
+        }
+
+        function checkGameAnswer(btn, selected, correct, explanation) {
+            triggerHaptic();
+            const parent = btn.closest('div').parentElement;
+            const resultBox = parent.querySelector('.game-result');
+            resultBox.classList.remove('hidden');
+            
+            const buttons = parent.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            if (selected === correct) {
+                btn.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-500');
+                resultBox.className = "game-result text-[11px] p-2.5 rounded-xl mt-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-medium";
+                resultBox.innerHTML = `<i class="fa-solid fa-circle-check ml-1"></i> <strong>پاسخ صحیح است!</strong><br>${explanation}`;
+            } else {
+                btn.classList.add('bg-red-500/20', 'border-red-500', 'text-red-500');
+                resultBox.className = "game-result text-[11px] p-2.5 rounded-xl mt-2 bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-medium";
+                resultBox.innerHTML = `<i class="fa-solid fa-circle-xmark ml-1"></i> <strong>پاسخ اشتباه است.</strong><br>${explanation}`;
+            }
+        }
+
+        // رندر بخش جدید: پرونده‌های جنایی و معماهای حقوقی
+        function renderCriminalCases() {
+            const container = document.getElementById('criminalContainer');
+            if (!container) return;
+            let list = appData.criminalCases || [];
+            if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">پرونده‌ای ثبت نشده است.</div>'; return; }
+            
+            container.innerHTML = list.map(c => `
+                <div class="ultra-glass p-4 rounded-3xl border border-red-600/30 space-y-3 shadow-xl">
+                    ${c.image ? `<div class="w-full h-36 rounded-2xl overflow-hidden bg-slate-900"><img src="${c.image}" class="w-full h-full object-cover" alt=""></div>` : ''}
+                    <h3 class="font-bold text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-user-secret ml-1.5"></i> ${c.title}</h3>
+                    <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed">${c.description}</p>
                 </div>
             `).join('');
         }

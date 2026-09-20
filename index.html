@@ -113,7 +113,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات شیشه‌ای بدون تداخل رنگی -->
+        <!-- منوی تنظیمات شیشه‌ای -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-85 p-4 settings-glass rounded-3xl space-y-3 text-xs shadow-2xl max-h-[75vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
@@ -265,7 +265,7 @@
             </div>
         </section>
 
-        <!-- تب ۴: اطلاعیه‌ها و نکات کوتاه حقوقی (رفع کامل تداخل رنگی) -->
+        <!-- تب ۴: اطلاعیه‌ها و نکات کوتاه حقوقی (کاملاً خوانا و بدون تداخل رنگی) -->
         <section id="news-tab" class="page-section hidden space-y-4">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-bullhorn ml-1.5 text-red-600"></i> اطلاعیه‌ها و اخبار رسمی</h2>
             <div id="newsContainer" class="space-y-3"></div>
@@ -320,25 +320,33 @@
             </div>
         </section>
 
-        <!-- تب ۶: بانک سوالات عمومی -->
+        <!-- تب ۶: بانک سوالات عمومی (طراحی گرافیکی جدید، کارت‌های مدرن و جذاب) -->
         <section id="public-faq-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-clipboard-question ml-1.5 text-red-600"></i> بانک سوالات عمومی و تاییدشده</h2>
+            <div class="flex items-center justify-between mb-1">
+                <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-clipboard-question ml-1.5 text-red-600"></i> بانک سوالات عمومی و تاییدشده</h2>
+            </div>
             <div id="publicFaqContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۷: پادکست‌های خبری -->
+        <!-- تب ۷: اینستاگرام حقوقی (کارت‌های دایره‌ای فوق‌جذاب با کنترل گوگل شیت) -->
+        <section id="instagram-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-3 flex items-center text-pink-500"><i class="fa-brands fa-instagram ml-1.5 text-sm"></i> کانال‌ها و پست‌های اینستاگرام حقوقی</h2>
+            <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center"></div>
+        </section>
+
+        <!-- تب ۸: پادکست‌های خبری -->
         <section id="podcasts-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-podcast ml-1.5 text-red-600"></i> پادکست‌ها و فایل‌های صوتی</h2>
             <div id="podcastsContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۸: پرونده‌های ویژه -->
+        <!-- تب ۹: پرونده‌های ویژه -->
         <section id="files-tab" class="page-section hidden">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-folder-open ml-1.5 text-red-600"></i> پرونده‌های ویژه</h2>
             <div id="filesContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۹: پخش زنده -->
+        <!-- تب ۱۰: پخش زنده -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden shadow-xl p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center">
@@ -361,20 +369,20 @@
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
-        <!-- تب ۱۰: اینفوگرافیک‌ها -->
+        <!-- تب ۱۱: اینفوگرافیک‌ها -->
         <section id="infographics-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-image ml-1.5 text-red-600"></i> اینفوگرافیک‌های حقوقی</h2>
             <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
-        <!-- تب ۱۱: سریال‌ها -->
+        <!-- تب ۱۲: سریال‌ها -->
         <section id="series-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-film ml-1.5 text-red-600"></i> سریال‌ها و ویدیوهای آموزشی</h2>
             <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه -->
+    <!-- ناوبری پایین صفحه (با اضافه شدن تب اینستاگرام) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -382,6 +390,7 @@
         <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
         <button onclick="switchTab('tools-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
         <button onclick="switchTab('public-faq-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
+        <button onclick="switchTab('instagram-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-brands fa-instagram text-sm mb-0.5 text-pink-500"></i><span class="text-[8px]">اینستاگرام</span></button>
         <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
         <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
         <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
@@ -389,7 +398,7 @@
         <button onclick="switchTab('series-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
     </nav>
 
-    <!-- مودال اطلاعات و پشتیبانی (اصلاح‌شده برای نمایش درست از گوگل شیت) -->
+    <!-- مودال اطلاعات و پشتیبانی -->
     <div id="aboutModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeAboutModal()" class="absolute top-3 left-3 text-slate-400 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -400,7 +409,7 @@
         </div>
     </div>
 
-    <!-- مودال پخش سریال -->
+    <!-- سایر مودال‌ها -->
     <div id="seriesModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -414,7 +423,6 @@
         </div>
     </div>
 
-    <!-- مودال اعلان‌ها -->
     <div id="notificationsModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3">
             <button onclick="toggleNotificationsModal()" class="absolute top-3 left-3 text-slate-400 p-2"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -425,7 +433,6 @@
         </div>
     </div>
 
-    <!-- مودال اینفوگرافیک -->
     <div id="infographicModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeInfographicModal()" class="absolute top-3 left-3 text-slate-400 p-2"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -436,7 +443,6 @@
         </div>
     </div>
 
-    <!-- توست پیام کپی -->
     <div id="copyToast" class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs shadow-2xl border border-white/20 hidden z-[200] transition-all">
         <i class="fa-solid fa-check text-emerald-400 ml-1"></i> متن با موفقیت کپی شد!
     </div>
@@ -448,8 +454,9 @@
             news: [{ title: "اطلاعیه مهم حقوقی", summary: "تغییرات جدید در نحوه ابلاغ الکترونیک قضایی", date: "۱۴۰۵/۰۶/۲۸" }],
             quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
             publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
+            instagram: [{ title: "مشاوره کیفری", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://instagram.com" }],
             series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com/v/example" }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.5.0\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.6.0\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -487,7 +494,7 @@
 
         function openAboutModal() {
             document.getElementById('settingsDropdown').classList.add('hidden');
-            let aboutText = "مینی‌اپ تخصصی حقوقی SIJT\nنسخه پیشرفته سیستم";
+            let aboutText = "مینی‌اپ تخصصی حقوقی SIJT";
             if (appData.about && appData.about.length > 0) {
                 aboutText = appData.about[0].text || appData.about[0].description || appData.about[0].summary || JSON.stringify(appData.about[0]);
             }
@@ -619,6 +626,7 @@
             renderNews();
             renderQuickTips();
             renderPublicFaqs();
+            renderInstagram();
             renderPodcasts();
             renderFiles();
             renderInfographics();
@@ -690,27 +698,57 @@
             `).join('');
         }
 
+        // رفع کامل تداخل رنگی در بخش ترفندها و نکات کوتاه حقوقی
         function renderQuickTips() {
             const container = document.getElementById('quickTipsContainer');
             if (!container) return;
             let list = appData.quickTips || [{ title: "نکته حقوقی", text: "همیشه قراردادهای مهم را با حضور دو شاهد امضا کنید." }];
             container.innerHTML = list.map(tip => `
-                <div class="ultra-glass p-3 rounded-xl border border-white/20 text-[11px] space-y-1">
-                    <div class="font-bold text-amber-400 flex items-center"><i class="fa-solid fa-star ml-1 text-xs"></i> ${tip.title || tip.name || ''}</div>
-                    <p class="text-slate-100 dark:text-slate-100 opacity-95">${tip.text || tip.description || tip.summary || ''}</p>
+                <div class="ultra-glass p-3.5 rounded-2xl border border-white/20 text-[11px] space-y-1.5 shadow-md">
+                    <div class="font-bold text-amber-400 flex items-center text-xs"><i class="fa-solid fa-star ml-1 text-xs"></i> ${tip.title || tip.name || ''}</div>
+                    <p class="text-slate-200 dark:text-slate-200 leading-relaxed">${tip.text || tip.description || tip.summary || ''}</p>
                 </div>
             `).join('');
         }
 
+        // بخش گرافیکی و جذاب بانک سوالات عمومی
         function renderPublicFaqs() {
             const container = document.getElementById('publicFaqContainer');
             if (!container) return;
             let list = appData.publicFaqs || [];
             container.innerHTML = list.map(pf => `
-                <div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-2">
-                    <div class="font-bold text-xs text-red-500"><i class="fa-solid fa-circle-question ml-1"></i> ${pf.question}</div>
-                    <div class="text-[11px] opacity-90 bg-black/20 p-2.5 rounded-xl"><i class="fa-solid fa-check ml-1 text-emerald-500"></i> ${pf.answer}</div>
+                <div class="ultra-glass p-4 rounded-3xl border border-red-500/20 space-y-2.5 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-red-600 to-amber-500"></div>
+                    <div class="font-bold text-xs text-red-500 dark:text-red-400 flex items-center pr-2">
+                        <div class="w-6 h-6 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center ml-2 flex-shrink-0 text-xs">
+                            <i class="fa-solid fa-question"></i>
+                        </div>
+                        ${pf.question}
+                    </div>
+                    <div class="text-[11px] leading-relaxed opacity-95 bg-black/30 dark:bg-black/50 p-3 rounded-2xl border border-white/10 pr-2">
+                        <div class="font-bold text-emerald-400 mb-1 flex items-center"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ تاییدشده کارشناس:</div>
+                        ${pf.answer}
+                    </div>
                 </div>
+            `).join('');
+        }
+
+        // بخش اینستاگرام با استایل دایره‌ای فوق‌جذاب و کنترل کامل از گوگل شیت
+        function renderInstagram() {
+            const container = document.getElementById('instagramContainer');
+            if (!container) return;
+            let list = appData.instagram || [];
+            if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4 col-span-3">صفحه یا پستی ثبت نشده است.</div>'; return; }
+            
+            container.innerHTML = list.map(ig => `
+                <a href="${ig.url || 'https://instagram.com'}" target="_blank" class="flex flex-col items-center space-y-2 group transition transform hover:scale-105">
+                    <div class="w-18 h-18 rounded-full p-1 bg-gradient-to-tr from-amber-500 via-red-600 to-purple-600 shadow-xl flex items-center justify-center">
+                        <div class="w-16 h-16 rounded-full overflow-hidden bg-slate-900 border-2 border-white flex items-center justify-center">
+                            <img src="${ig.image || 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg'}" class="w-full h-full object-cover transition group-hover:scale-110" alt="">
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-[11px] text-slate-800 dark:text-slate-200 line-clamp-2 px-1">${ig.title || 'اینستاگرام'}</h4>
+                </a>
             `).join('');
         }
 
@@ -834,7 +872,6 @@
         }
         function closeInfographicModal() { document.getElementById('infographicModal').classList.add('hidden'); }
 
-        // فرمول محاسبه دقیق هزینه دادرسی
         function calculateCourtFee() {
             const amount = parseFloat(document.getElementById('claimAmountInput').value) || 0;
             if(amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
@@ -842,14 +879,13 @@
             document.getElementById('feeResult').innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(fee).toLocaleString()} ریال`;
         }
 
-        // فرمول استاندارد و معقول محاسبه مهریه بر اساس تعداد سکه
         function calculateMahariyeh() {
             const count = parseFloat(document.getElementById('mahariyehAmount').value) || 0;
             const year = parseInt(document.getElementById('marriageYear').value) || 1400;
             if(count <= 0) return alert('تعداد سکه مهریه را وارد کنید.');
             if(year < 1350 || year > 1405) return alert('لطفاً سال عقد معتبری وارد کنید.');
             
-            let baseCoinPrice = 450000000; // میانگین قیمت هر سکه به ریال
+            let baseCoinPrice = 450000000;
             let totalValue = count * baseCoinPrice;
             document.getElementById('mahariyehResult').innerText = `ارزش تقریبی روز: حدود ${Math.round(totalValue).toLocaleString()} ریال`;
         }

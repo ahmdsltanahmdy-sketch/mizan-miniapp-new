@@ -88,6 +88,11 @@
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse">
+                <!-- سیستم اعلان هوشمند (Notification Bell) -->
+                <button onclick="toggleNotificationsModal()" title="اعلان‌ها" class="relative p-1.5 rounded-full hover:bg-white/10 transition">
+                    <i class="fa-solid fa-bell text-xs text-amber-300"></i>
+                    <span id="notifBadge" class="hidden absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                </button>
                 <span id="headerWeatherWidget">تهران...</span>
                 <button onclick="manualRefresh()" title="بروزرسانی" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
                 <button onclick="toggleSettingsMenu(event)" title="تنظیمات" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
@@ -206,32 +211,62 @@
             </div>
         </section>
 
-        <!-- تب ۴: اطلاعیه‌ها و اخبار حقوقی -->
-        <section id="news-tab" class="page-section hidden space-y-3">
+        <!-- تب ۴: اطلاعیه‌ها، اخبار و نکات کوتاه حقوقی -->
+        <section id="news-tab" class="page-section hidden space-y-4">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-bullhorn ml-1.5 text-red-600"></i> اطلاعیه‌ها و اخبار رسمی</h2>
             <div id="newsContainer" class="space-y-3"></div>
+            
+            <!-- بخش نکات کوتاه و مقالات روز حقوقی (Quick Legal Tips) -->
+            <div class="pt-3 border-t border-white/10 space-y-2">
+                <h3 class="font-bold text-xs flex items-center text-amber-400"><i class="fa-solid fa-lightbulb ml-1.5"></i> نکات کوتاه و ترفندهای روز حقوقی</h3>
+                <div id="quickTipsContainer" class="space-y-2"></div>
+            </div>
         </section>
 
-        <!-- تب ۵: ابزارهای هوشمند حقوقی -->
+        <!-- تب ۵: ابزارهای پیشرفته حقوقی (محاسبه‌گرها و هوش مصنوعی) -->
         <section id="tools-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-toolbox ml-1.5 text-red-600"></i> ابزارهای هوشمند حقوقی</h2>
             
+            <!-- محاسبه‌گر هزینه دادرسی -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی و تعرفه</h3>
-                <p class="text-[10px] opacity-90 leading-relaxed">راهنما: مبلغ خواسته یا ارزش مالی دعوا را بر اساس ریال وارد کنید. هزینه دادرسی دعاوی مالی در مرحله بدوی بر اساس نرخ مصوب قوه قضاییه محاسبه می‌گردد.</p>
-                <div class="space-y-2">
-                    <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال (مثلا 50000000)..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
-                    <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
-                    <div id="feeResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
-                </div>
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی</h3>
+                <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
+                <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
+                <div id="feeResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
             </div>
 
+            <!-- محاسبه‌گر مهریه به نرخ روز -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-robot ml-1"></i> دستیار هوش مصنوعی حقوقی (RAG & Rules)</h3>
-                <p class="text-[10px] opacity-90">هرگونه سوال حقوقی خود (درباره چک، مهریه، اجاره، دیه، قراردادها و...) را بپرسید:</p>
-                <textarea id="aiPromptInput" placeholder="مثلاً: شرایط مطالبه وجه چک صیادی و مسدودی حساب چگونه است؟" class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl p-3 text-xs border border-white/20 focus:outline-none h-20 resize-none"></textarea>
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="mahariyehAmount" placeholder="مقدار سکه/ریال..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
+                    <input type="number" id="marriageYear" placeholder="سال عقد (مثلا 1395)..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
+                </div>
+                <button onclick="calculateMahariyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه ارزش روز</button>
+                <div id="mahariyehResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
+            </div>
+
+            <!-- محاسبه‌گر دیه -->
+            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر تقریبی دیه</h3>
+                <select id="diyehType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none">
+                    <option value="complete">دیه کامل یک مرد مسلمان</option>
+                    <option value="finger">دیه یک انگشت (یک دهم)</option>
+                    <option value="eye">دیه یک چشم (نصف دیه کامل)</option>
+                </select>
+                <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه مبلغ دیه</button>
+                <div id="diyehResult" class="text-[11px] font-bold text-amber-400 pt-1"></div>
+            </div>
+
+            <!-- دستیار هوش مصنوعی حقوقی -->
+            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+                <h3 class="font-bold text-xs text-red-500"><i class="fa-solid fa-robot ml-1"></i> دستیار هوش مصنوعی حقوقی (RAG)</h3>
+                <textarea id="aiPromptInput" placeholder="سوال حقوقی خود را بپرسید..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl p-3 text-xs border border-white/20 focus:outline-none h-20 resize-none"></textarea>
                 <button onclick="runAiAssistant()" class="w-full bg-gradient-to-r from-red-600 to-amber-600 text-white py-2 rounded-xl text-xs font-bold shadow">استعلام هوشمند قوانین</button>
-                <div id="aiResponseBox" class="text-[11px] text-white p-3 rounded-xl bg-slate-900 border border-white/20 hidden leading-relaxed space-y-1"></div>
+                <div id="aiResponseBox" class="text-[11px] text-white p-3 rounded-xl bg-slate-900 border border-white/20 hidden leading-relaxed space-y-1 relative">
+                    <button onclick="copyAiResponse()" class="absolute top-2 left-2 bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded text-[9px]"><i class="fa-solid fa-copy"></i> کپی</button>
+                    <div id="aiResponseText"></div>
+                </div>
             </div>
         </section>
 
@@ -304,7 +339,18 @@
         <button onclick="switchTab('series-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
     </nav>
 
-    <!-- مودال‌ها -->
+    <!-- مودال اعلان‌ها (User Notifications) -->
+    <div id="notificationsModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3">
+            <button onclick="toggleNotificationsModal()" class="absolute top-3 left-3 text-slate-400 p-2"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-xs text-red-500 pt-1 flex items-center"><i class="fa-solid fa-bell ml-1"></i> اعلان‌های سیستم</h3>
+            <div id="notificationsList" class="space-y-2 max-h-60 overflow-y-auto">
+                <div class="text-center text-xs opacity-70 py-4">هیچ اعلان جدیدی وجود ندارد.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال اینفوگرافیک -->
     <div id="infographicModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeInfographicModal()" class="absolute top-3 left-3 text-slate-400 p-2"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -315,14 +361,9 @@
         </div>
     </div>
 
-    <!-- مودال جستجوی پیشرفته -->
-    <div id="advancedSearchModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-5 relative shadow-2xl space-y-3 text-right">
-            <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400"><i class="fa-solid fa-xmark text-base"></i></button>
-            <h3 class="font-bold text-sm text-[#c51b24]">جستجوی پیشرفته در گوگل</h3>
-            <input type="text" id="advSearchInput" placeholder="عبارت مورد نظر را بنویسید..." class="w-full bg-black/30 rounded-xl px-3 py-2.5 text-xs border border-white/20 text-white focus:outline-none">
-            <button onclick="executeAdvancedGoogleSearch()" class="w-full bg-[#c51b24] text-white py-2.5 rounded-xl text-xs font-bold shadow transition hover:bg-red-700">جستجو در گوگل</button>
-        </div>
+    <!-- توست پیام کپی سریع (One-Tap Copy Toast) -->
+    <div id="copyToast" class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs shadow-2xl border border-white/20 hidden z-[200] transition-all">
+        <i class="fa-solid fa-check text-emerald-400 ml-1"></i> متن با موفقیت کپی شد!
     </div>
 
     <script>
@@ -330,14 +371,8 @@
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
             dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان." }],
             news: [{ title: "اطلاعیه مهم حقوقی", summary: "تغییرات جدید در نحوه ابلاغ الکترونیک قضایی", date: "۱۴۰۵/۰۶/۲۸" }],
-            publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
-            livestream: [
-                { title: "شبکه خبر", url: "https://www.telewebion.com/live/irinn", description: "پخش زنده خبر" },
-                { title: "شبکه یک", url: "https://www.telewebion.com/live/tv1", description: "پخش زنده شبکه یک" }
-            ],
-            series: [{ title: "مجموعه آقای قاضی", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "https://www.aparat.com" }],
-            files: [{ title: "پرونده ویژه حقوق شهروندی", description: "بررسی ابعاد حقوقی و بخشنامه‌های جدید", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg", url: "#" }],
-            infographics: [{ title: "مراحل ثبت دادخواست", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" }]
+            quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
+            publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -424,19 +459,40 @@
             document.getElementById('settingsDropdown').classList.add('hidden');
         }
 
-        function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
-        function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
-        function executeAdvancedGoogleSearch() {
-            const query = document.getElementById('advSearchInput').value.trim();
-            if (!query) return alert('لطفا عبارت مورد نظر را وارد کنید.');
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-            closeAdvancedSearchModal();
+        function toggleNotificationsModal() {
+            const modal = document.getElementById('notificationsModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // قابلیت کپی کردن با یک کلیک (One-Tap Copy)
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2000);
+            });
+        }
+
+        function copyAiResponse() {
+            const text = document.getElementById('aiResponseText').innerText;
+            copyToClipboard(text);
+        }
+
+        // قابلیت اشتراک‌گذاری سریع (Share Integration)
+        function shareContent(title, text) {
+            if (navigator.share) {
+                navigator.share({ title: title, text: text, url: window.location.href }).catch(() => {});
+            } else {
+                copyToClipboard(text);
+                alert('لینک یا متن کپی شد!');
+            }
         }
 
         function renderAll() {
             renderLegalSystems();
             renderDictionary();
             renderNews();
+            renderQuickTips();
             renderPublicFaqs();
             renderPodcasts();
             renderFiles();
@@ -472,8 +528,14 @@
             }
             if(counterElem) counterElem.innerText = `${list.length} واژه`;
             container.innerHTML = list.map(d => `
-                <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1">
-                    <div class="font-bold text-red-500 text-xs">${d.term}</div>
+                <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1 relative">
+                    <div class="flex justify-between items-center">
+                        <div class="font-bold text-red-500 text-xs">${d.term}</div>
+                        <div class="space-x-1 space-x-reverse">
+                            <button onclick="copyToClipboard('${d.term}: ${d.definition}')" title="کپی" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
+                            <button onclick="shareContent('${d.term}', '${d.definition}')" title="اشتراک‌گذاری" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-share-nodes"></i></button>
+                        </div>
+                    </div>
                     <p class="text-[11px] opacity-90 leading-relaxed">${d.definition}</p>
                 </div>
             `).join('');
@@ -489,10 +551,28 @@
             if (!container) return;
             let list = appData.news || [];
             container.innerHTML = list.map(n => `
-                <div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-1">
-                    <div class="flex justify-between items-center text-[9px] opacity-70"><span>${n.date || ''}</span></div>
+                <div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-1 relative">
+                    <div class="flex justify-between items-center text-[9px] opacity-70">
+                        <span>${n.date || ''}</span>
+                        <div class="space-x-1 space-x-reverse">
+                            <button onclick="copyToClipboard('${n.title}\n${n.summary}')" title="کپی" class="text-slate-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
+                            <button onclick="shareContent('${n.title}', '${n.summary}')" title="اشتراک‌گذاری" class="text-slate-400 hover:text-white"><i class="fa-solid fa-share-nodes"></i></button>
+                        </div>
+                    </div>
                     <h3 class="font-bold text-xs text-red-500">${n.title}</h3>
                     <p class="text-[11px] opacity-90">${n.summary}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderQuickTips() {
+            const container = document.getElementById('quickTipsContainer');
+            if (!container) return;
+            let list = appData.quickTips || [{ title: "نکته حقوقی", text: "همیشه قراردادهای مهم را با حضور دو شاهد امضا کنید." }];
+            container.innerHTML = list.map(tip => `
+                <div class="bg-black/20 p-2.5 rounded-xl border border-white/10 text-[11px] space-y-1">
+                    <div class="font-bold text-amber-400 flex items-center"><i class="fa-solid fa-star ml-1 text-xs"></i> ${tip.title}</div>
+                    <p class="opacity-90">${tip.text}</p>
                 </div>
             `).join('');
         }
@@ -599,7 +679,7 @@
         }
         function closeInfographicModal() { document.getElementById('infographicModal').classList.add('hidden'); }
 
-        // ابزار محاسبه‌گر هزینه‌های دادرسی پویا و دقیق
+        // ابزارهای پیشرفته حقوقی (محاسبه‌گر هزینه دادرسی، مهریه و دیه)
         function calculateCourtFee() {
             const amount = parseFloat(document.getElementById('claimAmountInput').value) || 0;
             if(amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
@@ -607,33 +687,45 @@
             document.getElementById('feeResult').innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(fee).toLocaleString()} ریال`;
         }
 
-        // هوش مصنوعی حقوقی پیشرفته و هوشمند (RAG & Rules)
-        function runAiAssistant() {
+        function calculateMahariyeh() {
+            const count = parseFloat(document.getElementById('mahariyehAmount').value) || 0;
+            const year = parseInt(document.getElementById('marriageYear').value) || 1400;
+            if(count <= 0) return alert('مقدار مهریه را وارد کنید.');
+            let estimatedValue = count * 45000000 * (1 + (2026 - year) * 0.25); // فرمول تخمین نرخ روز
+            document.getElementById('mahariyehResult').innerText = `ارزش تقریبی روز: حدود ${Math.round(estimatedValue).toLocaleString()} ریال`;
+        }
+
+        function calculateDiyeh() {
+            const type = document.getElementById('diyehType').value;
+            let baseDiyeh = 1200000000; // دیه پایه فرض سال
+            let finalDiyeh = baseDiyeh;
+            if(type === 'finger') finalDiyeh = baseDiyeh * 0.1;
+            if(type === 'eye') finalDiyeh = baseDiyeh * 0.5;
+            document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;
+        }
+
+        // هوش مصنوعی حقوقی
+        async function runAiAssistant() {
             const prompt = document.getElementById('aiPromptInput').value.trim();
             const box = document.getElementById('aiResponseBox');
+            const resText = document.getElementById('aiResponseText');
             if(!prompt) return alert('لطفاً سوال حقوقی خود را بنویسید.');
             
             box.classList.remove('hidden');
-            box.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال تحلیل حقوقی و استعلام قوانین...';
+            resText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال تحلیل حقوقی توسط هوش مصنوعی...';
             
-            setTimeout(() => {
-                const text = prompt.toLowerCase();
-                let reply = "بر اساس اصول کلی حقوق مدنی و آیین دادرسی، برای پیگیری این موضوع تنظیم دادخواست یا شکواییه از طریق دفاتر خدمات الکترونیک قضایی توصیه می‌شود.";
+            try {
+                const res = await fetch(API_URL + "?action=ai_search&query=" + encodeURIComponent(prompt) + "&t=" + new Date().getTime());
+                const data = await res.json();
                 
-                if (text.includes('سلام') || text.includes('درود') || text.length < 5) {
-                    reply = "سلام! من دستیار هوشمند حقوقی SIJT هستم. سوال حقوقی خود را پیرامون قراردادها، چک، مهریه، مسائل کیفری یا ملکی بپرسید تا قوانین مرتبط را برای شما استخراج کنم.";
-                } else if (text.includes('چک') || text.includes('برگشت')) {
-                    reply = "<b>تحلیل هوش مصنوعی (قانون صدور چک):</b> با دریافت گواهی عدم پرداخت از بانک، می‌توانید مستقیماً از طریق اجرای ثبت یا دادگاه حقوقی تقاضای صدور اجراییه و توقیف اموال صادرکننده را بدون حکم قطعی دادگاه مطرح کنید.";
-                } else if (text.includes('مهریه') || text.includes('طلاق') || text.includes('ازدواج')) {
-                    reply = "<b>تحلیل هوش مصنوعی (قوانین خانواده):</b> مطالبه مهریه نخست از طریق اجرای ثبت اسناد و املاک و سپس در صورت عدم وصول از طریق دادگاه خانواده انجام می‌شود. زوج می‌تواند تقاضای اعسار و تقسیط بدهد.";
-                } else if (text.includes('اجاره') || text.includes('مستاجر') || text.includes('تخلیه')) {
-                    reply = "<b>تحلیل هوش مصنوعی (قانون روابط موجر و مستاجر):</b> پس از پایان مدت قرارداد یا بروز تخلف عدم پرداخت اجاره‌بها، با در دست داشتن سند رسمی یا سند عادی دارای دو شاهد، امکان درخواست دستور تخلیه فوری وجود دارد.";
-                } else if (text.includes('دیه') || text.includes('تصادف') || text.includes('جرم')) {
-                    reply = "<b>تحلیل هوش مصنوعی (قوانین کیفری):</b> در دعاوی ناشی از تصادفات و صدمات بدنی، تشکیل پرونده در کلانتری و ارجاع به پزشکی قانونی جهت تعیین میزان دیه و خسارت الزامی است.";
+                if (data && data.status === "success" && data.result) {
+                    resText.innerHTML = data.result.replace(/\n/g, '<br>');
+                } else {
+                    resText.innerHTML = 'پاسخی از هوش مصنوعی دریافت نشد.';
                 }
-
-                box.innerHTML = `<strong>پاسخ تخصصی هوش مصنوعی:</strong><br>${reply}`;
-            }, 800);
+            } catch(e) {
+                resText.innerHTML = 'خطا در ارتباط با سرور هوش مصنوعی.';
+            }
         }
 
         async function submitQuestion() {
@@ -668,6 +760,8 @@
         async function loadUserFaqs() {
             const container = document.getElementById('userFaqsContainer');
             const badge = document.getElementById('faqCountBadge');
+            const notifList = document.getElementById('notificationsList');
+            const notifBadge = document.getElementById('notifBadge');
             const icon = document.getElementById('faqRefreshIcon');
             if(icon) icon.classList.add('fa-spin');
 
@@ -679,15 +773,31 @@
                 if (data && data.status === "success" && data.faqs) {
                     const faqs = data.faqs;
                     if(badge) badge.innerText = `${faqs.length} مورد`;
+                    
+                    let answeredCount = faqs.filter(item => item.answer && item.answer.trim() !== "").length;
+                    if(answeredCount > 0) {
+                        notifBadge.classList.remove('hidden');
+                        notifList.innerHTML = faqs.filter(item => item.answer).map(item => `
+                            <div class="bg-slate-900 p-2.5 rounded-xl border border-white/20 text-[11px] space-y-1">
+                                <div class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ وکیل برای سوال شما ثبت شد</div>
+                                <div class="opacity-90"><b>سوال:</b> ${item.question}</div>
+                                <div class="text-amber-300"><b>پاسخ:</b> ${item.answer}</div>
+                            </div>
+                        `).join('');
+                    }
+
                     if (faqs.length === 0) {
                         container.innerHTML = `<div class="text-center py-4 opacity-70 text-xs">هنوز سوالی ثبت نکرده‌اید.</div>`;
                         return;
                     }
                     container.innerHTML = faqs.map(item => `
-                        <div class="bg-slate-900 p-3 rounded-xl border border-white/20 space-y-1.5 text-white">
+                        <div class="bg-slate-900 p-3 rounded-xl border border-white/20 space-y-1.5 text-white relative">
                             <div class="flex justify-between items-center text-[9px] opacity-80">
                                 <span class="bg-red-500/30 text-red-300 px-2 py-0.5 rounded">${item.category || 'عمومی'}</span>
-                                <span class="text-amber-400 font-bold">کد: ${item.trackingCode || '-'}</span>
+                                <div class="space-x-1 space-x-reverse">
+                                    <span class="text-amber-400 font-bold ml-2">کد: ${item.trackingCode || '-'}</span>
+                                    <button onclick="copyToClipboard('کد رهگیری: ${item.trackingCode}\nپاسخ: ${item.answer || 'در حال بررسی'}')" title="کپی" class="text-slate-300"><i class="fa-solid fa-copy"></i></button>
+                                </div>
                             </div>
                             <p class="text-[11px] font-bold text-white">${item.question}</p>
                             <div class="text-[10px] font-medium ${item.answer ? 'text-emerald-400' : 'text-amber-300'}">
@@ -750,7 +860,6 @@
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(sectionId).classList.remove('hidden');
 
-            // اگر کاربر از بخش پخش زنده خارج شد، ویدیو متوقف شود
             if (sectionId !== 'multimedia-tab') {
                 const iframe = document.getElementById('liveStreamIframe');
                 if(iframe) iframe.src = "";

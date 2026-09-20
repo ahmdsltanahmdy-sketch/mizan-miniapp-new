@@ -265,7 +265,7 @@
             </div>
         </section>
 
-        <!-- تب ۴: اطلاعیه‌ها و نکات کوتاه حقوقی (کاملاً خوانا و بدون تداخل رنگی) -->
+        <!-- تب ۴: اطلاعیه‌ها و نکات کوتاه حقوقی -->
         <section id="news-tab" class="page-section hidden space-y-4">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-bullhorn ml-1.5 text-red-600"></i> اطلاعیه‌ها و اخبار رسمی</h2>
             <div id="newsContainer" class="space-y-3"></div>
@@ -320,7 +320,7 @@
             </div>
         </section>
 
-        <!-- تب ۶: بانک سوالات عمومی (طراحی گرافیکی جدید، کارت‌های مدرن و جذاب) -->
+        <!-- تب ۶: بانک سوالات عمومی (طراحی گرافیکی جدید) -->
         <section id="public-faq-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-clipboard-question ml-1.5 text-red-600"></i> بانک سوالات عمومی و تاییدشده</h2>
@@ -328,7 +328,7 @@
             <div id="publicFaqContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۷: اینستاگرام حقوقی (کارت‌های دایره‌ای فوق‌جذاب با کنترل گوگل شیت) -->
+        <!-- تب ۷: اینستاگرام حقوقی (کارت‌های دایره‌ای جذاب) -->
         <section id="instagram-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 flex items-center text-pink-500"><i class="fa-brands fa-instagram ml-1.5 text-sm"></i> کانال‌ها و پست‌های اینستاگرام حقوقی</h2>
             <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center"></div>
@@ -382,7 +382,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با اضافه شدن تب اینستاگرام) -->
+    <!-- ناوبری پایین صفحه -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -398,7 +398,7 @@
         <button onclick="switchTab('series-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
     </nav>
 
-    <!-- مودال اطلاعات و پشتیبانی -->
+    <!-- مودال‌ها -->
     <div id="aboutModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeAboutModal()" class="absolute top-3 left-3 text-slate-400 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -409,7 +409,6 @@
         </div>
     </div>
 
-    <!-- سایر مودال‌ها -->
     <div id="seriesModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeSeriesModal()" class="absolute top-3 left-3 text-slate-400 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -698,7 +697,6 @@
             `).join('');
         }
 
-        // رفع کامل تداخل رنگی در بخش ترفندها و نکات کوتاه حقوقی
         function renderQuickTips() {
             const container = document.getElementById('quickTipsContainer');
             if (!container) return;
@@ -711,7 +709,6 @@
             `).join('');
         }
 
-        // بخش گرافیکی و جذاب بانک سوالات عمومی
         function renderPublicFaqs() {
             const container = document.getElementById('publicFaqContainer');
             if (!container) return;
@@ -733,7 +730,6 @@
             `).join('');
         }
 
-        // بخش اینستاگرام با استایل دایره‌ای فوق‌جذاب و کنترل کامل از گوگل شیت
         function renderInstagram() {
             const container = document.getElementById('instagramContainer');
             if (!container) return;
@@ -904,7 +900,7 @@
             const prompt = document.getElementById('aiPromptInput').value.trim();
             const box = document.getElementById('aiResponseBox');
             const resText = document.getElementById('aiResponseText');
-            if(!prompt) return alert('لطفاً سوال حقوقی خود را بنویسید.');
+            if(!prompt) return alert('لطفاً سوال حقوقی خود را بپرسید.');
             
             box.classList.remove('hidden');
             resText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال تحلیل حقوقی توسط هوش مصنوعی...';
@@ -1038,11 +1034,49 @@
                 return;
             }
             let resultsHTML = '';
-            let matchedDict = (appData.dictionary || []).filter(d => normalizeNumbers(d.term).includes(q)).slice(0, 3);
+            
+            let matchedDict = (appData.dictionary || []).filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q)).slice(0, 3);
             if (matchedDict.length > 0) {
-                resultsHTML += matchedDict.map(d => `<div class="p-2 hover:bg-white/20 rounded cursor-pointer"><div class="font-bold text-[11px]">${d.term}</div><div class="text-[9px] opacity-70">${d.definition}</div></div>`).join('');
+                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2 py-1">اصطلاحات حقوقی</div>`;
+                resultsHTML += matchedDict.map(d => `
+                    <div onclick="navigateToSection('dictionary-tab', '${d.term}')" class="p-2 hover:bg-white/20 rounded cursor-pointer transition">
+                        <div class="font-bold text-[11px] text-white">${d.term}</div>
+                        <div class="text-[9px] opacity-75 truncate text-slate-300">${d.definition}</div>
+                    </div>
+                `).join('');
             }
-            box.innerHTML = resultsHTML || '<div class="p-2 text-center text-slate-400">موردی یافت نشد</div>';
+
+            let matchedNews = (appData.news || []).filter(n => normalizeNumbers(n.title).includes(q) || normalizeNumbers(n.summary).includes(q)).slice(0, 2);
+            if (matchedNews.length > 0) {
+                resultsHTML += `<div class="text-[9px] font-bold text-red-500 px-2.5 pt-2 pb-1">اخبار و اطلاعیه‌ها</div>`;
+                resultsHTML += matchedNews.map(n => `
+                    <div onclick="navigateToSection('news-tab', '')" class="p-2 hover:bg-white/20 rounded cursor-pointer transition">
+                        <div class="font-bold text-[11px] text-white">${n.title}</div>
+                    </div>
+                `).join('');
+            }
+
+            box.innerHTML = resultsHTML || '<div class="p-3 text-center text-slate-400 text-xs">موردی با این کلیدواژه یافت نشد</div>';
+        }
+
+        function navigateToSection(sectionId, keyword) {
+            document.getElementById('liveSuggestionsBox').classList.add('hidden');
+            document.getElementById('searchInput').value = '';
+            
+            const targetNavBtn = document.querySelector(`nav button[onclick*="${sectionId}"]`);
+            if (targetNavBtn) {
+                switchTab(sectionId, targetNavBtn);
+            } else {
+                switchTab(sectionId, null);
+            }
+
+            if(sectionId === 'dictionary-tab' && keyword) {
+                const dictInput = document.getElementById('dictAdvancedSearchInput');
+                if(dictInput) {
+                    dictInput.value = keyword;
+                    renderDictionary(keyword);
+                }
+            }
         }
 
         function clearSearchInput() {

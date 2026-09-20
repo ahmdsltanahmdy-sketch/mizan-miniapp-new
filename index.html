@@ -164,7 +164,7 @@
         <!-- تب سامانه‌های قضایی -->
         <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
 
-        <!-- تب وکیل آنلاین (مشاور) با طراحی کاملاً خوانا و بدون تداخل گرافیکی -->
+        <!-- تب وکیل آنلاین (مشاور) -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
             <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-4">
                 <div class="flex items-center justify-between border-b border-white/10 pb-3">
@@ -469,7 +469,7 @@
                 <button onclick='playSelectedStream(${JSON.stringify(stream).replace(/'/g, "&apos;")}); triggerHaptic();' class="p-3 ultra-glass rounded-2xl text-right transition border hover:border-red-500 space-y-1 shadow-sm">
                     <div class="font-bold text-xs text-red-500 flex items-center"><i class="fa-solid fa-tv ml-1"></i> ${stream.title}</div>
                     <div class="text-[10px] opacity-80 truncate">${stream.description || 'کانال تلویزیونی'}</div>
-                </button>
+                >
             `).join('');
         }
 
@@ -694,7 +694,15 @@
 
                 if (data && data.status === "success" && data.faqs) {
                     const faqs = data.faqs;
-                    if(badge) badge.innerText = `${faqs.length} مورد`;
+                    const pendingCount = faqs.filter(item => !item.hasAnswer).length;
+                    
+                    if(badge) {
+                        if (pendingCount > 0) {
+                            badge.innerText = `${pendingCount} سوال در حال بررسی است`;
+                        } else {
+                            badge.innerText = `${faqs.length} مورد`;
+                        }
+                    }
 
                     if (faqs.length === 0) {
                         container.innerHTML = `<div class="text-center py-6 opacity-60 text-xs">هنوز سوالی ثبت نکرده‌اید.</div>`;
@@ -712,9 +720,15 @@
                                         <span class="font-bold text-[10px] text-red-500 dark:text-red-400">پرسش شما</span>
                                         <span class="text-[8px] opacity-60">${item.date || ''}</span>
                                     </div>
-                                    <p class="text-[11px] leading-relaxed ${item.hasAnswer ? 'opacity-90 font-normal' : 'text-amber-600 dark:text-amber-400 italic font-medium'}">
-                                        ${item.question}
-                                    </p>
+                                    
+                                    ${item.hasAnswer ? `
+                                        <p class="text-[11px] leading-relaxed opacity-90">${item.question}</p>
+                                    ` : `
+                                        <div class="bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl text-amber-600 dark:text-amber-400 text-[11px] font-medium flex items-center space-x-2 space-x-reverse">
+                                            <i class="fa-solid fa-clock-rotate-left animate-spin text-xs"></i>
+                                            <span>سوال شما محرمانه است و پس از بررسی وکیل در همین بخش نمایش داده خواهد شد.</span>
+                                        </div>
+                                    `}
                                 </div>
                             </div>
 
@@ -728,12 +742,7 @@
                                         <p class="text-[11px] leading-relaxed opacity-90">${item.answer}</p>
                                     </div>
                                 </div>
-                            ` : `
-                                <div class="mr-4 flex items-center space-x-1.5 space-x-reverse text-[9px] text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg w-fit">
-                                    <i class="fa-solid fa-clock-rotate-left animate-spin text-[8px]"></i>
-                                    <span>محرمانه - تا زمان پاسخ‌دهی وکیل پنهان است</span>
-                                </div>
-                            `}
+                            ` : ``}
                         </div>
                     `).join('');
                 }

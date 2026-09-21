@@ -157,9 +157,10 @@
                 <input type="checkbox" id="tgHapticCheck" onchange="updateTgSetting('haptic', this.checked)" checked class="accent-red-600 w-4 h-4">
             </div>
 
+            <!-- پاکسازی کش که همزمان تاریخچه چت‌های فعال را هم صفر می‌کند -->
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حافظه موقت و کش:</span>
-                <button onclick="localStorage.removeItem('mizan_cache'); location.reload();" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش</button>
+                <button onclick="localStorage.removeItem('mizan_cache'); sessionStorage.removeItem('mizan_active_chat'); location.reload();" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش</button>
             </div>
 
             <div class="pt-1 text-center">
@@ -265,7 +266,7 @@
             </div>
         </section>
 
-        <!-- تب جدید و مستقل: چت‌بات هوشمند (AI Chatbot) -->
+        <!-- تب چت‌بات هوشمند (AI Chatbot) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-3">
                 <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -403,7 +404,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با دکمه مستقل چت‌بات) -->
+    <!-- ناوبری پایین صفحه -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -493,6 +494,7 @@
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
+        // استفاده از sessionStorage جهت پاک شدن خودکار تاریخچه با خروج از مینی‌اپ
         let chatConversationHistory = JSON.parse(sessionStorage.getItem('mizan_active_chat')) || [];
         let lastSubmitTime = 0;
 
@@ -952,7 +954,6 @@
             document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;
         }
 
-        // رندر کردن حباب‌های چت و اسکرول خودکار به آخرین پیام
         function renderChatUI() {
             const container = document.getElementById('chatMessagesContainer');
             if(!container) return;
@@ -991,7 +992,6 @@
             renderChatUI();
         }
 
-        // ارسال درخواست چت به سرور با کنترل کامل تاریخچه برای جلوگیری از خطای ترافیک
         async function runAiAssistant() {
             const promptInput = document.getElementById('aiPromptInput');
             const prompt = promptInput.value.trim();
@@ -1013,7 +1013,7 @@
             container.scrollTop = container.scrollHeight;
 
             try {
-                // برای جلوگیری از خطای حجم بالا، فقط ۴ پیام آخر (۲ جفت سوال و جواب) به عنوان حافظه ارسال می‌شوند
+                // ارسال تنها ۴ پیام آخر برای جلوگیری از حجم بالای ترافیک و خطای سرور
                 const recentHistory = chatConversationHistory.slice(-4);
                 const historyParam = encodeURIComponent(JSON.stringify(recentHistory));
                 const res = await fetch(API_URL + "?action=ai_search&history=" + historyParam + "&t=" + new Date().getTime());
@@ -1035,7 +1035,7 @@
                     sessionStorage.setItem('mizan_active_chat', JSON.stringify(chatConversationHistory));
                     renderChatUI();
                 } else {
-                    chatConversationHistory.push({ role: 'model', text: 'پاسخی دریافت نشد. لطفاً مجدداً تلاش کنید.' });
+                    chatConversationHistory.push({ role: 'model', text: 'پاسخی از سرور دریافت نشد. لطفاً مجدداً تلاش کنید.' });
                     renderChatUI();
                 }
             } catch(e) {

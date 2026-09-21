@@ -93,7 +93,9 @@
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
 
     <script>
+        // لینک جدید گوگل اسکریپت شما
         const API_URL = 'https://script.google.com/macros/s/AKfycbyrMOSKpL5rwv5C9okpDQvbKE07-1JFP2ZE5xt7Xt4Y9sSvIUwbXZWU6ssTbBgQRgSZ/exec'; 
+        
         let userId = sessionStorage.getItem('mizan_user_id');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -596,6 +598,7 @@
             renderShareCards();
         });
 
+        // تابع هوشمند نرمال‌سازی برای بی‌تفاوتی به ی/ک عربی و فارسی و اعداد
         function normalizeNumbers(str) {
             if (!str) return '';
             let output = String(str);
@@ -695,7 +698,6 @@
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 const newData = await response.json();
                 if (newData && Object.keys(newData).length > 0) {
-                    // ادغام هوشمند داده‌ها برای حفظ کارت‌ها و قوانین در صورت خالی بودن شیت
                     appData = { 
                         ...fallbackData, 
                         ...newData,

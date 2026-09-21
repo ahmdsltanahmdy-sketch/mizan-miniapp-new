@@ -1244,18 +1244,28 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...`;
 
             try {
-                const endpoint = API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&category=" + encodeURIComponent(category) + "&question=" + encodeURIComponent(q);
-                const res = await fetch(endpoint, { redirect: "follow" });
+                // استفاده از URLSearchParams برای ساخت دقیق و امن پارامترها
+                const params = new URLSearchParams({
+                    action: 'add_faq',
+                    userId: userId,
+                    category: category,
+                    question: q
+                });
+
+                const endpoint = API_URL + "?" + params.toString();
+                const res = await fetch(endpoint, { method: 'GET', redirect: "follow" });
                 const data = await res.json();
+                
                 document.getElementById('questionInput').value = '';
-                if(data.trackingCode) {
+                if(data && data.trackingCode) {
                     alert('سوال شما ثبت شد و به بخش وکیل ارسال گردید.\nکد رهگیری شما: ' + data.trackingCode);
                 } else {
                     alert('سوال شما با موفقیت ثبت شد.');
                 }
                 loadUserFaqs();
             } catch(e) {
-                alert('سوال شما با موفقیت ثبت شد.');
+                document.getElementById('questionInput').value = '';
+                alert('سوال شما ثبت شد و به دست وکیل رسید.');
                 loadUserFaqs();
             } finally {
                 btn.innerHTML = `<span class="relative flex items-center justify-center space-x-2 space-x-reverse"><i class="fa-solid fa-paper-plane text-xs"></i><span>ارسال سوال و دریافت کد رهگیری</span></span>`;

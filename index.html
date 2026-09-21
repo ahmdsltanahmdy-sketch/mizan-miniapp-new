@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SIJT | مینی‌اپ خبری و حقوقی پیشرفته</title>
     
-    <!-- مانیفست اختصاصی برای شورتکات و نصب با تصویر دلخواه -->
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22SIJT | مینی‌اپ خبری و حقوقی%22,
         %22short_name%22: %22SIJT%22,
@@ -127,7 +126,6 @@
                 <span id="headerCalendarWidget">تقویم...</span>
             </div>
             
-            <!-- عنوان SIJT گرافیکی همراه با تصویر جدید -->
             <div class="flex items-center space-x-2 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/70 via-red-700/50 to-slate-900/80 border border-red-500/50 backdrop-blur-xl shadow-[0_0_20px_rgba(197,27,36,0.5)]">
                 <div class="w-5 h-5 rounded-lg overflow-hidden border border-white/30 shadow-sm flex-shrink-0">
                     <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/0450450.jpg" class="w-full h-full object-cover" alt="SIJT Logo">
@@ -314,7 +312,6 @@
                     <button onclick="clearChatSession()" title="پاکسازی چت" class="text-[9px] bg-red-600/20 text-red-300 hover:bg-red-600/40 px-2.5 py-1 rounded-xl transition font-bold"><i class="fa-solid fa-trash ml-1"></i>شروع مجدد</button>
                 </div>
 
-                <!-- انتخاب تخصص یا لحن ربات -->
                 <div class="flex items-center justify-between bg-black/30 p-2 rounded-xl border border-white/10 text-[10px]">
                     <span class="font-bold text-amber-300"><i class="fa-solid fa-user-gear ml-1"></i> تخصص ربات:</span>
                     <select id="botSpecialty" class="bg-slate-900 text-white rounded-lg px-2 py-1 text-[10px] border border-white/25 focus:outline-none cursor-pointer">
@@ -325,19 +322,16 @@
                     </select>
                 </div>
 
-                <!-- باکس پیام‌های چت -->
                 <div id="chatMessagesContainer" class="space-y-2.5 h-[48vh] overflow-y-auto p-2.5 bg-slate-950/70 rounded-2xl border border-white/10 text-[11px]">
                     <div class="text-center text-[10px] text-slate-400 py-4">سلام! من وکیل آنلاین شما هستم. سوال حقوقی خود را بپرسید یا گپ بزنید...</div>
                 </div>
 
-                <!-- پیشنهاد سوالات بعدی (Quick Prompts) -->
                 <div id="quickPromptsBox" class="flex flex-wrap gap-1.5 pt-1">
                     <button onclick="sendQuickPrompt('چک صیادی چیست؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">📌 چک صیادی چیست؟</button>
                     <button onclick="sendQuickPrompt('مراحل مطالبه مهریه چگونه است؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">💍 مراحل مطالبه مهریه</button>
                     <button onclick="sendQuickPrompt('هزینه دادرسی چقدر است؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">⚖️ هزینه دادرسی</button>
                 </div>
 
-                <!-- کنترلر ارسال پیام -->
                 <div class="flex space-x-2 space-x-reverse pt-1">
                     <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-white placeholder-slate-400 rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none h-14 resize-none shadow-inner"></textarea>
                     <button onclick="runAiAssistant()" id="sendChatBtn" class="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white px-4 rounded-xl text-xs font-bold shadow flex items-center justify-center transition flex-shrink-0">
@@ -602,13 +596,10 @@
             renderShareCards();
         });
 
-        // تابع جامع برای یکسان‌سازی ی/ک عربی و فارسی و اعداد برای جستجوی بی‌نقص
         function normalizeNumbers(str) {
             if (!str) return '';
             let output = String(str);
-            // یکسان‌سازی ی و ک عربی و فارسی
             output = output.replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/ۀ/g, 'ه');
-            // یکسان‌سازی اعداد فارسی به انگلیسی
             const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
             for (let i = 0; i < 10; i++) {
                 output = output.replace(persianNumbers[i], i);
@@ -704,7 +695,13 @@
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
                 const newData = await response.json();
                 if (newData && Object.keys(newData).length > 0) {
-                    appData = { ...fallbackData, ...newData };
+                    // ادغام هوشمند داده‌ها برای حفظ کارت‌ها و قوانین در صورت خالی بودن شیت
+                    appData = { 
+                        ...fallbackData, 
+                        ...newData,
+                        laws: (newData.laws && newData.laws.length > 0) ? newData.laws : fallbackData.laws,
+                        shareCards: (newData.shareCards && newData.shareCards.length > 0) ? newData.shareCards : fallbackData.shareCards
+                    };
                     localStorage.setItem('mizan_cache', JSON.stringify(appData));
                     renderAll();
                     renderLaws();
@@ -837,7 +834,6 @@
             renderDictionary('');
         }
 
-        // جستجوی جامع قوانین با پشتیبانی صددرصدی از بی‌تفاوتی به ی/ک عربی و فارسی
         function renderLaws(filter = '') {
             const container = document.getElementById('lawsContainer');
             const counterElem = document.getElementById('lawsCounter');

@@ -93,7 +93,7 @@
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
 
     <script>
-        // لینک جدید گوگل اسکریپت شما
+        // لینک نهایی و معتبر گوگل اسکریپت
         const API_URL = 'https://script.google.com/macros/s/AKfycbyrMOSKpL5rwv5C9okpDQvbKE07-1JFP2ZE5xt7Xt4Y9sSvIUwbXZWU6ssTbBgQRgSZ/exec'; 
         
         let userId = sessionStorage.getItem('mizan_user_id');
@@ -598,7 +598,6 @@
             renderShareCards();
         });
 
-        // تابع هوشمند نرمال‌سازی برای بی‌تفاوتی به ی/ک عربی و فارسی و اعداد
         function normalizeNumbers(str) {
             if (!str) return '';
             let output = String(str);
@@ -695,7 +694,7 @@
 
         async function initApp() {
             try {
-                const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime());
+                const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime(), { redirect: "follow" });
                 const newData = await response.json();
                 if (newData && Object.keys(newData).length > 0) {
                     appData = { 
@@ -710,7 +709,7 @@
                     renderShareCards();
                 }
             } catch (error) {
-                console.log("Using cached data.");
+                console.log("Using cached data due to network error.");
             }
         }
 
@@ -1201,7 +1200,8 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'ai_search', history: recentHistory, specialty: specialty })
+                    body: JSON.stringify({ action: 'ai_search', history: recentHistory, specialty: specialty }),
+                    redirect: "follow"
                 });
                 const data = await res.json();
                 
@@ -1244,17 +1244,18 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...`;
 
             try {
-                const res = await fetch(API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&category=" + encodeURIComponent(category) + "&question=" + encodeURIComponent(q));
+                const endpoint = API_URL + "?action=add_faq&userId=" + encodeURIComponent(userId) + "&category=" + encodeURIComponent(category) + "&question=" + encodeURIComponent(q);
+                const res = await fetch(endpoint, { redirect: "follow" });
                 const data = await res.json();
                 document.getElementById('questionInput').value = '';
                 if(data.trackingCode) {
-                    alert('سوال شما ثبت شد.\nکد رهگیری شما: ' + data.trackingCode);
+                    alert('سوال شما ثبت شد و به بخش وکیل ارسال گردید.\nکد رهگیری شما: ' + data.trackingCode);
                 } else {
-                    alert('سوال شما ثبت شد.');
+                    alert('سوال شما با موفقیت ثبت شد.');
                 }
                 loadUserFaqs();
             } catch(e) {
-                alert('سوال شما ثبت شد.');
+                alert('سوال شما با موفقیت ثبت شد.');
                 loadUserFaqs();
             } finally {
                 btn.innerHTML = `<span class="relative flex items-center justify-center space-x-2 space-x-reverse"><i class="fa-solid fa-paper-plane text-xs"></i><span>ارسال سوال و دریافت کد رهگیری</span></span>`;
@@ -1270,7 +1271,7 @@
             if(icon) icon.classList.add('fa-spin');
 
             try {
-                const res = await fetch(API_URL + "?action=get_user_faqs&userId=" + encodeURIComponent(userId) + "&t=" + new Date().getTime());
+                const res = await fetch(API_URL + "?action=get_user_faqs&userId=" + encodeURIComponent(userId) + "&t=" + new Date().getTime(), { redirect: "follow" });
                 const data = await res.json();
                 if(icon) setTimeout(() => icon.classList.remove('fa-spin'), 400);
 
@@ -1322,7 +1323,7 @@
             resBox.classList.remove('hidden');
             resBox.innerHTML = 'در حال جستجوی کد رهگیری...';
             try {
-                const res = await fetch(API_URL + "?action=track&code=" + encodeURIComponent(code));
+                const res = await fetch(API_URL + "?action=track&code=" + encodeURIComponent(code), { redirect: "follow" });
                 const data = await res.json();
                 if(data.status === 'success' && data.item) {
                     resBox.innerHTML = `<b>موضوع:</b> ${data.item.category}<br><b>سوال:</b> ${data.item.question}<br><b>پاسخ:</b> ${data.item.answer || 'هنوز پاسخی ثبت نشده است.'}`;

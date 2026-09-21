@@ -265,6 +265,37 @@
             </div>
         </section>
 
+        <!-- تب جدید و مستقل: چت‌بات هوشمند (AI Chatbot) -->
+        <section id="chatbot-tab" class="page-section hidden space-y-3">
+            <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-3">
+                <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+                    <div class="flex items-center space-x-2.5 space-x-reverse">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center text-white shadow flex-shrink-0">
+                            <i class="fa-solid fa-robot text-xs"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-extrabold text-xs text-red-500 dark:text-red-400">دستیار هوشمند حقوقی SIJT</h2>
+                            <p class="text-[9px] opacity-75">پاسخگویی آنی، دقیق و تعاملی به سوالات حقوقی</p>
+                        </div>
+                    </div>
+                    <button onclick="clearChatSession()" title="پاکسازی چت" class="text-[9px] bg-red-600/20 text-red-300 hover:bg-red-600/40 px-2.5 py-1 rounded-xl transition font-bold"><i class="fa-solid fa-trash ml-1"></i>شروع مجدد</button>
+                </div>
+
+                <!-- باکس پیام‌های چت -->
+                <div id="chatMessagesContainer" class="space-y-2.5 h-[55vh] overflow-y-auto p-2.5 bg-slate-950/70 rounded-2xl border border-white/10 text-[11px]">
+                    <div class="text-center text-[10px] text-slate-400 py-4">سلام! من وکیل آنلاین شما هستم. سوال حقوقی خود را بپرسید یا گپ بزنید...</div>
+                </div>
+
+                <!-- کنترلر ارسال پیام -->
+                <div class="flex space-x-2 space-x-reverse pt-1">
+                    <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-white placeholder-slate-400 rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none h-14 resize-none shadow-inner"></textarea>
+                    <button onclick="runAiAssistant()" id="sendChatBtn" class="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white px-4 rounded-xl text-xs font-bold shadow flex items-center justify-center transition flex-shrink-0">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
         <!-- تب ۴: اطلاعیه‌ها و نکات کوتاه حقوقی -->
         <section id="news-tab" class="page-section hidden space-y-4">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-bullhorn ml-1.5 text-red-600"></i> اطلاعیه‌ها و اخبار رسمی</h2>
@@ -276,7 +307,7 @@
             </div>
         </section>
 
-        <!-- تب ۵: ابزارهای پیشرفته حقوقی (با چت‌بات تعاملی پیوسته) -->
+        <!-- تب ۵: ابزارهای پیشرفته حقوقی -->
         <section id="tools-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-toolbox ml-1.5 text-red-600"></i> ابزارهای هوشمند حقوقی</h2>
             
@@ -307,27 +338,6 @@
                 </select>
                 <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه مبلغ دیه</button>
                 <div id="diyehResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1"></div>
-            </div>
-
-            <!-- چت‌بات تعاملی هوش مصنوعی (RAG با محیط گفتگو پیوسته و اسکرول‌شونده) -->
-            <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                    <h3 class="font-bold text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-robot ml-1.5"></i> دستیار هوشمند و وکیل آنلاین (چت زنده)</h3>
-                    <button onclick="clearChatSession()" class="text-[9px] bg-red-600/20 text-red-300 hover:bg-red-600/40 px-2 py-1 rounded transition"><i class="fa-solid fa-trash ml-1"></i>شروع گفتگو جدید</button>
-                </div>
-
-                <!-- باکس نمایش پیام‌های مکالمه (چت باکس) -->
-                <div id="chatMessagesContainer" class="space-y-2.5 max-h-80 overflow-y-auto p-2 bg-slate-950/60 rounded-xl border border-white/10 text-[11px]">
-                    <div class="text-center text-[10px] text-slate-400 py-3">سلام! من دستیار حقوقی شما هستم. هر سوال یا موضوعی دارید بپرسید تا راهنمایی‌تان کنم.</div>
-                </div>
-
-                <!-- کنترلر ارسال پیام -->
-                <div class="flex space-x-2 space-x-reverse pt-1">
-                    <textarea id="aiPromptInput" placeholder="سوال حقوقی خود را بنویسید..." class="flex-grow bg-slate-900 text-white placeholder-slate-400 rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none h-14 resize-none"></textarea>
-                    <button onclick="runAiAssistant()" id="sendChatBtn" class="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white px-4 rounded-xl text-xs font-bold shadow flex items-center justify-center transition flex-shrink-0">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
             </div>
         </section>
 
@@ -393,11 +403,12 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه -->
+    <!-- ناوبری پایین صفحه (با دکمه مستقل چت‌بات) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
         <button onclick="switchTab('lawyer-tab', this); triggerHaptic(); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
+        <button onclick="switchTab('chatbot-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-robot text-sm mb-0.5 text-amber-400"></i><span class="text-[8px]">چت‌بات هوشمند</span></button>
         <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
         <button onclick="switchTab('tools-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
         <button onclick="switchTab('public-faq-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
@@ -482,7 +493,6 @@
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
-        // استفاده از sessionStorage برای حفظ مکالمه تا زمان باز بودن مینی‌اپ و حذف به محض خروج
         let chatConversationHistory = JSON.parse(sessionStorage.getItem('mizan_active_chat')) || [];
         let lastSubmitTime = 0;
 
@@ -918,7 +928,7 @@
             const amount = parseFloat(document.getElementById('claimAmountInput').value) || 0;
             if(amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
             let fee = amount * 0.035;
-            document.getElementById('feeResult',).innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(fee).toLocaleString()} ریال`;
+            document.getElementById('feeResult').innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(fee).toLocaleString()} ریال`;
         }
 
         function calculateMahariyeh() {
@@ -942,13 +952,13 @@
             document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;
         }
 
-        // رندر کردن رابط مکالمه تعاملی (چت‌باکس حباب‌دار)
+        // رندر کردن حباب‌های چت و اسکرول خودکار به آخرین پیام
         function renderChatUI() {
             const container = document.getElementById('chatMessagesContainer');
             if(!container) return;
 
             if (chatConversationHistory.length === 0) {
-                container.innerHTML = `<div class="text-center text-[10px] text-slate-400 py-3">سلام! من دستیار حقوقی شما هستم. هر سوال یا موضوعی دارید بپرسید تا راهنمایی‌تان کنم.</div>`;
+                container.innerHTML = `<div class="text-center text-[10px] text-slate-400 py-4">سلام! من وکیل آنلاین شما هستم. سوال حقوقی خود را بپرسید یا گپ بزنید...</div>`;
                 return;
             }
 
@@ -965,7 +975,7 @@
                     return `
                         <div class="flex justify-start">
                             <div class="bg-slate-800 text-slate-100 p-2.5 rounded-2xl rounded-br-none max-w-[85%] text-[11px] leading-relaxed border border-white/10 shadow">
-                                <div class="font-bold text-amber-400 text-[10px] mb-1"><i class="fa-solid fa-robot ml-1"></i> وکیل آنلاین SIJT:</div>
+                                <div class="font-bold text-amber-400 text-[10px] mb-1"><i class="fa-solid fa-robot ml-1"></i> دستیار هوشمند SIJT:</div>
                                 ${msg.text.replace(/\n/g, '<br>')}
                             </div>
                         </div>
@@ -981,32 +991,31 @@
             renderChatUI();
         }
 
-        // ارسال پیام و حفظ حافظه مکالمه در نشست جاری
+        // ارسال درخواست چت به سرور با کنترل کامل تاریخچه برای جلوگیری از خطای ترافیک
         async function runAiAssistant() {
             const promptInput = document.getElementById('aiPromptInput');
             const prompt = promptInput.value.trim();
             if(!prompt) return alert('لطفاً پیام خود را بنویسید.');
 
-            // افزودن پیام کاربر به تاریخچه موقت
             chatConversationHistory.push({ role: 'user', text: prompt });
             promptInput.value = '';
             renderChatUI();
 
             const container = document.getElementById('chatMessagesContainer');
-            // نمایش حالت در حال تایپ
             const loadingId = 'loading_' + Date.now();
             container.insertAdjacentHTML('beforeend', `
                 <div id="${loadingId}" class="flex justify-start">
                     <div class="bg-slate-800 text-slate-300 p-2.5 rounded-2xl rounded-br-none text-[11px] italic animate-pulse">
-                        <i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال تحلیل حقوقی و نگارش پاسخ...
+                        <i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال پردازش و پاسخگویی...
                     </div>
                 </div>
             `);
             container.scrollTop = container.scrollHeight;
 
             try {
-                // ارسال کل تاریخچه نشست به سرور برای حفظ پیوستگی گفتگو
-                const historyParam = encodeURIComponent(JSON.stringify(chatConversationHistory));
+                // برای جلوگیری از خطای حجم بالا، فقط ۴ پیام آخر (۲ جفت سوال و جواب) به عنوان حافظه ارسال می‌شوند
+                const recentHistory = chatConversationHistory.slice(-4);
+                const historyParam = encodeURIComponent(JSON.stringify(recentHistory));
                 const res = await fetch(API_URL + "?action=ai_search&history=" + historyParam + "&t=" + new Date().getTime());
                 const data = await res.json();
                 
@@ -1018,7 +1027,6 @@
                     else if (typeof data === 'string') aiResult = data;
                 }
 
-                // حذف عنصر بارگذاری
                 const loadingElem = document.getElementById(loadingId);
                 if(loadingElem) loadingElem.remove();
 
@@ -1027,13 +1035,13 @@
                     sessionStorage.setItem('mizan_active_chat', JSON.stringify(chatConversationHistory));
                     renderChatUI();
                 } else {
-                    chatConversationHistory.push({ role: 'model', text: 'پاسخی از هوش مصنوعی دریافت نشد.' });
+                    chatConversationHistory.push({ role: 'model', text: 'پاسخی دریافت نشد. لطفاً مجدداً تلاش کنید.' });
                     renderChatUI();
                 }
             } catch(e) {
                 const loadingElem = document.getElementById(loadingId);
                 if(loadingElem) loadingElem.remove();
-                chatConversationHistory.push({ role: 'model', text: 'خطا در ارتباط با سرور هوش مصنوعی.' });
+                chatConversationHistory.push({ role: 'model', text: 'خطا در ارتباط با سرور. لطفا چند لحظه دیگر امتحان کنید.' });
                 renderChatUI();
             }
         }

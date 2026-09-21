@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SIJT | مینی‌اپ خبری و حقوقی پیشرفته</title>
     
-    <!-- لینک مانیفست اختصاصی با تصویر جدید شما برای نصب و شورتکات -->
+    <!-- لینک مانیفست اختصاصی برای نصب و شورتکات با تصویر دلخواه شما -->
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22SIJT | مینی‌اپ خبری و حقوقی%22,
         %22short_name%22: %22SIJT%22,
@@ -22,7 +22,6 @@
         ]
     }">
 
-    <!-- آیکون‌های استاندارد مرورگر و دستگاه‌ها با تصویر جدید -->
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/0450450.jpg">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/0450450.jpg">
     <meta name="theme-color" content="#c51b24">
@@ -81,6 +80,15 @@
             background-position: center;
             background-repeat: no-repeat;
         }
+
+        .card-bg-glass {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.92)), url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/0450450.jpg');
+            background-size: cover;
+            background-position: center;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
@@ -119,7 +127,7 @@
                 <span id="headerCalendarWidget">تقویم...</span>
             </div>
             
-            <!-- عنوان SIJT جذاب و گرافیکی به همراه تصویر جدید شما در کنار آن -->
+            <!-- عنوان SIJT گرافیکی و نئونی به همراه تصویر جدید شما در کنار آن -->
             <div class="flex items-center space-x-2 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/70 via-red-700/50 to-slate-900/80 border border-red-500/50 backdrop-blur-xl shadow-[0_0_20px_rgba(197,27,36,0.5)]">
                 <div class="w-5 h-5 rounded-lg overflow-hidden border border-white/30 shadow-sm flex-shrink-0">
                     <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/0450450.jpg" class="w-full h-full object-cover" alt="SIJT Logo">
@@ -169,7 +177,6 @@
                 </div>
             </div>
 
-            <!-- رفع مشکل بسته شدن منو با جلوگیری از انتشار رویداد -->
             <div class="flex items-center justify-between pb-2 border-b border-white/20" onclick="event.stopPropagation();">
                 <span class="font-bold">نوع تقویم نمایشی:</span>
                 <select id="calendarSelect" onchange="changeCalendarType(this.value); event.stopPropagation();" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none cursor-pointer">
@@ -291,7 +298,7 @@
             </div>
         </section>
 
-        <!-- تب چت‌بات هوشمند (AI Chatbot) -->
+        <!-- تب چت‌بات هوشمند (AI Chatbot با انتخاب تخصص ربات و Quick Prompts) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-3">
                 <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -301,15 +308,33 @@
                         </div>
                         <div>
                             <h2 class="font-extrabold text-xs text-red-500 dark:text-red-400">دستیار هوشمند حقوقی SIJT</h2>
-                            <p class="text-[9px] opacity-75">پاسخگویی آنی، دقیق و تعاملی به سوالات حقوقی</p>
+                            <p class="text-[9px] opacity-75">پاسخگویی آنی، دقیق و تعاملی</p>
                         </div>
                     </div>
                     <button onclick="clearChatSession()" title="پاکسازی چت" class="text-[9px] bg-red-600/20 text-red-300 hover:bg-red-600/40 px-2.5 py-1 rounded-xl transition font-bold"><i class="fa-solid fa-trash ml-1"></i>شروع مجدد</button>
                 </div>
 
+                <!-- انتخاب تخصص یا لحن ربات -->
+                <div class="flex items-center justify-between bg-black/30 p-2 rounded-xl border border-white/10 text-[10px]">
+                    <span class="font-bold text-amber-300"><i class="fa-solid fa-user-gear ml-1"></i> تخصص ربات:</span>
+                    <select id="botSpecialty" class="bg-slate-900 text-white rounded-lg px-2 py-1 text-[10px] border border-white/25 focus:outline-none cursor-pointer">
+                        <option value="general">وکیل عمومی و مشاور همه‌فن‌حریف</option>
+                        <option value="family">متخصص حقوق خانواده و مهریه</option>
+                        <option value="criminal">متخصص حقوق کیفری و جرایم</option>
+                        <option value="commercial">متخصص قراردادها و چک</option>
+                    </select>
+                </div>
+
                 <!-- باکس پیام‌های چت -->
-                <div id="chatMessagesContainer" class="space-y-2.5 h-[55vh] overflow-y-auto p-2.5 bg-slate-950/70 rounded-2xl border border-white/10 text-[11px]">
+                <div id="chatMessagesContainer" class="space-y-2.5 h-[48vh] overflow-y-auto p-2.5 bg-slate-950/70 rounded-2xl border border-white/10 text-[11px]">
                     <div class="text-center text-[10px] text-slate-400 py-4">سلام! من وکیل آنلاین شما هستم. سوال حقوقی خود را بپرسید یا گپ بزنید...</div>
+                </div>
+
+                <!-- پیشنهاد سوالات بعدی (Quick Prompts) -->
+                <div id="quickPromptsBox" class="flex flex-wrap gap-1.5 pt-1">
+                    <button onclick="sendQuickPrompt('چک صیادی چیست؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">📌 چک صیادی چیست؟</button>
+                    <button onclick="sendQuickPrompt('مراحل مطالبه مهریه چگونه است؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">💍 مراحل مطالبه مهریه</button>
+                    <button onclick="sendQuickPrompt('هزینه دادرسی چقدر است؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">⚖️ هزینه دادرسی</button>
                 </div>
 
                 <!-- کنترلر ارسال پیام -->
@@ -320,6 +345,25 @@
                     </button>
                 </div>
             </div>
+        </section>
+
+        <!-- تب جدید: قوانین و مقررات کلیدی (کنترل از گوگل شیت) -->
+        <section id="laws-tab" class="page-section hidden space-y-3">
+            <div class="flex items-center justify-between mb-1">
+                <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-scale-balanced ml-1.5 text-red-600"></i> آرشیو قوانین و مقررات کلیدی</h2>
+                <span id="lawsCounter" class="text-[9px] opacity-70"></span>
+            </div>
+            <div class="relative">
+                <input type="text" id="lawsSearchInput" oninput="renderLaws(this.value)" placeholder="جستجو در قوانین و مقررات..." class="w-full bg-black/20 dark:bg-black/40 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/20 focus:outline-none shadow-inner text-white">
+                <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-400 text-xs"></i>
+            </div>
+            <div id="lawsContainer" class="space-y-2.5 mt-2"></div>
+        </section>
+
+        <!-- تب جدید: کارت‌های حقوقی (Share Cards) با پس‌زمینه شیشه‌ای و گرافیکی -->
+        <section id="cards-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-id-card ml-1.5 text-red-600"></i> کارت‌های طلایی حقوقی (Share Cards)</h2>
+            <div id="shareCardsContainer" class="space-y-3"></div>
         </section>
 
         <!-- تب ۴: اطلاعیه‌ها و نکات کوتاه حقوقی -->
@@ -333,7 +377,7 @@
             </div>
         </section>
 
-        <!-- تب ۵: ابزارهای پیشرفته حقوقی -->
+        <!-- تب ۵: ابزارهای پیشرفته حقوقی (به همراه محاسبه‌گر سهم‌الارث جدید) -->
         <section id="tools-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-toolbox ml-1.5 text-red-600"></i> ابزارهای هوشمند حقوقی</h2>
             
@@ -364,6 +408,19 @@
                 </select>
                 <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه مبلغ دیه</button>
                 <div id="diyehResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1"></div>
+            </div>
+
+            <!-- ابزار جدید: محاسبه‌گر سهم‌الارث -->
+            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+                <h3 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-file-invoice-dollar ml-1"></i> محاسبه‌گر سهم‌الارث (طبقه اول)</h3>
+                <input type="number" id="estateAmount" placeholder="مبلغ کل ترکه به ریال..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
+                <select id="heirsType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none">
+                    <option value="wife_son_daughter">همسر + فرزند (پسر و دختر)</option>
+                    <option value="husband_son_daughter">شوهر + فرزند (پسر و دختر)</option>
+                    <option value="only_parents">فقط پدر و مادر</option>
+                </select>
+                <button onclick="calculateInheritance()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه سهم وراث</button>
+                <div id="inheritanceResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1 leading-relaxed"></div>
             </div>
         </section>
 
@@ -429,12 +486,14 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه -->
+    <!-- ناوبری پایین صفحه (با تب‌های جدید قوانین و کارت‌ها) -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
+        <button onclick="switchTab('laws-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-gavel text-sm mb-0.5 text-red-400"></i><span class="text-[8px]">قوانین</span></button>
+        <button onclick="switchTab('cards-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-id-card text-sm mb-0.5 text-amber-400"></i><span class="text-[8px]">کارت‌ها</span></button>
         <button onclick="switchTab('lawyer-tab', this); triggerHaptic(); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
-        <button onclick="switchTab('chatbot-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-robot text-sm mb-0.5 text-amber-400"></i><span class="text-[8px]">چت‌بات هوشمند</span></button>
+        <button onclick="switchTab('chatbot-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-robot text-sm mb-0.5 text-amber-400"></i><span class="text-[8px]">چت‌بات</span></button>
         <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
         <button onclick="switchTab('tools-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
         <button onclick="switchTab('public-faq-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
@@ -515,6 +574,15 @@
             publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
             instagram: [{ title: "مشاوره کیفری", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/0450450.jpg", url: "https://instagram.com" }],
             series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/0450450.jpg", url: "https://www.aparat.com/v/example" }],
+            laws: [
+                { title: "قانون صدور چک", summary: "مقررات جدید صدور و انتقال چک صیادی", content: "طبق قانون جدید، تمامی چک‌ها باید در سامانه صیاد ثبت و به نام گیرنده انتقال یابند." },
+                { title: "قانون حمایت خانواده", summary: "ضوابط مربوط به مهریه و حضانت", content: "مهریه تا ۱۱۰ سکه مشمول حبس می‌باشد و مازاد بر آن نیازمند اثبات ملائت است." }
+            ],
+            shareCards: [
+                { title: "نکته طلایی قراردادها", text: "هیچ‌گاه قراردادی را بدون حضور حداقل دو شاهد امضا نکنید و حتماً نسخه‌ای از آن را نزد خود نگه دارید." },
+                { title: "قانون چک صیادی", text: "چک فاقد ثبت در سامانه صیاد مشمول حمایت‌های قانونی چک نبوده و در حکم سند عادی است." },
+                { title: "حقوق مصرف‌کننده", text: "در خرید اینترنتی تا ۷ روز مهلت انصراف بدون ذکر علت وجود دارد (به جز موارد خاص)." }
+            ],
             about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.6.1\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
@@ -531,6 +599,8 @@
             loadUserFaqs();
             applySavedSettings();
             renderChatUI();
+            renderLaws();
+            renderShareCards();
         });
 
         function openAdvancedSearchModal() {
@@ -632,6 +702,8 @@
                     appData = { ...fallbackData, ...newData };
                     localStorage.setItem('mizan_cache', JSON.stringify(appData));
                     renderAll();
+                    renderLaws();
+                    renderShareCards();
                 }
             } catch (error) {
                 console.log("Using cached data.");
@@ -758,6 +830,56 @@
         function clearDictSearch() {
             document.getElementById('dictAdvancedSearchInput').value = '';
             renderDictionary('');
+        }
+
+        // رندر کردن قوانین کنترل‌شونده از گوگل شیت
+        function renderLaws(filter = '') {
+            const container = document.getElementById('lawsContainer');
+            const counterElem = document.getElementById('lawsCounter');
+            if(!container) return;
+            let list = appData.laws || [];
+            const q = normalizeNumbers(filter.trim());
+            if(q.length > 0) {
+                list = list.filter(l => normalizeNumbers(l.title).includes(q) || normalizeNumbers(l.summary).includes(q) || normalizeNumbers(l.content).includes(q));
+            }
+            if(counterElem) counterElem.innerText = `${list.length} قانون`;
+            if(list.length === 0) {
+                container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">قانونی یافت نشد.</div>';
+                return;
+            }
+            container.innerHTML = list.map(law => `
+                <div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-xs text-red-500">${law.title}</h3>
+                        <button onclick="copyToClipboard('${law.title}: ${law.content}')" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i> کپی</button>
+                    </div>
+                    <p class="text-[11px] font-bold text-amber-300 opacity-90">${law.summary || ''}</p>
+                    <p class="text-[11px] leading-relaxed text-slate-300">${law.content}</p>
+                </div>
+            `).join('');
+        }
+
+        // رندر کردن کارت‌های حقوقی گرافیکی (Share Cards) با پس‌زمینه شیشه‌ای
+        function renderShareCards() {
+            const container = document.getElementById('shareCardsContainer');
+            if(!container) return;
+            let cards = appData.shareCards || [];
+            container.innerHTML = cards.map((card, idx) => `
+                <div class="card-bg-glass p-4 rounded-3xl space-y-3 shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-20 h-20 bg-red-600/20 rounded-full blur-xl"></div>
+                    <div class="flex items-center justify-between border-b border-white/15 pb-2">
+                        <span class="font-extrabold text-xs text-amber-400 flex items-center"><i class="fa-solid fa-certificate ml-1"></i> ${card.title}</span>
+                        <span class="text-[9px] bg-red-600/30 text-red-200 px-2 py-0.5 rounded-full font-bold">SIJT Card</span>
+                    </div>
+                    <p class="text-[12px] leading-relaxed text-white font-medium">${card.text}</p>
+                    <div class="flex justify-between items-center pt-2 border-t border-white/10 text-[10px]">
+                        <span class="opacity-75">مینی‌اپ حقوقی SIJT</span>
+                        <button onclick="shareContent('${card.title}', '${card.text}')" class="bg-red-600/30 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl font-bold transition flex items-center">
+                            <i class="fa-solid fa-share-nodes ml-1"></i> اشتراک‌گذاری
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function renderNews() {
@@ -978,6 +1100,28 @@
             document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;
         }
 
+        // محاسبه‌گر سهم‌الارث (طبقه اول)
+        function calculateInheritance() {
+            const estate = parseFloat(document.getElementById('estateAmount').value) || 0;
+            const type = document.getElementById('heirsType').value;
+            const resultBox = document.getElementById('inheritanceResult');
+            if(estate <= 0) return alert('مبلغ کل ترکه را وارد کنید.');
+
+            let resText = "";
+            if(type === 'wife_son_daughter') {
+                let wifeShare = estate * 0.125; // ۱/۸
+                let remaining = estate - wifeShare;
+                resText = `سهم همسر (زوجه): ${Math.round(wifeShare).toLocaleString()} ریال<br>باقیمانده بین فرزندان (پسر ۲ برابر دختر تقسیم می‌شود): ${Math.round(remaining).toLocaleString()} ریال`;
+            } else if(type === 'husband_son_daughter') {
+                let husbandShare = estate * 0.25; // ۱/۴
+                let remaining = estate - husbandShare;
+                resText = `سهم شوهر (زوج): ${Math.round(husbandShare).toLocaleString()} ریال<br>باقیمانده بین فرزندان: ${Math.round(remaining).toLocaleString()} ریال`;
+            } else if(type === 'only_parents') {
+                resText = `در صورت نبود اولاد، ترکه بین پدر و مادر تقسیم می‌گردد (مادر ۱/۳ و پدر ۲/۳).`;
+            }
+            resultBox.innerHTML = resText;
+        }
+
         function renderChatUI() {
             const container = document.getElementById('chatMessagesContainer');
             if(!container) return;
@@ -1016,9 +1160,15 @@
             renderChatUI();
         }
 
+        function sendQuickPrompt(text) {
+            document.getElementById('aiPromptInput').value = text;
+            runAiAssistant();
+        }
+
         async function runAiAssistant() {
             const promptInput = document.getElementById('aiPromptInput');
             const prompt = promptInput.value.trim();
+            const specialty = document.getElementById('botSpecialty').value;
             if(!prompt) return alert('لطفاً پیام خود را بنویسید.');
 
             chatConversationHistory.push({ role: 'user', text: prompt });
@@ -1041,7 +1191,7 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'ai_search', history: recentHistory })
+                    body: JSON.stringify({ action: 'ai_search', history: recentHistory, specialty: specialty })
                 });
                 const data = await res.json();
                 

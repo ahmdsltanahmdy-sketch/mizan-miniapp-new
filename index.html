@@ -5,7 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SIJT | مینی‌اپ خبری و حقوقی پیشرفته</title>
     
-    <!-- تنظیمات آیکون شورتکات برای صفحه اصلی گوشی و تبلت -->
+    <!-- لینک مانیفست اختصاصی برای حل مشکل آیکون و نصب به عنوان PWA -->
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+        %22name%22: %22SIJT | مینی‌اپ خبری و حقوقی%22,
+        %22short_name%22: %22SIJT%22,
+        %22start_url%22: %22.%22,
+        %22display%22: %22standalone%22,
+        %22background_color%22: %22%230f172a%22,
+        %22theme_color%22: %22%23c51b24%22,
+        %22icons%22: [
+            {
+                %22src%22: %22https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg%22,
+                %22sizes%22: %22512x512%22,
+                %22type%22: %22image/jpeg%22
+            }
+        ]
+    }">
+
+    <!-- آیکون‌های استاندارد مرورگر و دستگاه‌ها -->
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg">
     <meta name="theme-color" content="#c51b24">
@@ -102,12 +119,9 @@
                 <span id="headerCalendarWidget">تقویم...</span>
             </div>
             
-            <!-- لوگو و عنوان گرافیکی و جذاب SIJT -->
-            <div class="flex items-center space-x-1.5 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/60 via-red-700/40 to-slate-900/60 border border-red-500/40 backdrop-blur-xl shadow-[0_0_15px_rgba(197,27,36,0.4)]">
-                <div class="w-5 h-5 rounded-lg overflow-hidden border border-white/30 shadow-sm flex-shrink-0">
-                    <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" class="w-full h-full object-cover" alt="SIJT">
-                </div>
-                <span class="font-black tracking-widest text-[12px] text-transparent bg-clip-text bg-gradient-to-r from-white via-red-200 to-amber-300 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">SIJT</span>
+            <!-- عنوان SIJT گرافیکی، نئونی و کاملاً جذاب بدون تصویر کنار آن -->
+            <div class="px-4 py-1 rounded-2xl bg-gradient-to-r from-red-600/80 via-red-700/60 to-slate-900/80 border border-red-500/50 backdrop-blur-xl shadow-[0_0_20px_rgba(197,27,36,0.6)]">
+                <span class="font-black tracking-[0.25em] text-[13px] text-transparent bg-clip-text bg-gradient-to-r from-white via-red-100 to-amber-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">SIJT</span>
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -152,10 +166,10 @@
                 </div>
             </div>
 
-            <!-- رفع باگ نوع تقویم نمایشی (میلادی / هجری شمسی) -->
-            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+            <!-- رفع مشکل بسته شدن منوی تنظیمات با جلوگیری از انتشار رویداد کلیک -->
+            <div class="flex items-center justify-between pb-2 border-b border-white/20" onclick="event.stopPropagation();">
                 <span class="font-bold">نوع تقویم نمایشی:</span>
-                <select id="calendarSelect" onchange="changeCalendarType(this.value)" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none cursor-pointer">
+                <select id="calendarSelect" onchange="changeCalendarType(this.value); event.stopPropagation();" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none cursor-pointer">
                     <option value="persian">هجری شمسی (جلالی)</option>
                     <option value="gregorian">میلادی (Gregorian)</option>
                 </select>

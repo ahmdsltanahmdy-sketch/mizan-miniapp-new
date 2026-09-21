@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SIJT | مینی‌اپ خبری و حقوقی پیشرفته</title>
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    
+    <!-- تنظیمات آیکون شورتکات برای صفحه اصلی گوشی و تبلت -->
+    <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg">
+    <meta name="theme-color" content="#c51b24">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -97,9 +102,12 @@
                 <span id="headerCalendarWidget">تقویم...</span>
             </div>
             
-            <div class="flex items-center space-x-1.5 space-x-reverse px-2.5 py-0.5 rounded-full bg-gradient-to-r from-red-600/40 via-red-500/20 to-transparent border border-red-500/30 backdrop-blur-md shadow-lg">
-                <span class="inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                <span class="font-black tracking-widest text-[11px] text-transparent bg-clip-text bg-gradient-to-r from-white via-red-100 to-red-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">SIJT</span>
+            <!-- لوگو و عنوان گرافیکی و جذاب SIJT -->
+            <div class="flex items-center space-x-1.5 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/60 via-red-700/40 to-slate-900/60 border border-red-500/40 backdrop-blur-xl shadow-[0_0_15px_rgba(197,27,36,0.4)]">
+                <div class="w-5 h-5 rounded-lg overflow-hidden border border-white/30 shadow-sm flex-shrink-0">
+                    <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-13_11-27-56.jpg" class="w-full h-full object-cover" alt="SIJT">
+                </div>
+                <span class="font-black tracking-widest text-[12px] text-transparent bg-clip-text bg-gradient-to-r from-white via-red-200 to-amber-300 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">SIJT</span>
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -144,11 +152,12 @@
                 </div>
             </div>
 
+            <!-- رفع باگ نوع تقویم نمایشی (میلادی / هجری شمسی) -->
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">نوع تقویم نمایشی:</span>
-                <select id="calendarSelect" onchange="changeCalendarType(this.value)" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none">
+                <select id="calendarSelect" onchange="changeCalendarType(this.value)" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none cursor-pointer">
                     <option value="persian">هجری شمسی (جلالی)</option>
-                    <option value="gregorian">میلادی</option>
+                    <option value="gregorian">میلادی (Gregorian)</option>
                 </select>
             </div>
 
@@ -265,7 +274,7 @@
             </div>
         </section>
 
-        <!-- تب چت‌بات هوشمند (AI Chatbot با درخواست POST) -->
+        <!-- تب چت‌بات هوشمند (AI Chatbot) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-3">
                 <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -990,7 +999,6 @@
             renderChatUI();
         }
 
-        // ارسال درخواست چت به سرور به روش امن POST (بدون محدودیت طول URL و خطای پارس تاریخچه)
         async function runAiAssistant() {
             const promptInput = document.getElementById('aiPromptInput');
             const prompt = promptInput.value.trim();
@@ -1012,7 +1020,6 @@
             container.scrollTop = container.scrollHeight;
 
             try {
-                // ارسال ۴ پیام آخر به صورت POST برای حفظ سرعت و جلوگیری از خطای سرور
                 const recentHistory = chatConversationHistory.slice(-4);
                 const res = await fetch(API_URL, {
                     method: 'POST',

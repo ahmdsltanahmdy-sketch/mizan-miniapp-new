@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SIJT | مینی‌اپ خبری و حقوقی پیشرفته</title>
     
-    <!-- لینک مانیفست اختصاصی برای نصب و شورتکات با تصویر دلخواه شما -->
+    <!-- مانیفست اختصاصی برای شورتکات و نصب با تصویر دلخواه -->
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22SIJT | مینی‌اپ خبری و حقوقی%22,
         %22short_name%22: %22SIJT%22,
@@ -127,7 +127,7 @@
                 <span id="headerCalendarWidget">تقویم...</span>
             </div>
             
-            <!-- عنوان SIJT گرافیکی و نئونی به همراه تصویر جدید شما در کنار آن -->
+            <!-- عنوان SIJT گرافیکی همراه با تصویر جدید -->
             <div class="flex items-center space-x-2 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/70 via-red-700/50 to-slate-900/80 border border-red-500/50 backdrop-blur-xl shadow-[0_0_20px_rgba(197,27,36,0.5)]">
                 <div class="w-5 h-5 rounded-lg overflow-hidden border border-white/30 shadow-sm flex-shrink-0">
                     <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/0450450.jpg" class="w-full h-full object-cover" alt="SIJT Logo">
@@ -298,7 +298,7 @@
             </div>
         </section>
 
-        <!-- تب چت‌بات هوشمند (AI Chatbot با انتخاب تخصص ربات و Quick Prompts) -->
+        <!-- تب چت‌بات هوشمند (AI Chatbot) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-3">
                 <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -308,7 +308,7 @@
                         </div>
                         <div>
                             <h2 class="font-extrabold text-xs text-red-500 dark:text-red-400">دستیار هوشمند حقوقی SIJT</h2>
-                            <p class="text-[9px] opacity-75">پاسخگویی آنی، دقیق و تعاملی</p>
+                            <p class="text-[9px] opacity-75">پاسخگویی آنی، دقیق و تعاملی به سوالات حقوقی</p>
                         </div>
                     </div>
                     <button onclick="clearChatSession()" title="پاکسازی چت" class="text-[9px] bg-red-600/20 text-red-300 hover:bg-red-600/40 px-2.5 py-1 rounded-xl transition font-bold"><i class="fa-solid fa-trash ml-1"></i>شروع مجدد</button>
@@ -347,7 +347,7 @@
             </div>
         </section>
 
-        <!-- تب جدید: قوانین و مقررات کلیدی (کنترل از گوگل شیت) -->
+        <!-- تب قوانین و مقررات کلیدی -->
         <section id="laws-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-scale-balanced ml-1.5 text-red-600"></i> آرشیو قوانین و مقررات کلیدی</h2>
@@ -360,7 +360,7 @@
             <div id="lawsContainer" class="space-y-2.5 mt-2"></div>
         </section>
 
-        <!-- تب جدید: کارت‌های حقوقی (Share Cards) با پس‌زمینه شیشه‌ای و گرافیکی -->
+        <!-- تب کارت‌های حقوقی (Share Cards) -->
         <section id="cards-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-id-card ml-1.5 text-red-600"></i> کارت‌های طلایی حقوقی (Share Cards)</h2>
             <div id="shareCardsContainer" class="space-y-3"></div>
@@ -377,7 +377,7 @@
             </div>
         </section>
 
-        <!-- تب ۵: ابزارهای پیشرفته حقوقی (به همراه محاسبه‌گر سهم‌الارث جدید) -->
+        <!-- تب ۵: ابزارهای پیشرفته حقوقی -->
         <section id="tools-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-toolbox ml-1.5 text-red-600"></i> ابزارهای هوشمند حقوقی</h2>
             
@@ -410,7 +410,6 @@
                 <div id="diyehResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1"></div>
             </div>
 
-            <!-- ابزار جدید: محاسبه‌گر سهم‌الارث -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
                 <h3 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-file-invoice-dollar ml-1"></i> محاسبه‌گر سهم‌الارث (طبقه اول)</h3>
                 <input type="number" id="estateAmount" placeholder="مبلغ کل ترکه به ریال..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
@@ -486,7 +485,7 @@
         </section>
     </main>
 
-    <!-- ناوبری پایین صفحه (با تب‌های جدید قوانین و کارت‌ها) -->
+    <!-- ناوبری پایین صفحه -->
     <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -603,6 +602,20 @@
             renderShareCards();
         });
 
+        // تابع جامع برای یکسان‌سازی ی/ک عربی و فارسی و اعداد برای جستجوی بی‌نقص
+        function normalizeNumbers(str) {
+            if (!str) return '';
+            let output = String(str);
+            // یکسان‌سازی ی و ک عربی و فارسی
+            output = output.replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/ۀ/g, 'ه');
+            // یکسان‌سازی اعداد فارسی به انگلیسی
+            const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+            for (let i = 0; i < 10; i++) {
+                output = output.replace(persianNumbers[i], i);
+            }
+            return output.toLowerCase().trim();
+        }
+
         function openAdvancedSearchModal() {
             const modal = document.getElementById('advancedSearchModal');
             if(modal) modal.classList.remove('hidden');
@@ -659,14 +672,6 @@
 
         function closeAboutModal() {
             document.getElementById('aboutModal').classList.add('hidden');
-        }
-
-        function normalizeNumbers(str) {
-            if (!str) return '';
-            const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
-            let output = String(str);
-            for (let i = 0; i < 10; i++) { output = output.replace(persianNumbers[i], i); }
-            return output.toLowerCase();
         }
 
         function updateDateTime() {
@@ -805,7 +810,7 @@
             const clearBtn = document.getElementById('clearDictBtn');
             if (!container) return;
             let list = appData.dictionary || [];
-            const q = normalizeNumbers(filter.trim());
+            const q = normalizeNumbers(filter);
             if (q.length > 0) {
                 if(clearBtn) clearBtn.classList.remove('hidden');
                 list = list.filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q));
@@ -832,26 +837,35 @@
             renderDictionary('');
         }
 
-        // رندر کردن قوانین کنترل‌شونده از گوگل شیت
+        // جستجوی جامع قوانین با پشتیبانی صددرصدی از بی‌تفاوتی به ی/ک عربی و فارسی
         function renderLaws(filter = '') {
             const container = document.getElementById('lawsContainer');
             const counterElem = document.getElementById('lawsCounter');
             if(!container) return;
             let list = appData.laws || [];
-            const q = normalizeNumbers(filter.trim());
+            const q = normalizeNumbers(filter);
+
             if(q.length > 0) {
-                list = list.filter(l => normalizeNumbers(l.title).includes(q) || normalizeNumbers(l.summary).includes(q) || normalizeNumbers(l.content).includes(q));
+                list = list.filter(law => {
+                    const title = normalizeNumbers(law.title || '');
+                    const summary = normalizeNumbers(law.summary || '');
+                    const content = normalizeNumbers(law.content || '');
+                    return title.includes(q) || summary.includes(q) || content.includes(q);
+                });
             }
+
             if(counterElem) counterElem.innerText = `${list.length} قانون`;
+
             if(list.length === 0) {
-                container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">قانونی یافت نشد.</div>';
+                container.innerHTML = '<div class="text-center opacity-70 text-xs py-6">هیچ قانون یا مقرراتی با این عبارت یافت نشد.</div>';
                 return;
             }
+
             container.innerHTML = list.map(law => `
-                <div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-1.5">
+                <div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-1.5 shadow-md">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-xs text-red-500">${law.title}</h3>
-                        <button onclick="copyToClipboard('${law.title}: ${law.content}')" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i> کپی</button>
+                        <button onclick="copyToClipboard('${law.title}\\n${law.content}')" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i> کپی متن</button>
                     </div>
                     <p class="text-[11px] font-bold text-amber-300 opacity-90">${law.summary || ''}</p>
                     <p class="text-[11px] leading-relaxed text-slate-300">${law.content}</p>
@@ -859,12 +873,11 @@
             `).join('');
         }
 
-        // رندر کردن کارت‌های حقوقی گرافیکی (Share Cards) با پس‌زمینه شیشه‌ای
         function renderShareCards() {
             const container = document.getElementById('shareCardsContainer');
             if(!container) return;
             let cards = appData.shareCards || [];
-            container.innerHTML = cards.map((card, idx) => `
+            container.innerHTML = cards.map(card => `
                 <div class="card-bg-glass p-4 rounded-3xl space-y-3 shadow-xl relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 w-20 h-20 bg-red-600/20 rounded-full blur-xl"></div>
                     <div class="flex items-center justify-between border-b border-white/15 pb-2">
@@ -1100,7 +1113,6 @@
             document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;
         }
 
-        // محاسبه‌گر سهم‌الارث (طبقه اول)
         function calculateInheritance() {
             const estate = parseFloat(document.getElementById('estateAmount').value) || 0;
             const type = document.getElementById('heirsType').value;
@@ -1109,11 +1121,11 @@
 
             let resText = "";
             if(type === 'wife_son_daughter') {
-                let wifeShare = estate * 0.125; // ۱/۸
+                let wifeShare = estate * 0.125;
                 let remaining = estate - wifeShare;
-                resText = `سهم همسر (زوجه): ${Math.round(wifeShare).toLocaleString()} ریال<br>باقیمانده بین فرزندان (پسر ۲ برابر دختر تقسیم می‌شود): ${Math.round(remaining).toLocaleString()} ریال`;
+                resText = `سهم همسر (زوجه): ${Math.round(wifeShare).toLocaleString()} ریال<br>باقیمانده بین فرزندان (پسر ۲ برابر دختر): ${Math.round(remaining).toLocaleString()} ریال`;
             } else if(type === 'husband_son_daughter') {
-                let husbandShare = estate * 0.25; // ۱/۴
+                let husbandShare = estate * 0.25;
                 let remaining = estate - husbandShare;
                 resText = `سهم شوهر (زوج): ${Math.round(husbandShare).toLocaleString()} ریال<br>باقیمانده بین فرزندان: ${Math.round(remaining).toLocaleString()} ریال`;
             } else if(type === 'only_parents') {
@@ -1328,7 +1340,7 @@
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');
             if(!box) return;
-            const q = normalizeNumbers(query.trim());
+            const q = normalizeNumbers(query);
             if (q.length > 0) {
                 if(clearBtn) clearBtn.classList.remove('hidden');
                 box.classList.remove('hidden');

@@ -309,6 +309,7 @@
                 <div id="diyehResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1"></div>
             </div>
 
+            <!-- بخش اصلاح‌شده هوش مصنوعی -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
                 <h3 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-robot ml-1"></i> دستیار هوش مصنوعی حقوقی (RAG)</h3>
                 <textarea id="aiPromptInput" placeholder="سوال حقوقی خود را بپرسید..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl p-3 text-xs border border-white/20 focus:outline-none h-20 resize-none"></textarea>
@@ -399,7 +400,6 @@
     </nav>
 
     <!-- مودال‌ها -->
-    <!-- مودال جستجوی پیشرفته در گوگل -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-400 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -484,7 +484,6 @@
             applySavedSettings();
         });
 
-        // توابع جستجوی پیشرفته (هدر)
         function openAdvancedSearchModal() {
             const modal = document.getElementById('advancedSearchModal');
             if(modal) modal.classList.remove('hidden');
@@ -934,6 +933,7 @@
             document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;
         }
 
+        // بخش هوش مصنوعی اصلاح‌شده و ایمن‌شده در برابر خطاهای ساختار پاسخ سرور
         async function runAiAssistant() {
             const prompt = document.getElementById('aiPromptInput').value.trim();
             const box = document.getElementById('aiResponseBox');
@@ -946,10 +946,20 @@
             try {
                 const res = await fetch(API_URL + "?action=ai_search&query=" + encodeURIComponent(prompt) + "&t=" + new Date().getTime());
                 const data = await res.json();
-                if (data && data.status === "success" && data.result) {
-                    resText.innerHTML = data.result.replace(/\n/g, '<br>');
+                
+                // بررسی دقیق‌تر انواع ساختارهای خروجی احتمالی گوگل اسکریپت
+                let aiResult = "";
+                if (data) {
+                    if (data.result) aiResult = data.result;
+                    else if (data.response) aiResult = data.response;
+                    else if (data.answer) aiResult = data.answer;
+                    else if (typeof data === 'string') aiResult = data;
+                }
+
+                if (aiResult) {
+                    resText.innerHTML = String(aiResult).replace(/\n/g, '<br>');
                 } else {
-                    resText.innerHTML = 'پاسخی از هوش مصنوعی دریافت نشد.';
+                    resText.innerHTML = 'پاسخی از هوش مصنوعی دریافت نشد. لطفاً از صحت کلید API در گوگل اسکریپت اطمینان حاصل کنید.';
                 }
             } catch(e) {
                 resText.innerHTML = 'خطا در ارتباط با سرور هوش مصنوعی.';
@@ -998,8 +1008,8 @@
                 const data = await res.json();
                 if(icon) setTimeout(() => icon.classList.remove('fa-spin'), 400);
 
-                if (data && data.status === "success" && data.faqs) {
-                    const faqs = data.faqs;
+                if (data && (data.status === "success" || data.faqs)) {
+                    const faqs = data.faqs || [];
                     if(badge) badge.innerText = `${faqs.length} مورد`;
                     
                     let answeredCount = faqs.filter(item => item.answer && item.answer.trim() !== "").length;

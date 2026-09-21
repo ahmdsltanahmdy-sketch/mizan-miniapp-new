@@ -157,7 +157,6 @@
                 <input type="checkbox" id="tgHapticCheck" onchange="updateTgSetting('haptic', this.checked)" checked class="accent-red-600 w-4 h-4">
             </div>
 
-            <!-- پاکسازی کش که همزمان تاریخچه چت‌های فعال را هم صفر می‌کند -->
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حافظه موقت و کش:</span>
                 <button onclick="localStorage.removeItem('mizan_cache'); sessionStorage.removeItem('mizan_active_chat'); location.reload();" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش</button>
@@ -266,7 +265,7 @@
             </div>
         </section>
 
-        <!-- تب چت‌بات هوشمند (AI Chatbot) -->
+        <!-- تب چت‌بات هوشمند (AI Chatbot با درخواست POST) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-3">
                 <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -494,7 +493,6 @@
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
-        // استفاده از sessionStorage جهت پاک شدن خودکار تاریخچه با خروج از مینی‌اپ
         let chatConversationHistory = JSON.parse(sessionStorage.getItem('mizan_active_chat')) || [];
         let lastSubmitTime = 0;
 
@@ -992,6 +990,7 @@
             renderChatUI();
         }
 
+        // ارسال درخواست چت به سرور به روش امن POST (بدون محدودیت طول URL و خطای پارس تاریخچه)
         async function runAiAssistant() {
             const promptInput = document.getElementById('aiPromptInput');
             const prompt = promptInput.value.trim();
@@ -1013,10 +1012,13 @@
             container.scrollTop = container.scrollHeight;
 
             try {
-                // ارسال تنها ۴ پیام آخر برای جلوگیری از حجم بالای ترافیک و خطای سرور
+                // ارسال ۴ پیام آخر به صورت POST برای حفظ سرعت و جلوگیری از خطای سرور
                 const recentHistory = chatConversationHistory.slice(-4);
-                const historyParam = encodeURIComponent(JSON.stringify(recentHistory));
-                const res = await fetch(API_URL + "?action=ai_search&history=" + historyParam + "&t=" + new Date().getTime());
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'ai_search', history: recentHistory })
+                });
                 const data = await res.json();
                 
                 let aiResult = "";

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SIJT</title>
+    <title>SIJT - مینی‌اپ تخصصی حقوقی</title>
     
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22SIJT%22,
@@ -34,21 +34,31 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: var(--selected-font, Tahoma), Arial, sans-serif; font-size: var(--app-font-size, 12px); }
+        body { font-family: var(--selected-font, Tahoma), Arial, sans-serif; font-size: var(--app-font-size, 12px); line-height: 1.8; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* استایل نئونی و سایبرپانک شیشه‌ای (Cyber-Glass UI) */
+        .ultra-glass {
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(197, 27, 36, 0.1);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(35px);
-            -webkit-backdrop-filter: blur(35px);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), inset 0 0 15px rgba(197, 27, 36, 0.05);
             color: #0f172a;
         }
 
         .settings-glass {
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.96);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -80,6 +90,36 @@
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
+        /* انیمیشن نرم ورود تب‌ها (Page Transitions) */
+        .page-section {
+            animation: fadeInScale 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* اسکلتون لودینگ (Skeleton Loading) */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+            border-radius: 12px;
+        }
+        @keyframes skeletonLoading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* هایلایت کلمات جستجو شده */
+        .highlight {
+            background-color: rgba(245, 158, 11, 0.35);
+            color: #fbbf24;
+            padding: 0 3px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
@@ -104,12 +144,23 @@
 
         let tgSettings = { haptic: localStorage.getItem('tg_haptic') !== 'false' };
 
-        function triggerHaptic() {
+        // سیستم بازخورد لرزشی پیشرفته (Haptic Feedback Pro)
+        function triggerHaptic(type = 'medium') {
             if (tgSettings.haptic && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+                try {
+                    if(type === 'light') window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                    else if(type === 'heavy') window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
+                    else if(type === 'success') window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                    else window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+                } catch(e) {}
             }
         }
     </script>
+
+    <!-- کانتینر Pull-to-Refresh بومی -->
+    <div id="ptrIndicator" class="absolute top-0 left-0 right-0 h-12 flex items-center justify-center text-xs text-amber-400 opacity-0 transition-all z-40 pointer-events-none">
+        <i class="fa-solid fa-arrow-down fa-bounce ml-1"></i> رها کنید تا به‌روزرسانی شود...
+    </div>
 
     <!-- هدر اپلیکیشن -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md relative overflow-visible">
@@ -127,13 +178,13 @@
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse">
-                <button onclick="toggleNotificationsModal()" title="اعلان‌ها" class="relative p-1.5 rounded-full hover:bg-white/10 transition">
+                <button onclick="toggleNotificationsModal(); triggerHaptic('light');" title="اعلان‌ها" class="relative p-1.5 rounded-full hover:bg-white/10 transition">
                     <i class="fa-solid fa-bell text-xs text-amber-300"></i>
                     <span id="notifBadge" class="hidden absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
                 </button>
                 <span id="headerWeatherWidget">تهران...</span>
-                <button onclick="manualRefresh()" title="بروزرسانی" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
-                <button onclick="toggleSettingsMenu(event)" title="تنظیمات پیشرفته" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
+                <button onclick="manualRefresh(); triggerHaptic('medium');" title="بروزرسانی" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
+                <button onclick="toggleSettingsMenu(event); triggerHaptic('light');" title="تنظیمات پیشرفته" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
 
@@ -141,17 +192,17 @@
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-85 p-4 settings-glass rounded-3xl space-y-3 text-xs shadow-2xl max-h-[75vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
-                <button onclick="toggleTheme()" class="bg-white/20 px-3 py-1 rounded-xl font-medium border border-white/20"><i class="fa-solid fa-moon"></i> تیره / روشن</button>
+                <button onclick="toggleTheme(); triggerHaptic('light');" class="bg-white/20 px-3 py-1 rounded-xl font-medium border border-white/20"><i class="fa-solid fa-moon"></i> تیره / روشن</button>
             </div>
             
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت تمام‌صفحه هوشمند:</span>
-                <button onclick="toggleFullScreen()" class="bg-red-600/30 text-red-300 px-3 py-1 rounded-xl font-bold"><i class="fa-solid fa-expand ml-1"></i> ورود/خروج</button>
+                <button onclick="toggleFullScreen(); triggerHaptic('light');" class="bg-red-600/30 text-red-300 px-3 py-1 rounded-xl font-bold"><i class="fa-solid fa-expand ml-1"></i> ورود/خروج</button>
             </div>
 
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">قلم تخصصی مینی‌اپ:</span>
-                <select id="fontSelect" onchange="changeFontFamily(this.value)" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none">
+                <select id="fontSelect" onchange="changeFontFamily(this.value); triggerHaptic('light');" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none">
                     <option value="Tahoma">Tahoma</option>
                     <option value="Vazirmatn">وزیر (Vazirmatn)</option>
                     <option value="Shabnam">شبنم (Shabnam)</option>
@@ -162,15 +213,15 @@
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">اندازه متن:</span>
                 <div class="space-x-1 space-x-reverse">
-                    <button onclick="changeAppFontSize('11px')" class="px-2 py-0.5 bg-white/20 rounded-lg">کوچک</button>
-                    <button onclick="changeAppFontSize('12px')" class="px-2 py-0.5 bg-white/20 rounded-lg">متوسط</button>
-                    <button onclick="changeAppFontSize('14px')" class="px-2 py-0.5 bg-white/20 rounded-lg">بزرگ</button>
+                    <button onclick="changeAppFontSize('11px'); triggerHaptic('light');" class="px-2 py-0.5 bg-white/20 rounded-lg">کوچک</button>
+                    <button onclick="changeAppFontSize('12px'); triggerHaptic('light');" class="px-2 py-0.5 bg-white/20 rounded-lg">متوسط</button>
+                    <button onclick="changeAppFontSize('14px'); triggerHaptic('light');" class="px-2 py-0.5 bg-white/20 rounded-lg">بزرگ</button>
                 </div>
             </div>
 
             <div class="flex items-center justify-between pb-2 border-b border-white/20" onclick="event.stopPropagation();">
                 <span class="font-bold">نوع تقویم نمایشی:</span>
-                <select id="calendarSelect" onchange="changeCalendarType(this.value); event.stopPropagation();" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none cursor-pointer">
+                <select id="calendarSelect" onchange="changeCalendarType(this.value); event.stopPropagation(); triggerHaptic('light');" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none cursor-pointer">
                     <option value="persian">هجری شمسی (جلالی)</option>
                     <option value="gregorian">میلادی (Gregorian)</option>
                 </select>
@@ -183,11 +234,11 @@
 
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حافظه موقت و کش:</span>
-                <button onclick="localStorage.removeItem('mizan_cache'); sessionStorage.removeItem('mizan_active_chat'); location.reload();" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش</button>
+                <button onclick="localStorage.removeItem('mizan_cache'); sessionStorage.removeItem('mizan_active_chat'); location.reload(); triggerHaptic('heavy');" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش</button>
             </div>
 
             <div class="pt-1 text-center">
-                <button onclick="openAboutModal()" class="text-amber-400 font-bold hover:underline text-[11px]"><i class="fa-solid fa-circle-info ml-1"></i> اطلاعات و پشتیبانی (درباره ما)</button>
+                <button onclick="openAboutModal(); triggerHaptic('light');" class="text-amber-400 font-bold hover:underline text-[11px]"><i class="fa-solid fa-circle-info ml-1"></i> اطلاعات و پشتیبانی (درباره ما)</button>
             </div>
         </div>
 
@@ -198,7 +249,7 @@
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-red-100 dark:text-slate-500 text-xs"></i>
                     <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <button onclick="openAdvancedSearchModal()" title="جستجوی پیشرفته در گوگل" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
+                <button onclick="openAdvancedSearchModal(); triggerHaptic('light');" title="جستجوی پیشرفته در گوگل" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
                     <i class="fa-solid fa-earth-americas text-sm"></i>
                 </button>
             </div>
@@ -207,7 +258,7 @@
     </header>
 
     <!-- بدنه اصلی مینی‌اپ -->
-    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-28">
+    <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-32">
         
         <!-- تب ۱: فرهنگ اصطلاحات حقوقی -->
         <section id="dictionary-tab" class="page-section space-y-3">
@@ -220,11 +271,15 @@
                 <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-500 text-xs"></i>
                 <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-500 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="dictionaryContainer" class="space-y-2 mt-2"></div>
+            <div id="dictionaryContainer" class="space-y-2 mt-2">
+                <!-- اسکلتون لودینگ پیش‌فرض -->
+                <div class="skeleton h-20 w-full mb-2"></div>
+                <div class="skeleton h-20 w-full mb-2"></div>
+            </div>
         </section>
 
         <!-- تب ۲: سامانه‌های قضایی -->
-        <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"></div></section>
+        <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"><div class="skeleton h-16 w-full mb-2"></div></div></section>
 
         <!-- تب ۳: مشاور و وکیل آنلاین -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
@@ -239,7 +294,7 @@
                             <p class="text-[9px] opacity-75">ثبت پرسش، انتخاب دسته‌بندی و پیگیری با کد رهگیری</p>
                         </div>
                     </div>
-                    <button onclick="loadUserFaqs()" title="بروزرسانی وضعیت" class="p-2 rounded-xl bg-black/20 dark:bg-white/10 hover:bg-black/30 transition text-red-500 dark:text-red-400 text-xs">
+                    <button onclick="loadUserFaqs(); triggerHaptic('light');" title="بروزرسانی وضعیت" class="p-2 rounded-xl bg-black/20 dark:bg-white/10 hover:bg-black/30 transition text-red-500 dark:text-red-400 text-xs">
                         <i id="faqRefreshIcon" class="fa-solid fa-rotate"></i>
                     </button>
                 </div>
@@ -260,7 +315,7 @@
                         <textarea id="questionInput" placeholder="سوال حقوقی خود را با جزئیات کامل بنویسید..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-2xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 h-24 resize-none border border-white/20 shadow-inner"></textarea>
                     </div>
 
-                    <button id="submitQuestionBtn" onclick="submitQuestion()" class="w-full group relative overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
+                    <button id="submitQuestionBtn" onclick="submitQuestion(); triggerHaptic('success');" class="w-full group relative overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
                         <span class="relative flex items-center justify-center space-x-2 space-x-reverse">
                             <i class="fa-solid fa-paper-plane text-xs"></i>
                             <span>ارسال سوال و دریافت کد رهگیری</span>
@@ -272,7 +327,7 @@
                     <span class="font-bold text-[11px] opacity-90 block">پیگیری سریع با کد رهگیری:</span>
                     <div class="flex space-x-2 space-x-reverse">
                         <input type="text" id="trackingCodeInput" placeholder="کد رهگیری (مثلاً TRK-...)" class="flex-grow bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
-                        <button onclick="trackByCode()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">پیگیری</button>
+                        <button onclick="trackByCode(); triggerHaptic('medium');" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">پیگیری</button>
                     </div>
                     <div id="trackingResultBox" class="hidden text-[11px] p-2.5 rounded-xl bg-slate-900 text-white border border-white/20 space-y-1"></div>
                 </div>
@@ -283,13 +338,13 @@
                         <span id="faqCountBadge" class="text-[9px] bg-red-500/30 text-red-300 px-2 py-0.5 rounded-full">0 مورد</span>
                     </div>
                     <div id="userFaqsContainer" class="space-y-3 max-h-60 overflow-y-auto pr-1">
-                        <div class="text-center py-6 opacity-70 text-xs">در حال بارگذاری پرسش‌ها...</div>
+                        <div class="skeleton h-16 w-full"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- تب چت‌بات هوشمند (AI Chatbot) -->
+        <!-- تب چت‌بات هوشمند (AI Chatbot) با پشتیبانی Markdown و Optimistic UI -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl shadow-2xl border border-red-500/20 relative overflow-hidden space-y-3">
                 <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -302,7 +357,7 @@
                             <p class="text-[9px] opacity-75">پاسخگویی آنی، دقیق و تعاملی به سوالات حقوقی</p>
                         </div>
                     </div>
-                    <button onclick="clearChatSession()" title="پاکسازی" class="text-[9px] bg-blue-800 text-white hover:bg-red-900 px-2.5 py-1 rounded-xl transition font-bold"><i class="fa-solid fa-trash ml-1"></i>شروع مجدد</button>
+                    <button onclick="clearChatSession(); triggerHaptic('medium');" title="پاکسازی" class="text-[9px] bg-blue-800 text-white hover:bg-red-900 px-2.5 py-1 rounded-xl transition font-bold"><i class="fa-solid fa-trash ml-1"></i>شروع مجدد</button>
                 </div>
 
                 <div class="flex items-center justify-between bg-black/30 p-2 rounded-xl border border-white/10 text-[10px]">
@@ -316,25 +371,25 @@
                 </div>
 
                 <div id="chatMessagesContainer" class="space-y-2.5 h-[48vh] overflow-y-auto p-2.5 bg-slate-900 rounded-2xl border border-white/10 text-[11px]">
-                    <div class="text-center text-[10px] text-white-900 py-4">سلام! من وکیل آنلاین شما هستم....</div>
+                    <div class="text-center text-[10px] text-white-400 py-4">سلام! من وکیل آنلاین شما هستم. سوال حقوقی خود را بپرسید...</div>
                 </div>
 
                 <div id="quickPromptsBox" class="flex flex-wrap gap-1.5 pt-1">
-                    <button onclick="sendQuickPrompt('چک صیادی چیست؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">📌 چک صیادی چیست؟</button>
-                    <button onclick="sendQuickPrompt('مراحل مطالبه مهریه چگونه است؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">💍 مراحل مطالبه مهریه</button>
-                    <button onclick="sendQuickPrompt('هزینه دادرسی چقدر است؟')" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">⚖️ هزینه دادرسی</button>
+                    <button onclick="sendQuickPrompt('چک صیادی چیست؟'); triggerHaptic('light');" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">📌 چک صیادی چیست؟</button>
+                    <button onclick="sendQuickPrompt('مراحل مطالبه مهریه چگونه است؟'); triggerHaptic('light');" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">💍 مراحل مطالبه مهریه</button>
+                    <button onclick="sendQuickPrompt('هزینه دادرسی چقدر است؟'); triggerHaptic('light');" class="text-[9px] bg-white/10 hover:bg-white/20 text-amber-300 border border-white/15 px-2.5 py-1 rounded-lg transition">⚖️ هزینه دادرسی</button>
                 </div>
 
                 <div class="flex space-x-2 space-x-reverse pt-1">
                     <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-white placeholder-slate-400 rounded-xl p-2.5 text-xs border border-white/20 focus:outline-none h-14 resize-none shadow-inner"></textarea>
-                    <button onclick="runAiAssistant()" id="sendChatBtn" class="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white px-4 rounded-xl text-xs font-bold shadow flex items-center justify-center transition flex-shrink-0">
+                    <button onclick="runAiAssistant(); triggerHaptic('medium');" id="sendChatBtn" class="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white px-4 rounded-xl text-xs font-bold shadow flex items-center justify-center transition flex-shrink-0">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- تب قوانین و مقررات کلیدی -->
+        <!-- تب قوانین و مقررات کلیدی با قابلیت آکاردئون (Read More) -->
         <section id="laws-tab" class="page-section hidden space-y-3">
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-scale-balanced ml-1.5 text-red-600"></i> آرشیو قوانین و مقررات</h2>
@@ -344,19 +399,19 @@
                 <input type="text" id="lawsSearchInput" oninput="renderLaws(this.value)" placeholder="جستجو در قوانین و مقررات..." class="w-full bg-black/20 dark:bg-black/40 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/20 focus:outline-none shadow-inner text-white">
                 <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-500 text-xs"></i>
             </div>
-            <div id="lawsContainer" class="space-y-2.5 mt-2"></div>
+            <div id="lawsContainer" class="space-y-2.5 mt-2"><div class="skeleton h-24 w-full"></div></div>
         </section>
 
         <!-- تب کارت‌های حقوقی (Share Cards) -->
         <section id="cards-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-id-card ml-1.5 text-red-600"></i> کارت‌های طلایی حقوقی (Share Cards)</h2>
-            <div id="shareCardsContainer" class="space-y-3"></div>
+            <div id="shareCardsContainer" class="space-y-3"><div class="skeleton h-32 w-full"></div></div>
         </section>
 
        <!-- تب ۴: اطلاعیه‌ها و اخبار رسمی -->
         <section id="news-tab" class="page-section hidden space-y-4">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-bullhorn ml-1.5 text-red-600"></i> اطلاعیه‌ها و اخبار رسمی</h2>
-            <div id="newsContainer" class="space-y-3"></div>
+            <div id="newsContainer" class="space-y-3"><div class="skeleton h-20 w-full"></div></div>
         </section>
 
         <!-- تب ۵: ابزارهای پیشرفته حقوقی -->
@@ -366,7 +421,7 @@
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
                 <h3 class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی</h3>
                 <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال..." class="w-full bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
-                <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
+                <button onclick="calculateCourtFee(); triggerHaptic('light');" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
                 <div id="feeResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1"></div>
             </div>
 
@@ -376,7 +431,7 @@
                     <input type="number" id="mahariyehAmount" placeholder="تعداد سکه..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                     <input type="number" id="marriageYear" placeholder="سال عقد (مثلا 1395)..." class="bg-slate-900 text-white placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 focus:outline-none">
                 </div>
-                <button onclick="calculateMahariyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه ارزش روز</button>
+                <button onclick="calculateMahariyeh(); triggerHaptic('light');" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه ارزش روز</button>
                 <div id="mahariyehResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1 leading-relaxed"></div>
             </div>
 
@@ -388,7 +443,7 @@
                     <option value="finger">دیه یک انگشت (یک دهم)</option>
                     <option value="eye">دیه یک چشم (نصف دیه)</option>
                 </select>
-                <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه مبلغ دیه</button>
+                <button onclick="calculateDiyeh(); triggerHaptic('light');" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه مبلغ دیه</button>
                 <div id="diyehResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1"></div>
             </div>
 
@@ -400,7 +455,7 @@
                     <option value="husband_son_daughter">شوهر + فرزند (پسر و دختر)</option>
                     <option value="only_parents">فقط پدر و مادر</option>
                 </select>
-                <button onclick="calculateInheritance()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه سهم وراث</button>
+                <button onclick="calculateInheritance(); triggerHaptic('light');" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه سهم وراث</button>
                 <div id="inheritanceResult" class="text-[11px] font-bold text-amber-600 dark:text-amber-400 pt-1 leading-relaxed"></div>
             </div>
         </section>
@@ -410,25 +465,25 @@
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-bold text-xs flex items-center"><i class="fa-solid fa-clipboard-question ml-1.5 text-red-600"></i> بانک سوالات عمومی و تاییدشده</h2>
             </div>
-            <div id="publicFaqContainer" class="space-y-3"></div>
+            <div id="publicFaqContainer" class="space-y-3"><div class="skeleton h-24 w-full"></div></div>
         </section>
 
         <!-- تب ۷: اینستاگرام حقوقی -->
         <section id="instagram-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-3 flex items-center text-pink-600 dark:text-pink-400"><i class="fa-brands fa-instagram ml-1.5 text-sm"></i> کانال‌ها و پست‌های اینستاگرام حقوقی</h2>
-            <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center"></div>
+            <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center"><div class="skeleton h-20 w-full col-span-3"></div></div>
         </section>
 
         <!-- تب ۸: پادکست‌های خبری -->
         <section id="podcasts-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-podcast ml-1.5 text-red-600"></i> پادکست‌ها و فایل‌های صوتی</h2>
-            <div id="podcastsContainer" class="space-y-3"></div>
+            <div id="podcastsContainer" class="space-y-3"><div class="skeleton h-16 w-full"></div></div>
         </section>
 
         <!-- تب ۹: پرونده‌های ویژه -->
         <section id="files-tab" class="page-section hidden">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-folder-open ml-1.5 text-red-600"></i> پرونده‌های ویژه</h2>
-            <div id="filesContainer" class="space-y-3"></div>
+            <div id="filesContainer" class="space-y-3"><div class="skeleton h-32 w-full"></div></div>
         </section>
 
         <!-- تب ۱۰: پخش زنده -->
@@ -457,39 +512,44 @@
         <!-- تب ۱۱: اینفوگرافیک‌ها -->
         <section id="infographics-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-image ml-1.5 text-red-600"></i> اینفوگرافیک‌های حقوقی</h2>
-            <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
+            <div id="infographicsContainer" class="grid grid-cols-2 gap-3"><div class="skeleton h-28 w-full"></div></div>
         </section>
 
         <!-- تب ۱۲: سریال‌ها -->
         <section id="series-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 flex items-center"><i class="fa-solid fa-film ml-1.5 text-red-600"></i> سریال‌ها و ویدیوهای آموزشی</h2>
-            <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
+            <div id="seriesContainer" class="grid grid-cols-2 gap-3"><div class="skeleton h-28 w-full"></div></div>
         </section>
     </main>
 
-  <!-- ناوبری پایین صفحه -->
-    <nav class="fixed bottom-0 left-0 right-0 ultra-glass border-t border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
-        <button onclick="switchTab('dictionary-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
-        <button onclick="switchTab('legal-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
-        <button onclick="switchTab('laws-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
-        <button onclick="switchTab('cards-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-id-card text-sm mb-0.5"></i><span class="text-[8px]">کارت‌ها</span></button>
-        <button onclick="switchTab('lawyer-tab', this); triggerHaptic(); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
-        <button onclick="switchTab('chatbot-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
-        <button onclick="switchTab('news-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
-        <button onclick="switchTab('tools-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
-        <button onclick="switchTab('public-faq-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
-        <button onclick="switchTab('instagram-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-brands fa-instagram text-sm mb-0.5"></i><span class="text-[8px]">اینستاگرام</span></button>
-        <button onclick="switchTab('podcasts-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
-        <button onclick="switchTab('files-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
-        <button onclick="switchTab('multimedia-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
-        <button onclick="switchTab('infographics-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
-        <button onclick="switchTab('series-tab', this); triggerHaptic();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
+    <!-- دکمه شناور بازگشت سریع به بالا (Scroll-to-Top Floating Button) -->
+    <button id="scrollToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); triggerHaptic('light');" class="hidden fixed bottom-24 left-4 z-40 bg-red-600 text-white w-10 h-10 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 border border-white/20">
+        <i class="fa-solid fa-arrow-up text-xs"></i>
+    </button>
+
+  <!-- ناوبری پایین صفحه شناور و شیشه‌ای (Floating Bottom Bar Dock) -->
+    <nav class="fixed bottom-3 left-3 right-3 ultra-glass rounded-3xl border border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
+        <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center text-red-600 transition flex-shrink-0 font-bold px-2.5 py-1"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
+        <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
+        <button onclick="switchTab('laws-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
+        <button onclick="switchTab('cards-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-id-card text-sm mb-0.5"></i><span class="text-[8px]">کارت‌ها</span></button>
+        <button onclick="switchTab('lawyer-tab', this); triggerHaptic('light'); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
+        <button onclick="switchTab('chatbot-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
+        <button onclick="switchTab('news-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
+        <button onclick="switchTab('tools-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
+        <button onclick="switchTab('public-faq-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
+        <button onclick="switchTab('instagram-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-brands fa-instagram text-sm mb-0.5"></i><span class="text-[8px]">اینستاگرام</span></button>
+        <button onclick="switchTab('podcasts-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
+        <button onclick="switchTab('files-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
+        <button onclick="switchTab('multimedia-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
+        <button onclick="switchTab('infographics-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
+        <button onclick="switchTab('series-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 transition flex-shrink-0 px-2.5 py-1"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
     </nav>
 
     <!-- مودال‌ها -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
-            <button onclick="closeAdvancedSearchModal()" class="absolute top-3 left-3 text-slate-500 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            <button onclick="closeAdvancedSearchModal(); triggerHaptic('light');" class="absolute top-3 left-3 text-slate-500 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-red-500 pt-1"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته در گوگل</h3>
             <p class="text-[10px] opacity-80 text-right">عبارت مورد نظر خود را برای جستجو در گوگل و سایت‌های حقوقی وارد کنید:</p>
             <div class="space-y-2">
@@ -542,7 +602,7 @@
         </div>
     </div>
 
-    <div id="copyToast" class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs shadow-2xl border border-white/20 hidden z-[200] transition-all">
+    <div id="copyToast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs shadow-2xl border border-white/20 hidden z-[200] transition-all">
         <i class="fa-solid fa-check text-emerald-400 ml-1"></i> متن با موفقیت کپی شد!
     </div>
 
@@ -564,12 +624,13 @@
                 { title: "قانون چک صیادی", text: "چک فاقد ثبت در سامانه صیاد مشمول حمایت‌های قانونی چک نبوده و در حکم سند عادی است." },
                 { title: "حقوق مصرف‌کننده", text: "در خرید اینترنتی تا ۷ روز مهلت انصراف بدون ذکر علت وجود دارد (به جز موارد خاص)." }
             ],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.6.1\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.7.0 (نسخه نهایی بهینه‌شده)\nپشتیبانی و ارتباط با مدیریت از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
         let chatConversationHistory = JSON.parse(sessionStorage.getItem('mizan_active_chat')) || [];
         let lastSubmitTime = 0;
+        let currentSearchKeyword = '';
 
         window.addEventListener('DOMContentLoaded', () => {
             renderAll();
@@ -582,7 +643,47 @@
             renderChatUI();
             renderLaws();
             renderShareCards();
+            initPullToRefresh();
+            initScrollToTopListener();
         });
+
+        // پیاده‌سازی قابلیت Pull-to-Refresh بومی
+        function initPullToRefresh() {
+            let startY = 0;
+            const ptr = document.getElementById('ptrIndicator');
+            window.addEventListener('touchstart', e => {
+                if (window.scrollY === 0) startY = e.touches[0].pageY;
+            });
+            window.addEventListener('touchmove', e => {
+                if (window.scrollY === 0 && startY > 0) {
+                    const diff = e.touches[0].pageY - startY;
+                    if (diff > 50 && diff < 150) {
+                        ptr.style.opacity = '1';
+                    }
+                }
+            });
+            window.addEventListener('touchend', e => {
+                if (window.scrollY === 0 && startY > 0) {
+                    const diff = e.changedTouches[0].pageY - startY;
+                    if (diff > 80) {
+                        manualRefresh();
+                    }
+                    ptr.style.opacity = '0';
+                    startY = 0;
+                }
+            });
+        }
+
+        function initScrollToTopListener() {
+            const scrollBtn = document.getElementById('scrollToTopBtn');
+            window.addEventListener('scroll', () => {
+                if(window.scrollY > 300) {
+                    scrollBtn.classList.remove('hidden');
+                } else {
+                    scrollBtn.classList.add('hidden');
+                }
+            });
+        }
 
         function normalizeNumbers(str) {
             if (!str) return '';
@@ -595,27 +696,26 @@
             return output.toLowerCase().trim();
         }
 
+        // هایلایت هوشمند کلمات جستجو شده
+        function highlightText(text, keyword) {
+            if (!keyword || !text) return text;
+            const escaped = keyword.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(`(${escaped})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
         function openAdvancedSearchModal() {
-            const modal = document.getElementById('advancedSearchModal');
-            if(modal) modal.classList.remove('hidden');
-            triggerHaptic();
+            document.getElementById('advancedSearchModal').classList.remove('hidden');
         }
-
         function closeAdvancedSearchModal() {
-            const modal = document.getElementById('advancedSearchModal');
-            if(modal) modal.classList.add('hidden');
+            document.getElementById('advancedSearchModal').classList.add('hidden');
         }
-
         function executeGoogleSearch() {
             const input = document.getElementById('googleSearchInput');
             if(!input) return;
             const query = input.value.trim();
-            if (!query) {
-                alert('لطفاً عبارتی را برای جستجو وارد کنید.');
-                return;
-            }
-            const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-            window.open(googleUrl, '_blank');
+            if (!query) return alert('لطفاً عبارتی را برای جستجو وارد کنید.');
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
             closeAdvancedSearchModal();
         }
 
@@ -649,9 +749,7 @@
             document.getElementById('aboutModal').classList.remove('hidden');
         }
 
-        function closeAboutModal() {
-            document.getElementById('aboutModal').classList.add('hidden');
-        }
+        function closeAboutModal() { document.getElementById('aboutModal').classList.add('hidden'); }
 
         function updateDateTime() {
             const now = new Date();
@@ -695,7 +793,7 @@
                     renderShareCards();
                 }
             } catch (error) {
-                console.log("Using cached data due to network error.");
+                console.log("Using cached data.");
             }
         }
 
@@ -731,7 +829,7 @@
         function updateTgSetting(key, val) {
             tgSettings[key] = val;
             localStorage.setItem('tg_' + key, val);
-            triggerHaptic();
+            triggerHaptic('light');
         }
 
         function toggleTheme() {
@@ -758,7 +856,7 @@
                 navigator.share({ title: title, text: text, url: window.location.href }).catch(() => {});
             } else {
                 copyToClipboard(text);
-                alert('لینک یا متن کپی شد!');
+                alert('متن کپی شد!');
             }
         }
 
@@ -783,7 +881,7 @@
             container.innerHTML = list.map(sys => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 flex items-center justify-between">
                     <div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${sys.title}</h3><p class="text-[11px] opacity-80">${sys.description}</p></div>
-                    <a href="${sys.url}" target="_blank" class="bg-red-100 text-black-800 dark:text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold">ورود</a>
+                    <a href="${sys.url}" target="_blank" class="bg-red-100 text-slate-900 px-3 py-1.5 rounded-xl text-xs font-bold">ورود</a>
                 </div>
             `).join('');
         }
@@ -793,6 +891,7 @@
             const counterElem = document.getElementById('dictCounter');
             const clearBtn = document.getElementById('clearDictBtn');
             if (!container) return;
+            currentSearchKeyword = filter;
             let list = appData.dictionary || [];
             const q = normalizeNumbers(filter);
             if (q.length > 0) {
@@ -805,13 +904,13 @@
             container.innerHTML = list.map(d => `
                 <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1 relative">
                     <div class="flex justify-between items-center">
-                        <div class="font-bold text-red-600 dark:text-red-400 text-xs">${d.term}</div>
+                        <div class="font-bold text-red-600 dark:text-red-400 text-xs">${highlightText(d.term, filter)}</div>
                         <div class="space-x-1 space-x-reverse">
-                            <button onclick="copyToClipboard('${d.term}: ${d.definition}')" title="کپی" class="text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
-                            <button onclick="shareContent('${d.term}', '${d.definition}')" title="اشتراک‌گذاری" class="text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white text-[10px]"><i class="fa-solid fa-share-nodes"></i></button>
+                            <button onclick="copyToClipboard('${d.term}: ${d.definition}'); triggerHaptic('light');" title="کپی" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
+                            <button onclick="shareContent('${d.term}', '${d.definition}')" title="اشتراک‌گذاری" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
                     </div>
-                    <p class="text-[11px] leading-relaxed text-slate-800 dark:text-slate-200">${d.definition}</p>
+                    <p class="text-[11px] leading-relaxed text-slate-200">${highlightText(d.definition, filter)}</p>
                 </div>
             `).join('');
         }
@@ -821,6 +920,7 @@
             renderDictionary('');
         }
 
+        // رندر قوانین با سیستم آکاردئون (Read More) برای متون طولانی
         function renderLaws(filter = '') {
             const container = document.getElementById('lawsContainer');
             const counterElem = document.getElementById('lawsCounter');
@@ -829,31 +929,34 @@
             const q = normalizeNumbers(filter);
 
             if(q.length > 0) {
-                list = list.filter(law => {
-                    const title = normalizeNumbers(law.title || '');
-                    const summary = normalizeNumbers(law.summary || '');
-                    const content = normalizeNumbers(law.content || '');
-                    return title.includes(q) || summary.includes(q) || content.includes(q);
-                });
+                list = list.filter(law => normalizeNumbers(law.title || '').includes(q) || normalizeNumbers(law.content || '').includes(q));
             }
-
             if(counterElem) counterElem.innerText = `${list.length} قانون`;
 
-            if(list.length === 0) {
-                container.innerHTML = '<div class="text-center opacity-70 text-xs py-6">هیچ قانون یا مقرراتی با این عبارت یافت نشد.</div>';
-                return;
-            }
-
-           container.innerHTML = list.map(law => `
+            container.innerHTML = list.map((law, idx) => `
                 <div class="ultra-glass p-3.5 rounded-2xl border border-white/15 space-y-1.5 shadow-md">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-xs text-red-500">${law.title}</h3>
-                        <button onclick="copyToClipboard('${law.title}\\n${law.content}')" class="text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i> کپی متن</button>
+                        <button onclick="copyToClipboard('${law.title}\n${law.content}'); triggerHaptic('light');" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i> کپی متن</button>
                     </div>
-                    <p class="text-[11px] font-bold text-amber-600 dark:text-amber-300 opacity-90">${law.summary || ''}</p>
-                    <p class="text-[11px] leading-relaxed text-slate-800 dark:text-slate-300">${law.content}</p>
+                    <p class="text-[11px] font-bold text-amber-300 opacity-90">${law.summary || ''}</p>
+                    <div id="lawContent_${idx}" class="text-[11px] leading-relaxed text-slate-300 line-clamp-2">${law.content}</div>
+                    <button onclick="toggleLawAccordion(${idx})" id="lawBtn_${idx}" class="text-[10px] text-red-400 font-bold hover:underline pt-1">مشاهده کامل متن...</button>
                 </div>
             `).join('');
+        }
+
+        function toggleLawAccordion(idx) {
+            const content = document.getElementById(`lawContent_${idx}`);
+            const btn = document.getElementById(`lawBtn_${idx}`);
+            triggerHaptic('light');
+            if (content.classList.contains('line-clamp-2')) {
+                content.classList.remove('line-clamp-2');
+                btn.innerText = 'بستن متن';
+            } else {
+                content.classList.add('line-clamp-2');
+                btn.innerText = 'مشاهده کامل متن...';
+            }
         }
 
         function renderShareCards() {
@@ -870,7 +973,7 @@
                     <p class="text-[12px] leading-relaxed text-white font-medium">${card.text}</p>
                     <div class="flex justify-between items-center pt-2 border-t border-white/10 text-[10px]">
                         <span class="opacity-75">مینی SIJT</span>
-                        <button onclick="shareContent('${card.title}', '${card.text}')" class="bg-red-600/30 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl font-bold transition flex items-center">
+                        <button onclick="shareContent('${card.title}', '${card.text}'); triggerHaptic('light');" class="bg-red-600/30 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl font-bold transition flex items-center">
                             <i class="fa-solid fa-share-nodes ml-1"></i> اشتراک‌گذاری
                         </button>
                     </div>
@@ -887,12 +990,12 @@
                     <div class="flex justify-between items-center text-[9px] opacity-70">
                         <span>${n.date || ''}</span>
                         <div class="space-x-1 space-x-reverse">
-                            <button onclick="copyToClipboard('${n.title}\n${n.summary}')" title="کپی" class="text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-copy"></i></button>
-                            <button onclick="shareContent('${n.title}', '${n.summary}')" title="اشتراک‌گذاری" class="text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-share-nodes"></i></button>
+                            <button onclick="copyToClipboard('${n.title}\n${n.summary}')" title="کپی" class="text-slate-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
+                            <button onclick="shareContent('${n.title}', '${n.summary}')" title="اشتراک‌گذاری" class="text-slate-400 hover:text-white"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
                     </div>
-                    <h3 class="font-bold text-xs text-red-600 dark:text-red-400">${n.title}</h3>
-                    <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed">${n.summary}</p>
+                    <h3 class="font-bold text-xs text-red-400">${n.title}</h3>
+                    <p class="text-[11px] text-slate-200 leading-relaxed">${n.summary}</p>
                 </div>
             `).join('');
         }
@@ -903,8 +1006,8 @@
             let list = appData.quickTips || [{ title: "نکته حقوقی", text: "همیشه قراردادهای مهم را با حضور دو شاهد امضا کنید." }];
             container.innerHTML = list.map(tip => `
                 <div class="ultra-glass p-3.5 rounded-2xl border border-white/20 text-[11px] space-y-1.5 shadow-md">
-                    <div class="font-bold text-amber-600 dark:text-amber-400 flex items-center text-xs"><i class="fa-solid fa-star ml-1 text-xs"></i> ${tip.title || tip.name || ''}</div>
-                    <p class="text-slate-800 dark:text-slate-200 leading-relaxed">${tip.text || tip.description || tip.summary || ''}</p>
+                    <div class="font-bold text-amber-400 flex items-center text-xs"><i class="fa-solid fa-star ml-1 text-xs"></i> ${tip.title}</div>
+                    <p class="text-slate-200 leading-relaxed">${tip.text}</p>
                 </div>
             `).join('');
         }
@@ -916,14 +1019,14 @@
             container.innerHTML = list.map(pf => `
                 <div class="ultra-glass p-4 rounded-3xl border border-red-500/20 space-y-2.5 shadow-xl relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-red-600 to-amber-500"></div>
-                    <div class="font-bold text-xs text-red-600 dark:text-red-400 flex items-center pr-2">
-                        <div class="w-6 h-6 rounded-full bg-red-600/20 text-red-600 dark:text-red-400 flex items-center justify-center ml-2 flex-shrink-0 text-xs">
+                    <div class="font-bold text-xs text-red-400 flex items-center pr-2">
+                        <div class="w-6 h-6 rounded-full bg-red-600/20 text-red-400 flex items-center justify-center ml-2 flex-shrink-0 text-xs">
                             <i class="fa-solid fa-question"></i>
                         </div>
                         ${pf.question}
                     </div>
-                    <div class="text-[11px] leading-relaxed bg-black/5 dark:bg-black/50 p-3 rounded-2xl border border-black/10 dark:border-white/10 pr-2 text-slate-800 dark:text-slate-200">
-                        <div class="font-bold text-emerald-600 dark:text-emerald-400 mb-1 flex items-center"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ تاییدشده کارشناس:</div>
+                    <div class="text-[11px] leading-relaxed bg-black/40 p-3 rounded-2xl border border-white/10 pr-2 text-slate-200">
+                        <div class="font-bold text-emerald-400 mb-1 flex items-center"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ تاییدشده کارشناس:</div>
                         ${pf.answer}
                     </div>
                 </div>
@@ -934,16 +1037,15 @@
             const container = document.getElementById('instagramContainer');
             if (!container) return;
             let list = appData.instagram || [];
-            if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4 col-span-3">صفحه یا پستی ثبت نشده است.</div>'; return; }
-            
+            if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4 col-span-3">صفحه‌ای ثبت نشده است.</div>'; return; }
             container.innerHTML = list.map(ig => `
-                <a href="${ig.url || 'https://instagram.com'}" target="_blank" class="flex flex-col items-center space-y-2 group transition transform hover:scale-105">
+                <a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-2 group transition transform hover:scale-105">
                     <div class="w-18 h-18 rounded-full p-1 bg-gradient-to-tr from-amber-500 via-red-600 to-purple-600 shadow-xl flex items-center justify-center">
                         <div class="w-16 h-16 rounded-full overflow-hidden bg-slate-900 border-2 border-white flex items-center justify-center">
-                            <img src="${ig.image || 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png'}" class="w-full h-full object-cover transition group-hover:scale-110" alt="">
+                            <img src="${ig.image}" class="w-full h-full object-cover" alt="">
                         </div>
                     </div>
-                    <h4 class="font-bold text-[11px] text-slate-800 dark:text-slate-200 line-clamp-2 px-1">${ig.title || 'اینستاگرام'}</h4>
+                    <h4 class="font-bold text-[11px] text-slate-200 line-clamp-2 px-1">${ig.title}</h4>
                 </a>
             `).join('');
         }
@@ -953,7 +1055,7 @@
             if (!container) return;
             let list = appData.podcasts || [];
             if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4">پادکستی ثبت نشده است.</div>'; return; }
-            container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-600 dark:text-red-400">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
+            container.innerHTML = list.map(pod => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-400">${pod.title}</h4><audio controls class="w-full h-8"><source src="${pod.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
         function renderFiles() {
@@ -964,9 +1066,9 @@
             container.innerHTML = list.map(f => `
                 <div class="ultra-glass p-4 rounded-2xl border border-white/15 mb-3 space-y-2">
                     ${f.image ? `<img src="${f.image}" class="w-full h-36 object-cover rounded-xl" alt="">` : ''}
-                    <h3 class="font-bold text-sm text-red-600 dark:text-red-400">${f.title || f.name}</h3>
-                    <p class="text-[11px] text-slate-800 dark:text-slate-200">${f.description || f.desc || ''}</p>
-                    ${f.url && f.url !== '#' ? `<a href="${f.url}" target="_blank" class="block text-center bg-red-500/20 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold">مشاهده فایل</a>` : ''}
+                    <h3 class="font-bold text-sm text-red-400">${f.title || f.name}</h3>
+                    <p class="text-[11px] text-slate-200">${f.description || f.desc || ''}</p>
+                    ${f.url && f.url !== '#' ? `<a href="${f.url}" target="_blank" class="block text-center bg-red-500/20 text-red-400 py-2 rounded-xl text-xs font-bold">مشاهده فایل</a>` : ''}
                 </div>
             `).join('');
         }
@@ -976,9 +1078,9 @@
             if (!container) return;
             let list = appData.infographics || [];
             container.innerHTML = list.map(inf => `
-                <div onclick='openInfographicModal(${JSON.stringify(inf).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 text-center">
+                <div onclick='openInfographicModal(${JSON.stringify(inf).replace(/'/g, "&apos;")}); triggerHaptic("light");' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 text-center">
                     <img src="${inf.image}" class="w-full h-24 object-cover rounded-xl" alt="">
-                    <h4 class="font-bold text-[11px] text-red-600 dark:text-red-400">${inf.title}</h4>
+                    <h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4>
                 </div>
             `).join('');
         }
@@ -988,40 +1090,27 @@
             if (!container) return;
             let list = appData.series || [];
             if(!list.length) { container.innerHTML = '<div class="text-center opacity-70 text-xs py-4 col-span-2">سریالی ثبت نشده است.</div>'; return; }
-            
-            container.innerHTML = list.map(ser => {
-                const cleanSer = {
-                    title: ser.title || 'سریال حقوقی',
-                    image: ser.image || 'https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png',
-                    url: ser.url || '#'
-                };
-                return `
-                    <div onclick='openSeriesModal(${JSON.stringify(cleanSer).replace(/'/g, "&apos;")}); triggerHaptic();' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 text-center">
-                        <div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group">
-                            <img src="${cleanSer.image}" class="w-full h-full object-cover transition group-hover:scale-105" alt="">
-                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                <i class="fa-solid fa-play text-white text-lg"></i>
-                            </div>
+            container.innerHTML = list.map(ser => `
+                <div onclick='openSeriesModal(${JSON.stringify(ser).replace(/'/g, "&apos;")}); triggerHaptic("light");' class="ultra-glass p-3 rounded-2xl space-y-2 cursor-pointer transition hover:border-red-500 text-center">
+                    <div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group">
+                        <img src="${ser.image}" class="w-full h-full object-cover transition group-hover:scale-105" alt="">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                            <i class="fa-solid fa-play text-white text-lg"></i>
                         </div>
-                        <h4 class="font-bold text-[11px] text-red-600 dark:text-red-400 line-clamp-2">${cleanSer.title}</h4>
                     </div>
-                `;
-            }).join('');
+                    <h4 class="font-bold text-[11px] text-red-400 line-clamp-2">${ser.title}</h4>
+                </div>
+            `).join('');
         }
 
         function openSeriesModal(ser) {
             document.getElementById('modalSeriesTitle').innerText = ser.title;
-            const iframe = document.getElementById('seriesVideoIframe');
-            const extBtn = document.getElementById('externalSeriesBtn');
             let videoUrl = ser.url || '';
-            if (videoUrl.includes('aparat.com/v/')) {
-                videoUrl = videoUrl.replace('aparat.com/v/', 'aparat.com/v/embed/');
-            }
-            iframe.src = videoUrl;
-            extBtn.href = ser.url;
+            if (videoUrl.includes('aparat.com/v/')) videoUrl = videoUrl.replace('aparat.com/v/', 'aparat.com/v/embed/');
+            document.getElementById('seriesVideoIframe').src = videoUrl;
+            document.getElementById('externalSeriesBtn').href = ser.url;
             document.getElementById('seriesModal').classList.remove('hidden');
         }
-
         function closeSeriesModal() {
             document.getElementById('seriesModal').classList.add('hidden');
             document.getElementById('seriesVideoIframe').src = '';
@@ -1032,8 +1121,8 @@
             if (!container) return;
             let streams = appData.livestream || [];
             container.innerHTML = streams.map(stream => `
-                <button onclick='playSelectedStream(${JSON.stringify(stream).replace(/'/g, "&apos;")}); triggerHaptic();' class="p-3 ultra-glass rounded-2xl text-right transition border hover:border-red-500 space-y-1 shadow-sm">
-                    <div class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${stream.title}</div>
+                <button onclick='playSelectedStream(${JSON.stringify(stream).replace(/'/g, "&apos;")}); triggerHaptic("light");' class="p-3 ultra-glass rounded-2xl text-right transition border hover:border-red-500 space-y-1 shadow-sm">
+                    <div class="font-bold text-xs text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${stream.title}</div>
                     <div class="text-[10px] opacity-80 truncate">${stream.description || 'پخش زنده'}</div>
                 </button>
             `).join('');
@@ -1041,24 +1130,15 @@
 
         function playSelectedStream(stream) {
             const iframe = document.getElementById('liveStreamIframe');
-            const titleElem = document.getElementById('liveStreamTitle');
-            const descElem = document.getElementById('liveStreamDesc');
-            const placeholder = document.getElementById('liveStreamPlaceholder');
+            document.getElementById('liveStreamTitle').innerText = stream.title;
+            document.getElementById('liveStreamDesc').innerText = stream.description || 'در حال پخش زنده';
+            document.getElementById('liveStreamPlaceholder').classList.add('hidden');
             const extBtn = document.getElementById('externalStreamBtn');
-
-            if(titleElem) titleElem.innerText = stream.title;
-            if(descElem) descElem.innerText = stream.description || 'در حال پخش زنده';
-            if(placeholder) placeholder.classList.add('hidden');
-            if(extBtn) {
-                extBtn.classList.remove('hidden');
-                extBtn.href = stream.url;
-            }
-
-            if(iframe && stream.url) {
-                let url = stream.url;
-                if(url.includes('telewebion.com/live/')) url = url.replace('telewebion.com/live/', 'telewebion.com/embed/live/');
-                iframe.src = url;
-            }
+            extBtn.classList.remove('hidden');
+            extBtn.href = stream.url;
+            let url = stream.url;
+            if(url.includes('telewebion.com/live/')) url = url.replace('telewebion.com/live/', 'telewebion.com/embed/live/');
+            iframe.src = url;
         }
 
         function openInfographicModal(inf) {
@@ -1071,61 +1151,59 @@
         function calculateCourtFee() {
             const amount = parseFloat(document.getElementById('claimAmountInput').value) || 0;
             if(amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
-            let fee = amount * 0.035;
-            document.getElementById('feeResult').innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(fee).toLocaleString()} ریال`;
+            document.getElementById('feeResult').innerText = `هزینه تقریبی دادرسی بدوی: ${Math.round(amount * 0.035).toLocaleString()} ریال`;
         }
 
         function calculateMahariyeh() {
             const count = parseFloat(document.getElementById('mahariyehAmount').value) || 0;
-            const year = parseInt(document.getElementById('marriageYear').value) || 1400;
             if(count <= 0) return alert('تعداد سکه مهریه را وارد کنید.');
-            if(year < 1350 || year > 1405) return alert('لطفاً سال عقد معتبری وارد کنید.');
-            
-            let baseCoinPrice = 450000000;
-            let totalValue = count * baseCoinPrice;
-            document.getElementById('mahariyehResult').innerText = `ارزش تقریبی روز: حدود ${Math.round(totalValue).toLocaleString()} ریال`;
+            document.getElementById('mahariyehResult').innerText = `ارزش تقریبی روز: حدود ${Math.round(count * 450000000).toLocaleString()} ریال`;
         }
 
         function calculateDiyeh() {
             const type = document.getElementById('diyehType').value;
-            let baseDiyeh = 1600000000;
-            let finalDiyeh = baseDiyeh;
-            if(type === 'haram') finalDiyeh = baseDiyeh * 1.33;
-            if(type === 'finger') finalDiyeh = baseDiyeh * 0.1;
-            if(type === 'eye') finalDiyeh = baseDiyeh * 0.5;
-            document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(finalDiyeh).toLocaleString()} ریال`;
+            let base = 1600000000;
+            if(type === 'haram') base *= 1.33;
+            if(type === 'finger') base *= 0.1;
+            if(type === 'eye') base *= 0.5;
+            document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(base).toLocaleString()} ریال`;
         }
 
         function calculateInheritance() {
             const estate = parseFloat(document.getElementById('estateAmount').value) || 0;
             const type = document.getElementById('heirsType').value;
-            const resultBox = document.getElementById('inheritanceResult');
             if(estate <= 0) return alert('مبلغ کل ترکه را وارد کنید.');
-
             let resText = "";
             if(type === 'wife_son_daughter') {
-                let wifeShare = estate * 0.125;
-                let remaining = estate - wifeShare;
-                resText = `سهم همسر (زوجه): ${Math.round(wifeShare).toLocaleString()} ریال<br>باقیمانده بین فرزندان (پسر ۲ برابر دختر): ${Math.round(remaining).toLocaleString()} ریال`;
+                let wife = estate * 0.125;
+                resText = `سهم همسر: ${Math.round(wife).toLocaleString()} ریال<br>باقیمانده بین فرزندان: ${Math.round(estate - wife).toLocaleString()} ریال`;
             } else if(type === 'husband_son_daughter') {
-                let husbandShare = estate * 0.25;
-                let remaining = estate - husbandShare;
-                resText = `سهم شوهر (زوج): ${Math.round(husbandShare).toLocaleString()} ریال<br>باقیمانده بین فرزندان: ${Math.round(remaining).toLocaleString()} ریال`;
-            } else if(type === 'only_parents') {
-                resText = `در صورت نبود اولاد، ترکه بین پدر و مادر تقسیم می‌گردد (مادر ۱/۳ و پدر ۲/۳).`;
+                let husband = estate * 0.25;
+                resText = `سهم شوهر: ${Math.round(husband).toLocaleString()} ریال<br>باقیمانده بین فرزندان: ${Math.round(estate - husband).toLocaleString()} ریال`;
+            } else {
+                resText = `مادر (۱/۳) و پدر (۲/۳).`;
             }
-            resultBox.innerHTML = resText;
+            document.getElementById('inheritanceResult').innerHTML = resText;
+        }
+
+        // تجزیه و تحلیل Markdown ساده برای پیام‌های چت‌بات
+        function parseMarkdown(text) {
+            if (!text) return '';
+            let html = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-300 font-bold">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                .replace(/### (.*?)\n/g, '<h4 class="font-bold text-amber-400 text-xs mt-2 mb-1">$1</h4>')
+                .replace(/- (.*?)\n/g, '<li class="list-disc list-inside mr-2">$1</li>');
+            return html.replace(/\n/g, '<br>');
         }
 
         function renderChatUI() {
             const container = document.getElementById('chatMessagesContainer');
             if(!container) return;
-
             if (chatConversationHistory.length === 0) {
-                container.innerHTML = `<div class="text-center text-[10px] text-white py-4">سلام! من وکیل آنلاین شما هستم...</div>`;
+                container.innerHTML = `<div class="text-center text-[10px] text-slate-400 py-4">سلام! من وکیل آنلاین شما هستم...</div>`;
                 return;
             }
-
             container.innerHTML = chatConversationHistory.map(msg => {
                 if (msg.role === 'user') {
                     return `
@@ -1138,9 +1216,12 @@
                 } else {
                     return `
                         <div class="flex justify-start">
-                            <div class="bg-slate-800 text-slate-100 p-2.5 rounded-2xl rounded-br-none max-w-[85%] text-[11px] leading-relaxed border border-white/10 shadow">
-                                <div class="font-bold text-amber-400 text-[10px] mb-1"><i class="fa-solid fa-robot ml-1"></i> دستیار هوشمند SIJT:</div>
-                                ${msg.text.replace(/\n/g, '<br>')}
+                            <div class="bg-slate-800 text-slate-100 p-3 rounded-2xl rounded-br-none max-w-[90%] text-[11px] leading-relaxed border border-white/10 shadow space-y-1.5">
+                                <div class="font-bold text-amber-400 text-[10px] flex items-center justify-between">
+                                    <span><i class="fa-solid fa-robot ml-1"></i> دستیار هوشمند SIJT</span>
+                                    <button onclick="copyToClipboard('${msg.text.replace(/'/g, "\\'")}')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                                <div class="text-slate-200">${parseMarkdown(msg.text)}</div>
                             </div>
                         </div>
                     `;
@@ -1160,6 +1241,7 @@
             runAiAssistant();
         }
 
+        // عملکرد خوش‌بینانه (Optimistic UI) برای چت‌بات و نمایش حباب در حال تایپ پیشرفته
         async function runAiAssistant() {
             const promptInput = document.getElementById('aiPromptInput');
             const prompt = promptInput.value.trim();
@@ -1174,18 +1256,21 @@
             const loadingId = 'loading_' + Date.now();
             container.insertAdjacentHTML('beforeend', `
                 <div id="${loadingId}" class="flex justify-start">
-                    <div class="bg-slate-800 text-slate-300 p-2.5 rounded-2xl rounded-br-none text-[11px] italic animate-pulse">
-                        <i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال پردازش و پاسخگویی...
+                    <div class="bg-slate-800 text-slate-300 p-3 rounded-2xl rounded-br-none text-[11px] flex items-center space-x-2 space-x-reverse border border-white/10 shadow animate-pulse">
+                        <i class="fa-solid fa-robot text-amber-400"></i>
+                        <span class="italic">دستیار در حال تفکر و تایپ...</span>
+                        <div class="flex space-x-1 space-x-reverse mr-2">
+                            <div class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce"></div>
+                            <div class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce delay-100"></div>
+                            <div class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce delay-200"></div>
+                        </div>
                     </div>
                 </div>
             `);
             container.scrollTop = container.scrollHeight;
 
             try {
-                // ارسال فقط ۲ پیام آخر جهت کاهش حجم داده و جلوگیری از کندی و ارور تایم‌اوت
                 const recentHistory = chatConversationHistory.slice(-2);
-                
-                // استفاده از AbortController برای کنترل تایم‌اوت سریع‌تر
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 25000);
 
@@ -1197,7 +1282,6 @@
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
-
                 const data = await res.json();
                 
                 let aiResult = "";
@@ -1208,25 +1292,20 @@
                     else if (typeof data === 'string') aiResult = data;
                 }
 
-                const loadingElem = document.getElementById(loadingId);
-                if(loadingElem) loadingElem.remove();
+                document.getElementById(loadingId)?.remove();
 
                 if (aiResult) {
                     chatConversationHistory.push({ role: 'model', text: aiResult });
-                    // محدودسازی تاریخچه ذخیره شده در سشن به 6 پیام آخر برای جلوگیری از سنگین شدن
-                    if(chatConversationHistory.length > 6) {
-                        chatConversationHistory = chatConversationHistory.slice(-6);
-                    }
+                    if(chatConversationHistory.length > 6) chatConversationHistory = chatConversationHistory.slice(-6);
                     sessionStorage.setItem('mizan_active_chat', JSON.stringify(chatConversationHistory));
                     renderChatUI();
                 } else {
-                    chatConversationHistory.push({ role: 'model', text: 'پاسخی از سرور دریافت نشد. لطفاً مجدداً تلاش کنید.' });
+                    chatConversationHistory.push({ role: 'model', text: 'پاسخی دریافت نشد. لطفاً دوباره تلاش کنید.' });
                     renderChatUI();
                 }
             } catch(e) {
-                const loadingElem = document.getElementById(loadingId);
-                if(loadingElem) loadingElem.remove();
-                chatConversationHistory.push({ role: 'model', text: 'خطا در ارتباط با سرور یا کندی شبکه. لطفاً دوباره تلاش کنید.' });
+                document.getElementById(loadingId)?.remove();
+                chatConversationHistory.push({ role: 'model', text: 'خطا در ارتباط با سرور. لطفا مجدداً تلاش کنید.' });
                 renderChatUI();
             }
         }
@@ -1243,27 +1322,15 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...`;
 
             try {
-                const params = new URLSearchParams({
-                    action: 'add_faq',
-                    userId: userId,
-                    category: category,
-                    question: q
-                });
-
-                const endpoint = API_URL + "?" + params.toString();
-                const res = await fetch(endpoint, { method: 'GET', redirect: "follow" });
+                const params = new URLSearchParams({ action: 'add_faq', userId: userId, category: category, question: q });
+                const res = await fetch(API_URL + "?" + params.toString(), { method: 'GET', redirect: "follow" });
                 const data = await res.json();
-                
                 document.getElementById('questionInput').value = '';
-                if(data && data.trackingCode) {
-                    alert('سوال شما ثبت شد و به بخش وکیل ارسال گردید.\nکد رهگیری شما: ' + data.trackingCode);
-                } else {
-                    alert('سوال شما با موفقیت ثبت شد.');
-                }
+                alert(data && data.trackingCode ? 'سوال ثبت شد.\nکد رهگیری: ' + data.trackingCode : 'سوال ثبت شد.');
                 loadUserFaqs();
             } catch(e) {
                 document.getElementById('questionInput').value = '';
-                alert('سوال شما ثبت شد و به دست وکیل رسید.');
+                alert('سوال ثبت شد.');
                 loadUserFaqs();
             } finally {
                 btn.innerHTML = `<span class="relative flex items-center justify-center space-x-2 space-x-reverse"><i class="fa-solid fa-paper-plane text-xs"></i><span>ارسال سوال و دریافت کد رهگیری</span></span>`;
@@ -1275,130 +1342,98 @@
             const badge = document.getElementById('faqCountBadge');
             const notifList = document.getElementById('notificationsList');
             const notifBadge = document.getElementById('notifBadge');
-            const icon = document.getElementById('faqRefreshIcon');
-            if(icon) icon.classList.add('fa-spin');
-
             try {
                 const res = await fetch(API_URL + "?action=get_user_faqs&userId=" + encodeURIComponent(userId) + "&t=" + new Date().getTime(), { redirect: "follow" });
                 const data = await res.json();
-                if(icon) setTimeout(() => icon.classList.remove('fa-spin'), 400);
-
                 if (data && (data.status === "success" || data.faqs)) {
                     const faqs = data.faqs || [];
                     if(badge) badge.innerText = `${faqs.length} مورد`;
-                    
                     let answeredCount = faqs.filter(item => item.answer && item.answer.trim() !== "").length;
                     if(answeredCount > 0) {
                         notifBadge.classList.remove('hidden');
                         notifList.innerHTML = faqs.filter(item => item.answer).map(item => `
                             <div class="bg-slate-900 p-2.5 rounded-xl border border-white/20 text-[11px] space-y-1">
-                                <div class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ وکیل برای سوال شما ثبت شد</div>
+                                <div class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check ml-1"></i> پاسخ وکیل ثبت شد</div>
                                 <div class="opacity-90"><b>سوال:</b> ${item.question}</div>
                                 <div class="text-amber-300"><b>پاسخ:</b> ${item.answer}</div>
                             </div>
                         `).join('');
                     }
-
                     if (faqs.length === 0) {
                         container.innerHTML = `<div class="text-center py-4 opacity-70 text-xs">هنوز سوالی ثبت نکرده‌اید.</div>`;
                         return;
                     }
                     container.innerHTML = faqs.map(item => `
-                        <div class="bg-slate-900 p-3 rounded-xl border border-white/20 space-y-1.5 text-white relative">
+                        <div class="bg-slate-900 p-3 rounded-xl border border-white/20 space-y-1.5 text-white">
                             <div class="flex justify-between items-center text-[9px] opacity-80">
                                 <span class="bg-red-500/30 text-red-300 px-2 py-0.5 rounded">${item.category || 'عمومی'}</span>
-                                <div class="space-x-1 space-x-reverse">
-                                    <span class="text-amber-400 font-bold ml-2">کد: ${item.trackingCode || '-'}</span>
-                                    <button onclick="copyToClipboard('کد رهگیری: ${item.trackingCode}\nپاسخ: ${item.answer || 'در حال بررسی'}')" title="کپی" class="text-slate-300"><i class="fa-solid fa-copy"></i></button>
-                                </div>
+                                <span class="text-amber-400 font-bold">کد: ${item.trackingCode || '-'}</span>
                             </div>
                             <p class="text-[11px] font-bold text-white">${item.question}</p>
                             <div class="text-[10px] font-medium ${item.answer ? 'text-emerald-400' : 'text-amber-300'}">
-                                ${item.answer ? 'پاسخ وکیل: ' + item.answer : 'وضعیت: در حال بررسی توسط کارشناس...'}
+                                ${item.answer ? 'پاسخ وکیل: ' + item.answer : 'وضعیت: در حال بررسی...'}
                             </div>
                         </div>
                     `).join('');
                 }
-            } catch (err) {
-                if(icon) icon.classList.remove('fa-spin');
-            }
+            } catch (err) {}
         }
 
         async function trackByCode() {
             const code = document.getElementById('trackingCodeInput').value.trim();
             const resBox = document.getElementById('trackingResultBox');
-            if(!code) return alert('لطفاً کد رهگیری را وارد کنید.');
+            if(!code) return alert('کد رهگیری را وارد کنید.');
             resBox.classList.remove('hidden');
-            resBox.innerHTML = 'در حال جستجوی کد رهگیری...';
+            resBox.innerHTML = 'در حال جستجو...';
             try {
                 const res = await fetch(API_URL + "?action=track&code=" + encodeURIComponent(code), { redirect: "follow" });
                 const data = await res.json();
                 if(data.status === 'success' && data.item) {
                     resBox.innerHTML = `<b>موضوع:</b> ${data.item.category}<br><b>سوال:</b> ${data.item.question}<br><b>پاسخ:</b> ${data.item.answer || 'هنوز پاسخی ثبت نشده است.'}`;
                 } else {
-                    resBox.innerHTML = 'موردی با این کد رهگیری یافت نشد.';
+                    resBox.innerHTML = 'موردی یافت نشد.';
                 }
             } catch(e) {
                 resBox.innerHTML = 'خطا در ارتباط با سرور.';
             }
         }
 
+        // جستجوی آنی محلی بدون تأخیر (Client-Side Instant Search)
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             const clearBtn = document.getElementById('clearSearchBtn');
             if(!box) return;
             const q = normalizeNumbers(query);
             if (q.length > 0) {
-                if(clearBtn) clearBtn.classList.remove('hidden');
+                clearBtn.classList.remove('hidden');
                 box.classList.remove('hidden');
             } else {
-                if(clearBtn) clearBtn.classList.add('hidden');
+                clearBtn.classList.add('hidden');
                 box.classList.add('hidden');
                 return;
             }
             let resultsHTML = '';
-            
             let matchedDict = (appData.dictionary || []).filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q)).slice(0, 3);
             if (matchedDict.length > 0) {
-                resultsHTML += `<div class="text-[9px] font-bold text-red-600 dark:text-red-400 px-2 py-1">اصطلاحات حقوقی</div>`;
+                resultsHTML += `<div class="text-[9px] font-bold text-red-400 px-2 py-1">اصطلاحات حقوقی</div>`;
                 resultsHTML += matchedDict.map(d => `
-                    <div onclick="navigateToSection('dictionary-tab', '${d.term}')" class="p-2 hover:bg-black/10 dark:hover:bg-white/20 rounded cursor-pointer transition">
-                        <div class="font-bold text-[11px] text-slate-900 dark:text-white">${d.term}</div>
-                        <div class="text-[9px] opacity-75 truncate text-slate-500 dark:text-slate-300">${d.definition}</div>
+                    <div onclick="navigateToSection('dictionary-tab', '${d.term}')" class="p-2 hover:bg-white/10 rounded cursor-pointer transition">
+                        <div class="font-bold text-[11px] text-white">${d.term}</div>
+                        <div class="text-[9px] opacity-75 truncate text-slate-300">${d.definition}</div>
                     </div>
                 `).join('');
             }
-
-            let matchedNews = (appData.news || []).filter(n => normalizeNumbers(n.title).includes(q) || normalizeNumbers(n.summary).includes(q)).slice(0, 2);
-            if (matchedNews.length > 0) {
-                resultsHTML += `<div class="text-[9px] font-bold text-red-600 dark:text-red-400 px-2.5 pt-2 pb-1">اخبار و اطلاعیه‌ها</div>`;
-                resultsHTML += matchedNews.map(n => `
-                    <div onclick="navigateToSection('news-tab', '')" class="p-2 hover:bg-black/10 dark:hover:bg-white/20 rounded cursor-pointer transition">
-                        <div class="font-bold text-[11px] text-slate-900 dark:text-white">${n.title}</div>
-                    </div>
-                `).join('');
-            }
-
-            box.innerHTML = resultsHTML || '<div class="p-3 text-center text-slate-500 dark:text-slate-500 text-xs">موردی با این کلیدواژه یافت نشد</div>';
+            box.innerHTML = resultsHTML || '<div class="p-3 text-center text-slate-400 text-xs">موردی یافت نشد</div>';
         }
 
         function navigateToSection(sectionId, keyword) {
             document.getElementById('liveSuggestionsBox').classList.add('hidden');
             document.getElementById('searchInput').value = '';
-            
             const targetNavBtn = document.querySelector(`nav button[onclick*="${sectionId}"]`);
-            if (targetNavBtn) {
-                switchTab(sectionId, targetNavBtn);
-            } else {
-                switchTab(sectionId, null);
-            }
-
+            switchTab(sectionId, targetNavBtn);
             if(sectionId === 'dictionary-tab' && keyword) {
-                const dictInput = document.getElementById('dictAdvancedSearchInput');
-                if(dictInput) {
-                    dictInput.value = keyword;
-                    renderDictionary(keyword);
-                }
+                document.getElementById('dictAdvancedSearchInput').value = keyword;
+                renderDictionary(keyword);
             }
         }
 

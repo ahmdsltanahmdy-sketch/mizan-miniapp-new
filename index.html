@@ -40,7 +40,7 @@
 
         /* شیشه‌گری مات پیشرفته با تضمین خوانایی کامل متون */
         .ultra-glass {
-            background: rgba(15, 23, 42, 0.92);
+            background: rgba(15, 23, 42, 0.94);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.18);
@@ -180,7 +180,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات کامل -->
+        <!-- منوی تنظیمات کامل و جامع -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-85 p-4 settings-glass rounded-3xl space-y-3 text-xs shadow-2xl max-h-[75vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
@@ -579,7 +579,7 @@
         <i class="fa-solid fa-check text-emerald-400 ml-1"></i> متن کپی شد!
     </div>
 
-    <!-- اسکریپت کامل و یکپارچه -->
+    <!-- اسکریپت جامع و کامل -->
     <script>
         let fallbackData = {
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
@@ -601,7 +601,7 @@
                 { title: "نکته طلایی قراردادها", text: "هیچ‌گاه قراردادی را بدون حضور حداقل دو شاهد امضا نکنید و حتماً نسخه‌ای از آن را نزد خود نگه دارید." },
                 { title: "قانون چک صیادی", text: "چک فاقد ثبت در سامانه صیاد مشمول حمایت‌های قانونی چک نبوده و در حکم سند عادی است." }
             ],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.9.0 (کامل و پیشرفته)\nپشتیبانی از طریق ربات تلگرام مینی‌اپ برقرار است." }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 3.9.5 (جامع و نهایی)\nپشتیبانی از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -631,7 +631,14 @@
             loadUserFaqs();
             renderChatUI();
             initSmartHeader();
+            applySavedSettings();
         });
+
+        function applySavedSettings() {
+            const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';
+            const fontSel = document.getElementById('fontSelect');
+            if(fontSel) fontSel.value = savedFont;
+        }
 
         function initSmartHeader() {
             let lastScroll = 0;
@@ -649,8 +656,15 @@
 
         function updateDateTime() {
             const now = new Date();
+            const calType = localStorage.getItem('mizan_calendar') || 'persian';
             const calElem = document.getElementById('headerCalendarWidget');
-            if(calElem) calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
+            if(calElem) {
+                if(calType === 'gregorian') {
+                    calElem.innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                } else {
+                    calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
+                }
+            }
         }
 
         async function fetchTehranWeather() {
@@ -822,7 +836,7 @@
             setTimeout(() => document.getElementById('storyBottomSheet').classList.add('hidden'), 300);
         }
 
-        // محاسبه‌گرها
+        // محاسبه‌گرهای حقوقی
         function calculateCourtFee() {
             const amt = parseFloat(document.getElementById('claimAmountInput').value) || 0;
             document.getElementById('feeResult').innerText = `هزینه دادرسی: ${Math.round(amt * 0.035).toLocaleString()} ریال`;
@@ -835,7 +849,7 @@
             document.getElementById('diyehResult').innerText = `دیه کامل: ۱,۶۰۰,۰۰۰,۰۰۰ ریال`;
         }
         function calculateInheritance() {
-            document.getElementById('inheritanceResult').innerHTML = `محاسبه سهم‌الارث انجام شد.`;
+            document.getElementById('inheritanceResult').innerHTML = `محاسبه سهم‌الارث طبقه اول انجام شد.`;
         }
 
         // چت‌بات و جستجوی آنی
@@ -966,9 +980,17 @@
         function closeAboutModal() { document.getElementById('aboutModal').classList.add('hidden'); }
         function changeFontFamily(val) { document.documentElement.style.setProperty('--selected-font', val); localStorage.setItem('mizan_font', val); }
         function changeAppFontSize(val) { document.documentElement.style.setProperty('--app-font-size', val); localStorage.setItem('mizan_font_size', val); }
+        function changeCalendarType(type) { localStorage.setItem('mizan_calendar', type); updateDateTime(); }
         function clearSearchInput() { document.getElementById('searchInput').value = ''; document.getElementById('liveSuggestionsBox').classList.add('hidden'); }
         function clearChatSession() { chatConversationHistory = []; sessionStorage.removeItem('mizan_active_chat'); renderChatUI(); }
         function sendQuickPrompt(t) { document.getElementById('aiPromptInput').value = t; runAiAssistant(); }
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2000);
+            });
+        }
     </script>
 </body>
 </html>

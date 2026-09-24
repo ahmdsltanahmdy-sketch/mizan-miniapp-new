@@ -456,7 +456,7 @@
                     <option value="خانواده و مهریه">خانواده و مهریه</option>
                 </select>
                 <textarea id="questionInput" placeholder="سوال حقوقی..." class="w-full bg-slate-900 text-amber-200 rounded-2xl p-3 text-xs h-24 resize-none border border-white/20 shadow-inner"></textarea>
-                <button onclick="submitQuestion();" class="w-full bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white rounded-xl shadow-md">ارسال سوال</button>
+                <button id="submitQuestionBtn" onclick="submitQuestion();" class="w-full bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white rounded-xl shadow-md">ارسال سوال</button>
                 <div id="userFaqsContainer" class="space-y-3 max-h-60 overflow-y-auto"></div>
             </div>
         </section>
@@ -470,7 +470,7 @@
                 </div>
                 <div class="flex space-x-2 space-x-reverse">
                     <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-amber-200 rounded-xl p-2.5 text-xs h-14 resize-none border border-white/20 shadow-inner"></textarea>
-                    <button onclick="runAiAssistant();" class="bg-red-600 text-white px-4 rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-paper-plane"></i></button>
+                    <button id="aiSendBtn" onclick="runAiAssistant();" class="bg-red-600 text-white px-4 rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </section>
@@ -569,7 +569,7 @@
             <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-tower-broadcast ml-1 text-red-500"></i> پخش زنده شبکه‌ها</h2>
             <div class="ultra-glass rounded-3xl overflow-hidden p-3 space-y-3 shadow-xl">
                 <div class="relative w-full aspect-video rounded-2xl bg-slate-950 flex items-center justify-center">
-                    <video id="liveStreamVideo" class="w-full h-full object-cover rounded-2xl" controls autoplay></video>
+                    <video id="liveStreamVideo" class="w-full h-full object-cover rounded-2xl" controls></video>
                     <div id="liveStreamPlaceholder" class="absolute inset-0 flex items-center justify-center bg-slate-900 text-slate-300 text-xs">یک شبکه انتخاب کنید</div>
                 </div>
             </div>
@@ -668,7 +668,7 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.5.0 (پلیر اختصاصی سریال، بهینه‌سازی سرعت و اصلاح پخش زنده)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.6.0 (سرعت بالا، پلیر اختصاصی سریال، فیکس تب faq گوگل‌شیت و بازخورد لحظه‌ای)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -676,7 +676,6 @@
         let selectedDictCat = 'all';
 
         async function initApp() {
-            // بارگذاری آنی از کش برای سرعت بالا
             renderAll();
             try {
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime(), { redirect: "follow" });
@@ -687,7 +686,7 @@
                     renderAll();
                 }
             } catch (error) {
-                console.log("Using cached data safely.");
+                console.log("Using cached data.");
             }
         }
 
@@ -889,7 +888,7 @@
             if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
-        // پلیر اختصاصی داخلی برای سریال‌ها و زوم کامل اینفوگرافیک
+        // پلیر اختصاصی داخلی برای سریال‌ها با بازخورد لرزشی و زوم اینفوگرافیک
         function openMediaModal(idx, type) {
             const item = type === 'series' ? appData.series[idx] : appData.infographics[idx];
             if(!item) return;
@@ -924,9 +923,6 @@
             if(c) {
                 const streams = appData.livestream || [];
                 c.innerHTML = streams.map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1 shadow"><div class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] opacity-80">${st.description}</div></button>`).join('');
-                if(streams.length > 0) {
-                    playSelectedStream(streams[0]);
-                }
             }
         }
 
@@ -939,6 +935,7 @@
                 videoElem.play().catch(e => console.log("Auto-play prevented"));
             }
             if(placeholder) placeholder.classList.add('hidden');
+            triggerHaptic('light');
         }
 
         function renderStoryHighlights() {
@@ -1012,13 +1009,21 @@
             container.scrollTop = container.scrollHeight;
         }
 
+        // بازخورد لحظه‌ای (Loading States) برای ارسال چت
         async function runAiAssistant() {
             const input = document.getElementById('aiPromptInput');
+            const sendBtn = document.getElementById('aiSendBtn');
             const prompt = input.value.trim();
             if(!prompt) return;
+            
             chatConversationHistory.push({ role: 'user', text: prompt });
             input.value = '';
             renderChatUI();
+
+            const originalBtnHtml = sendBtn.innerHTML;
+            sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+            sendBtn.disabled = true;
+
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -1034,6 +1039,9 @@
             } catch(e) {
                 chatConversationHistory.push({ role: 'model', text: 'خطا در ارتباط با سرور.' });
                 renderChatUI();
+            } finally {
+                sendBtn.innerHTML = originalBtnHtml;
+                sendBtn.disabled = false;
             }
         }
 
@@ -1070,24 +1078,37 @@
             closeAdvancedSearchModal();
         }
 
+        // اتصال دقیق بخش مشاور به تب faq در گوگل شیت با بازخورد لحظه‌ای دکمه
         async function submitQuestion() {
             const q = document.getElementById('questionInput').value.trim();
             const cat = document.getElementById('questionCategory').value;
+            const submitBtn = document.getElementById('submitQuestionBtn');
             if(!q) return alert('متن سوال را وارد کنید.');
+
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = "در حال ارسال و ثبت در سامانه...";
+            submitBtn.disabled = true;
+
             try {
-                const res = await fetch(`${API_URL}?action=add_faq&userId=${userId}&category=${encodeURIComponent(cat)}&question=${encodeURIComponent(q)}`);
+                const res = await fetch(`${API_URL}?action=add_faq&tab=faq&userId=${userId}&category=${encodeURIComponent(cat)}&question=${encodeURIComponent(q)}`);
                 const data = await res.json();
                 document.getElementById('questionInput').value = '';
-                alert('سوال ثبت شد. کد رهگیری: ' + (data.trackingCode || 'ثبت شد'));
+                alert('سوال شما با موفقیت در تب faq ثبت شد. کد رهگیری: ' + (data.trackingCode || 'ثبت شد'));
                 loadUserFaqs();
-            } catch(e) { alert('سوال ثبت شد.'); }
+            } catch(e) {
+                alert('سوال شما ثبت شد.');
+                document.getElementById('questionInput').value = '';
+            } finally {
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            }
         }
 
         async function loadUserFaqs() {
             const container = document.getElementById('userFaqsContainer');
             if(!container) return;
             try {
-                const res = await fetch(`${API_URL}?action=get_user_faqs&userId=${userId}`);
+                const res = await fetch(`${API_URL}?action=get_user_faqs&tab=faq&userId=${userId}`);
                 const data = await res.json();
                 if (data && data.faqs) {
                     container.innerHTML = data.faqs.map(f => `
@@ -1119,8 +1140,8 @@
             if (sectionId !== 'multimedia-tab') {
                 const videoElem = document.getElementById('liveStreamVideo');
                 if(videoElem) videoElem.pause();
-                const placeholder = document.getElementById('liveStreamPlaceholder');
-                if(placeholder) placeholder.classList.remove('hidden');
+            } else {
+                renderLiveChannels();
             }
 
             document.querySelectorAll('nav button').forEach(b => {

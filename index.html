@@ -110,7 +110,6 @@
             color: #0f172a;
         }
 
-        /* ناوبری پایین شناور مدرن */
         .floating-nav {
             background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(35px);
@@ -130,7 +129,6 @@
             transform: scale(1.15) translateY(-2px);
         }
 
-        /* منوی کشویی اصلاح‌شده و کاملاً در دسترس */
         #moreDrawer {
             display: none;
             position: fixed;
@@ -201,22 +199,27 @@
             box-shadow: 0 0 6px #ef4444;
         }
 
+        /* مدال بزرگتر و مناسب برای زوم اینفوگرافیک */
         .zoomable-container {
             overflow: auto;
             position: relative;
-            max-height: 75vh;
+            width: 100%;
+            height: 70vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #000;
+            border-radius: 1rem;
         }
         .zoomable-img {
             transition: transform 0.3s ease;
             cursor: zoom-in;
             max-width: 100%;
-            height: auto;
+            max-height: 100%;
+            object-fit: contain;
         }
         .zoomable-img.zoomed {
-            transform: scale(1.8);
+            transform: scale(2.2);
             cursor: zoom-out;
         }
 
@@ -587,21 +590,23 @@
         </section>
     </main>
 
-    <!-- منوی کشویی گروه‌بندی شده (Segmented More Drawer) -->
+    <!-- منوی کشویی گروه‌بندی شده (Segmented More Drawer - بدون رنگ‌بندی آیکون‌ها) -->
     <div id="moreDrawer" class="settings-glass rounded-t-3xl p-4 shadow-2xl space-y-3">
         <div class="flex justify-between items-center pb-2 border-b border-white/10">
             <span class="font-bold text-xs text-amber-300"><i class="fa-solid fa-layer-group ml-1"></i> سایر بخش‌ها و امکانات مینی‌اپ</span>
-            <button onclick="toggleMoreDrawer()" class="text-slate-300 hover:text-white p-1"><i class="fa-solid fa-xmark text-sm"></i></button>
+            <button onclick="toggleMoreDrawer(event)" class="text-slate-300 hover:text-white p-1"><i class="fa-solid fa-xmark text-sm"></i></button>
         </div>
         <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
-            <button onclick="switchTab('news-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1 relative"><i class="fa-solid fa-bullhorn text-red-500 text-sm"></i><span>اطلاعیه‌ها</span><span id="badgeNews" class="badge-dot hidden"></span></button>
-            <button onclick="switchTab('public-faq-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-clipboard-question text-amber-400 text-sm"></i><span>بانک سوال</span></button>
-            <button onclick="switchTab('instagram-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-brands fa-instagram text-pink-500 text-sm"></i><span>اینستاگرام</span></button>
-            <button onclick="switchTab('podcasts-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-podcast text-emerald-400 text-sm"></i><span>پادکست</span></button>
-            <button onclick="switchTab('files-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-folder-open text-blue-400 text-sm"></i><span>پرونده‌ها</span></button>
-            <button onclick="switchTab('multimedia-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-tower-broadcast text-purple-400 text-sm"></i><span>پخش زنده</span></button>
-            <button onclick="switchTab('infographics-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-image text-indigo-400 text-sm"></i><span>اینفوگرافیک</span></button>
-            <button onclick="switchTab('series-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-film text-rose-400 text-sm"></i><span>سریال</span></button>
+            <button onclick="switchTab('news-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1 relative"><i class="fa-solid fa-bullhorn text-sm"></i><span>اطلاعیه‌ها</span><span id="badgeNews" class="badge-dot hidden"></span></button>
+            <button onclick="switchTab('public-faq-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-clipboard-question text-sm"></i><span>بانک سوال</span></button>
+            <button onclick="switchTab('instagram-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-brands fa-instagram text-sm"></i><span>اینستاگرام</span></button>
+            <button onclick="switchTab('podcasts-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-podcast text-sm"></i><span>پادکست</span></button>
+            <button onclick="switchTab('files-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-folder-open text-sm"></i><span>پرونده‌ها</span></button>
+            <button onclick="switchTab('multimedia-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-tower-broadcast text-sm"></i><span>پخش زنده</span></button>
+            <button onclick="switchTab('infographics-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-image text-sm"></i><span>اینفوگرافیک</span></button>
+            <button onclick="switchTab('series-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-film text-sm"></i><span>سریال</span></button>
+            <button onclick="switchTab('chatbot-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-robot text-sm"></i><span>چت‌بات</span></button>
+            <button onclick="switchTab('tools-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-toolbox text-sm"></i><span>ابزارها</span></button>
         </div>
     </div>
 
@@ -610,12 +615,12 @@
         <i class="fa-solid fa-arrow-up text-xs"></i>
     </button>
 
-    <!-- مودال رسانه -->
+    <!-- مودال رسانه با قابلیت زوم کامل و حالت نمایش عریض -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
-        <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
+        <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-lg w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 id="mediaModalTitle" class="font-bold text-xs text-amber-300 pt-1"></h3>
-            <div id="mediaModalContent" class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10"></div>
+            <div id="mediaModalContent" class="relative w-full rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10"></div>
             <a id="mediaModalExternalBtn" href="#" target="_blank" class="hidden block w-full bg-red-600/30 text-red-200 border border-red-500/40 py-2 rounded-xl text-xs font-bold transition hover:bg-red-600 hover:text-white">
                 <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای خارجی در پلتفرم اصلی
             </a>
@@ -633,17 +638,15 @@
         </div>
     </div>
 
-    <!-- تب‌بار اصلی پایین (گزینه بیشتر کاملاً استاندارد و هم‌رنگ با بقیه تب‌ها) -->
+    <!-- ناوبری پایین با دقیقاً 5 تب اصلی و دکمه بیشتر -->
     <nav class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center justify-around whitespace-nowrap">
-        <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-2.5 py-1 relative"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
-        <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
-        <button onclick="switchTab('laws-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
-        <button onclick="switchTab('cards-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-id-card text-sm mb-0.5"></i><span class="text-[8px]">کارت‌ها</span></button>
-        <button onclick="switchTab('lawyer-tab', this); triggerHaptic('light'); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
-        <button onclick="switchTab('chatbot-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
-        <button onclick="switchTab('tools-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
-        <!-- دکمه منوی کشویی بیشتر کاملاً هم‌رنگ با بقیه -->
-        <button onclick="toggleMoreDrawer(event);" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-bars-staggered text-sm mb-0.5"></i><span class="text-[8px]">بیشتر</span><span id="badgeMore" class="badge-dot hidden"></span></button>
+        <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-3 py-1 relative"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
+        <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
+        <button onclick="switchTab('laws-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
+        <button onclick="switchTab('cards-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-id-card text-sm mb-0.5"></i><span class="text-[8px]">کارت‌ها</span></button>
+        <button onclick="switchTab('lawyer-tab', this); triggerHaptic('light'); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
+        <!-- دکمه منوی کشویی بیشتر -->
+        <button onclick="toggleMoreDrawer(event);" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-bars-staggered text-sm mb-0.5"></i><span class="text-[8px]">بیشتر</span><span id="badgeMore" class="badge-dot hidden"></span></button>
     </nav>
 
     <script>
@@ -658,10 +661,13 @@
             podcasts: [{ title: "پادکست حقوقی شماره ۱", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }],
             files: [{ title: "پرونده ویژه حقوقی", description: "بررسی ابعاد حقوقی قراردادهای پیش‌فروش مسکن", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "#" }],
             infographics: [{ title: "اینفوگرافیک مراحل دعوای حقوقی", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" }],
-            livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
+            livestream: [
+                { title: "شبکه یک سیما", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/tv1" },
+                { title: "شبکه خبر", description: "پخش زنده اخبار", url: "https://www.telewebion.com/live/khabar" }
+            ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.3.0 (رفع کامل ایراد منوی کشویی و یکپارچه‌سازی ظاهر تب‌ها)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.4.0 (رفع کامل ارورها، اصلاح منوی کشویی و رفع مشکل پخش زنده و سریال)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -678,7 +684,8 @@
                     renderAll();
                 }
             } catch (error) {
-                console.log("Using cached data.");
+                console.log("Using cached data safely.");
+                renderAll();
             }
         }
 
@@ -889,10 +896,10 @@
             const extBtn = document.getElementById('mediaModalExternalBtn');
             if(type === 'series') {
                 let url = item.url || '';
-                if(url.includes('aparat.com/v/')) url = url.replace('aparat.com/v/', 'aparat.com/v/embed/');
-                content.innerHTML = `<iframe src="${url}" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+                // در صورت وجود محدودیت آپارات، نمایش لینک مستقیم و دکمه خارجی امن
+                content.innerHTML = `<div class="p-6 text-center space-y-3"><i class="fa-solid fa-film text-3xl text-amber-400"></i><p class="text-xs text-slate-200">جهت پخش بدون محدودیت در پلتفرم اصلی کلیک کنید:</p><a href="${url}" target="_blank" class="inline-block bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold">تماشای ویدیو در پلتفرم</a></div>`;
                 extBtn.classList.remove('hidden');
-                extBtn.href = item.url;
+                extBtn.href = url;
             } else {
                 content.innerHTML = `<div class="zoomable-container"><img src="${item.image}" loading="lazy" class="zoomable-img" onclick="toggleZoom(this)" title="برای زوم کلیک کنید"></div>`;
                 extBtn.classList.add('hidden');
@@ -913,7 +920,13 @@
         function renderLiveChannels() {
             const c = document.getElementById('liveChannelsSelector');
             const currentSize = localStorage.getItem('mizan_font_size') || '12px';
-            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1 shadow"><div class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] opacity-80">${st.description}</div></button>`).join('');
+            if(c) {
+                const streams = appData.livestream || [];
+                c.innerHTML = streams.map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1 shadow"><div class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] opacity-80">${st.description}</div></button>`).join('');
+                if(streams.length > 0) {
+                    playSelectedStream(streams[0]);
+                }
+            }
         }
 
         function playSelectedStream(st) {

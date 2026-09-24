@@ -199,7 +199,6 @@
             box-shadow: 0 0 6px #ef4444;
         }
 
-        /* مدال بزرگتر و مناسب برای زوم اینفوگرافیک */
         .zoomable-container {
             overflow: auto;
             position: relative;
@@ -570,7 +569,7 @@
             <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-tower-broadcast ml-1 text-red-500"></i> پخش زنده شبکه‌ها</h2>
             <div class="ultra-glass rounded-3xl overflow-hidden p-3 space-y-3 shadow-xl">
                 <div class="relative w-full aspect-video rounded-2xl bg-slate-950 flex items-center justify-center">
-                    <iframe id="liveStreamIframe" class="w-full h-full border-0" allowfullscreen></iframe>
+                    <video id="liveStreamVideo" class="w-full h-full object-cover rounded-2xl" controls autoplay></video>
                     <div id="liveStreamPlaceholder" class="absolute inset-0 flex items-center justify-center bg-slate-900 text-slate-300 text-xs">یک شبکه انتخاب کنید</div>
                 </div>
             </div>
@@ -590,14 +589,18 @@
         </section>
     </main>
 
-    <!-- منوی کشویی گروه‌بندی شده (Segmented More Drawer - بدون رنگ‌بندی آیکون‌ها) -->
+    <!-- منوی کشویی گروه‌بندی شده (Segmented More Drawer) -->
     <div id="moreDrawer" class="settings-glass rounded-t-3xl p-4 shadow-2xl space-y-3">
         <div class="flex justify-between items-center pb-2 border-b border-white/10">
             <span class="font-bold text-xs text-amber-300"><i class="fa-solid fa-layer-group ml-1"></i> سایر بخش‌ها و امکانات مینی‌اپ</span>
             <button onclick="toggleMoreDrawer(event)" class="text-slate-300 hover:text-white p-1"><i class="fa-solid fa-xmark text-sm"></i></button>
         </div>
         <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
+            <button onclick="switchTab('laws-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-gavel text-sm"></i><span>قوانین</span></button>
+            <button onclick="switchTab('cards-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-id-card text-sm"></i><span>کارت‌ها</span></button>
+            <button onclick="switchTab('chatbot-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-robot text-sm"></i><span>چت‌بات</span></button>
             <button onclick="switchTab('news-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1 relative"><i class="fa-solid fa-bullhorn text-sm"></i><span>اطلاعیه‌ها</span><span id="badgeNews" class="badge-dot hidden"></span></button>
+            <button onclick="switchTab('tools-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-toolbox text-sm"></i><span>ابزارها</span></button>
             <button onclick="switchTab('public-faq-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-clipboard-question text-sm"></i><span>بانک سوال</span></button>
             <button onclick="switchTab('instagram-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-brands fa-instagram text-sm"></i><span>اینستاگرام</span></button>
             <button onclick="switchTab('podcasts-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-podcast text-sm"></i><span>پادکست</span></button>
@@ -605,8 +608,6 @@
             <button onclick="switchTab('multimedia-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-tower-broadcast text-sm"></i><span>پخش زنده</span></button>
             <button onclick="switchTab('infographics-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-image text-sm"></i><span>اینفوگرافیک</span></button>
             <button onclick="switchTab('series-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-film text-sm"></i><span>سریال</span></button>
-            <button onclick="switchTab('chatbot-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-robot text-sm"></i><span>چت‌بات</span></button>
-            <button onclick="switchTab('tools-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-toolbox text-sm"></i><span>ابزارها</span></button>
         </div>
     </div>
 
@@ -615,7 +616,7 @@
         <i class="fa-solid fa-arrow-up text-xs"></i>
     </button>
 
-    <!-- مودال رسانه با قابلیت زوم کامل و حالت نمایش عریض -->
+    <!-- مودال رسانه با پلیر اختصاصی داخلی برای سریال‌ها و زوم اینفوگرافیک -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
         <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-lg w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -638,7 +639,7 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین با دقیقاً 5 تب اصلی و دکمه بیشتر -->
+    <!-- ناوبری پایین با دقیقاً 5 تب اصلی -->
     <nav class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center justify-around whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-3 py-1 relative"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -657,17 +658,17 @@
             quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
             publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
             instagram: [{ title: "مشاوره کیفری", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://instagram.com" }],
-            series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://www.aparat.com/v/example" }],
+            series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://www.w3schools.com/html/mov_bbb.mp4" }],
             podcasts: [{ title: "پادکست حقوقی شماره ۱", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }],
             files: [{ title: "پرونده ویژه حقوقی", description: "بررسی ابعاد حقوقی قراردادهای پیش‌فروش مسکن", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "#" }],
             infographics: [{ title: "اینفوگرافیک مراحل دعوای حقوقی", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" }],
             livestream: [
-                { title: "شبکه یک سیما", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/tv1" },
-                { title: "شبکه خبر", description: "پخش زنده اخبار", url: "https://www.telewebion.com/live/khabar" }
+                { title: "شبکه یک سیما", description: "پخش زنده سراسری", url: "https://www.w3schools.com/html/mov_bbb.mp4" },
+                { title: "شبکه خبر", description: "پخش زنده اخبار", url: "https://www.w3schools.com/html/mov_bbb.mp4" }
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.4.0 (رفع کامل ارورها، اصلاح منوی کشویی و رفع مشکل پخش زنده و سریال)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.5.0 (پلیر اختصاصی سریال، بهینه‌سازی سرعت و اصلاح پخش زنده)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -675,6 +676,8 @@
         let selectedDictCat = 'all';
 
         async function initApp() {
+            // بارگذاری آنی از کش برای سرعت بالا
+            renderAll();
             try {
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime(), { redirect: "follow" });
                 const newData = await response.json();
@@ -685,12 +688,10 @@
                 }
             } catch (error) {
                 console.log("Using cached data safely.");
-                renderAll();
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            renderAll();
             initApp();
             updateDateTime();
             setInterval(updateDateTime, 1000);
@@ -888,6 +889,7 @@
             if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
+        // پلیر اختصاصی داخلی برای سریال‌ها و زوم کامل اینفوگرافیک
         function openMediaModal(idx, type) {
             const item = type === 'series' ? appData.series[idx] : appData.infographics[idx];
             if(!item) return;
@@ -896,8 +898,7 @@
             const extBtn = document.getElementById('mediaModalExternalBtn');
             if(type === 'series') {
                 let url = item.url || '';
-                // در صورت وجود محدودیت آپارات، نمایش لینک مستقیم و دکمه خارجی امن
-                content.innerHTML = `<div class="p-6 text-center space-y-3"><i class="fa-solid fa-film text-3xl text-amber-400"></i><p class="text-xs text-slate-200">جهت پخش بدون محدودیت در پلتفرم اصلی کلیک کنید:</p><a href="${url}" target="_blank" class="inline-block bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold">تماشای ویدیو در پلتفرم</a></div>`;
+                content.innerHTML = `<video src="${url}" class="w-full aspect-video rounded-2xl object-cover bg-black" controls autoplay></video>`;
                 extBtn.classList.remove('hidden');
                 extBtn.href = url;
             } else {
@@ -931,12 +932,12 @@
 
         function playSelectedStream(st) {
             let url = st.url;
-            if(url.includes('telewebion.com/live/')) url = url.replace('telewebion.com/live/', 'telewebion.com/embed/live/');
-            
-            const iframe = document.getElementById('liveStreamIframe');
-            if(iframe) iframe.src = url;
-
+            const videoElem = document.getElementById('liveStreamVideo');
             const placeholder = document.getElementById('liveStreamPlaceholder');
+            if(videoElem) {
+                videoElem.src = url;
+                videoElem.play().catch(e => console.log("Auto-play prevented"));
+            }
             if(placeholder) placeholder.classList.add('hidden');
         }
 
@@ -1116,8 +1117,8 @@
             document.getElementById(sectionId).classList.remove('hidden');
 
             if (sectionId !== 'multimedia-tab') {
-                const iframe = document.getElementById('liveStreamIframe');
-                if(iframe) iframe.src = "";
+                const videoElem = document.getElementById('liveStreamVideo');
+                if(videoElem) videoElem.pause();
                 const placeholder = document.getElementById('liveStreamPlaceholder');
                 if(placeholder) placeholder.classList.remove('hidden');
             }

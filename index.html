@@ -199,6 +199,7 @@
             box-shadow: 0 0 6px #ef4444;
         }
 
+        /* کانتینر اینفوگرافیک با قابلیت زوم و جابجایی (Pan & Zoom) */
         .zoomable-container {
             overflow: auto;
             position: relative;
@@ -209,17 +210,17 @@
             justify-content: center;
             background: #000;
             border-radius: 1rem;
+            cursor: grab;
+        }
+        .zoomable-container:active {
+            cursor: grabbing;
         }
         .zoomable-img {
-            transition: transform 0.3s ease;
-            cursor: zoom-in;
+            transition: transform 0.2s ease;
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-        }
-        .zoomable-img.zoomed {
-            transform: scale(2.2);
-            cursor: zoom-out;
+            user-select: none;
         }
 
         .custom-skeleton {
@@ -616,7 +617,7 @@
         <i class="fa-solid fa-arrow-up text-xs"></i>
     </button>
 
-    <!-- مودال رسانه با پلیر اختصاصی داخلی برای سریال‌ها و زوم اینفوگرافیک -->
+    <!-- مودال رسانه با پلیر اختصاصی داخلی شیشه‌ای مدرن برای سریال‌ها و زوم/جابجایی اینفوگرافیک -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
         <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-lg w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -668,7 +669,7 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.7.0 (پلیر فعال سریال، لودینگ چرخان دکمه‌ها و فیکس پخش زنده)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.8.0 (پلیر اختصاصی ویدیو، قابلیت پن/دراگ اینفوگرافیک زوم‌شده و لودینگ چرخان)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -888,7 +889,7 @@
             if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
-        // پلیر اختصاصی داخلی برای سریال‌ها به همراه پخش خارجی و زوم اینفوگرافیک
+        // پلیر اختصاصی داخلی برای سریال‌ها و مدیریت زوم با قابلیت جابجایی تصویر (Pan & Drag)
         function openMediaModal(idx, type) {
             const item = type === 'series' ? appData.series[idx] : appData.infographics[idx];
             if(!item) return;
@@ -897,24 +898,65 @@
             const extBtn = document.getElementById('mediaModalExternalBtn');
             if(type === 'series') {
                 let url = item.url || '';
-                content.innerHTML = `<video src="${url}" class="w-full aspect-video rounded-2xl object-cover bg-black" controls autoplay></video>`;
+                content.innerHTML = `<video src="${url}" class="w-full aspect-video rounded-2xl object-cover bg-black shadow-2xl" controls autoplay playsinline></video>`;
                 extBtn.classList.remove('hidden');
                 extBtn.href = url;
             } else {
-                content.innerHTML = `<div class="zoomable-container"><img src="${item.image}" loading="lazy" class="zoomable-img" onclick="toggleZoom(this)" title="برای زوم کلیک کنید"></div>`;
+                content.innerHTML = `<div class="zoomable-container" id="zoomContainer"><img src="${item.image}" loading="lazy" class="zoomable-img" id="zoomImg" onclick="toggleZoom(this)" title="برای زوم کلیک کنید"></div>`;
                 extBtn.classList.add('hidden');
+                initPanAndZoom();
             }
             document.getElementById('mediaModal').classList.remove('hidden');
         }
 
+        let scale = 1;
         function toggleZoom(img) {
-            img.classList.toggle('zoomed');
+            if (scale === 1) {
+                scale = 2.2;
+                img.style.transform = `scale(${scale})`;
+                img.style.cursor = 'grab';
+            } else {
+                scale = 1;
+                img.style.transform = `scale(1)`;
+                img.style.cursor = 'zoom-in';
+            }
             triggerHaptic('light');
+        }
+
+        function initPanAndZoom() {
+            const container = document.getElementById('zoomContainer');
+            const img = document.getElementById('zoomImg');
+            let isDragging = false;
+            let startX, startY, scrollLeft, scrollTop;
+
+            container.addEventListener('mousedown', (e) => {
+                if (scale <= 1) return;
+                isDragging = true;
+                container.style.cursor = 'grabbing';
+                startX = e.pageX - container.offsetLeft;
+                startY = e.pageY - container.offsetTop;
+                scrollLeft = container.scrollLeft;
+                scrollTop = container.scrollTop;
+            });
+
+            container.addEventListener('mouseleave', () => { isDragging = false; });
+            container.addEventListener('mouseup', () => { isDragging = false; container.style.cursor = scale > 1 ? 'grab' : 'zoom-in'; });
+            container.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const y = e.pageY - container.offsetTop;
+                const walkX = (x - startX) * 1.5;
+                const walkY = (y - startY) * 1.5;
+                container.scrollLeft = scrollLeft - walkX;
+                container.scrollTop = scrollTop - walkY;
+            });
         }
 
         function closeMediaModal() {
             document.getElementById('mediaModal').classList.add('hidden');
             document.getElementById('mediaModalContent').innerHTML = '';
+            scale = 1;
             const video = document.querySelector('#mediaModalContent video');
             if(video) video.pause();
         }

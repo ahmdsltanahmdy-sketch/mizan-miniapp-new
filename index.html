@@ -38,20 +38,29 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* افکت گرادینت مش پویا و نویز ملایم (Mesh Gradients & Noise) */
+        /* پس‌زمینه مش و خوانایی کامل */
         .mesh-bg {
-            background-color: #0f172a;
+            background-color: #0b0f19;
             background-image: 
-                radial-gradient(at 10% 15%, rgba(197, 27, 36, 0.18) 0px, transparent 55%),
-                radial-gradient(at 90% 85%, rgba(245, 158, 11, 0.12) 0px, transparent 55%),
-                radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.98) 0px, transparent 100%);
+                radial-gradient(at 10% 15%, rgba(197, 27, 36, 0.22) 0px, transparent 55%),
+                radial-gradient(at 90% 85%, rgba(245, 158, 11, 0.15) 0px, transparent 55%),
+                radial-gradient(at 50% 50%, rgba(11, 15, 25, 0.99) 0px, transparent 100%);
         }
-        .light .mesh-bg, body:not(.dark) .mesh-bg {
-            background-color: #f8fafc;
-            background-image: 
-                radial-gradient(at 10% 15%, rgba(197, 27, 36, 0.08) 0px, transparent 55%),
-                radial-gradient(at 90% 85%, rgba(245, 158, 11, 0.06) 0px, transparent 55%),
-                radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.98) 0px, transparent 100%);
+        .light .mesh-bg, body:not(.dark):not(.oled-mode) .mesh-bg {
+            background-color: #f1f5f9;
+            background-image: none;
+        }
+
+        /* حالت مطالعه تاریک مطلق OLED */
+        body.oled-mode {
+            background-color: #000000 !important;
+            color: #f8fafc !important;
+            background-image: none !important;
+        }
+        body.oled-mode .ultra-glass {
+            background: rgba(10, 10, 10, 0.98) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
         }
 
         .noise-overlay {
@@ -62,29 +71,28 @@
             z-index: 999;
         }
 
-        /* گرادینت متن برای عناوین مهم (Gradient Text) */
         .text-gradient {
             background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* افکت شیشه‌ای پیشرفته با خوانایی بالا */
+        /* رفع مشکل کنتراست و تداخل رنگ متن‌ها در کارت‌ها */
         .ultra-glass {
-            background: rgba(15, 23, 42, 0.94);
+            background: rgba(15, 23, 42, 0.96);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+            color: #f1f5f9;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .light .ultra-glass, body:not(.dark) .ultra-glass {
-            background: rgba(255, 255, 255, 0.96);
+        .light .ultra-glass, body:not(.dark):not(.oled-mode) .ultra-glass {
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(0, 0, 0, 0.12);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
             color: #0f172a;
         }
 
@@ -92,17 +100,17 @@
             background: rgba(15, 23, 42, 0.98);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
         }
-        .light .settings-glass, body:not(.dark) .settings-glass {
+        .light .settings-glass, body:not(.dark):not(.oled-mode) .settings-glass {
             background: rgba(255, 255, 255, 0.98);
             border: 1px solid rgba(0, 0, 0, 0.15);
             color: #0f172a;
         }
 
         .glass-tab { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
-        .dark .glass-tab { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.15); }
+        .dark .glass-tab, body.oled-mode .glass-tab { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.15); }
 
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
@@ -111,18 +119,24 @@
         }
 
         .card-bg-glass {
-            background-image: linear-gradient(rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.98)), url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png');
+            background-image: linear-gradient(rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.99)), url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png');
             background-size: cover;
             background-position: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #ffffff;
         }
 
-        /* انیمیشن داینامیک هدر هنگام اسکرول (Shrinking Header on Scroll) */
-        #appHeader { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .header-shrunken { padding: 4px 0 !important; transform: scale(0.985); box-shadow: 0 10px 25px rgba(0,0,0,0.4); opacity: 0.97; }
+        /* انیمیشن محو شدن و بازگشت هدر هنگام اسکرول */
+        #appHeader {
+            transition: transform 0.35s ease, opacity 0.35s ease;
+            will-change: transform, opacity;
+        }
+        .header-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
 
-        /* بازخورد موجی کلیک (Ripple Effect) */
         .ripple-container { position: relative; overflow: hidden; }
         .ripple-effect {
             position: absolute;
@@ -181,6 +195,9 @@
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
         }
+        if (localStorage.getItem('oled_mode') === 'true') {
+            document.body.classList.add('oled-mode');
+        }
 
         const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';
         document.documentElement.style.setProperty('--selected-font', savedFont);
@@ -198,8 +215,8 @@
         }
     </script>
 
-    <!-- هدر -->
-    <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md transition-all duration-300">
+    <!-- هدر با قابلیت محو شدن هنگام اسکرول -->
+    <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
         <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
             <div class="flex items-center space-x-2 space-x-reverse">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
@@ -226,6 +243,10 @@
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
                 <button onclick="toggleTheme();" class="bg-white/20 px-3 py-1 rounded-xl font-medium">تیره / روشن</button>
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">حالت مطالعه تاریک مطلق (OLED):</span>
+                <button onclick="toggleOledMode();" class="bg-red-600/40 text-red-200 px-3 py-1 rounded-xl font-medium">فعال/غیرفعال</button>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">تمام‌صفحه هوشمند:</span>
@@ -310,7 +331,7 @@
 
         <!-- تب ۲: سامانه‌ها -->
         <section id="legal-tab" class="page-section hidden">
-            <h2 class="font-black text-xs mb-2 text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> سامانه های قضایی</h2>
+            <h2 class="font-black text-xs mb-2 text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> سامانه‌های قضایی</h2>
             <div id="legalSystemsContainer" class="space-y-3">
                 <div class="skeleton h-16 w-full"></div>
             </div>
@@ -516,7 +537,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.7.0 (با افکت‌های مش‌گرادینت، نویز و تعاملات نوری پیشرفته)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.8.0 (بهینه‌سازی کامل خوانایی متن‌ها، اسکرول هدر و حالت OLED)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -565,9 +586,12 @@
             localStorage.setItem('mizan_font', val);
         }
 
+        // اصلاح کامل تابع تغییر اندازه متن
         function changeAppFontSize(val) {
             document.documentElement.style.setProperty('--app-font-size', val);
             localStorage.setItem('mizan_font_size', val);
+            // اعمال مستقیم روی بدنه برای بازخورد آنی
+            document.body.style.fontSize = val;
         }
 
         function changeCalendarType(type) {
@@ -650,12 +674,12 @@
             }
             if(counterElem) counterElem.innerText = `${list.length} واژه`;
             container.innerHTML = list.map(d => `
-                <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1 shadow">
+                <div class="ultra-glass p-3.5 rounded-xl border border-white/15 space-y-1.5 shadow-md">
                     <div class="flex justify-between items-center">
-                        <div class="font-extrabold text-red-500 text-xs">${d.term}</div>
-                        <button onclick="copyToClipboard('${d.term}: ${d.definition}'); triggerHaptic('light');" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
+                        <div class="font-black text-red-400 text-xs">${d.term}</div>
+                        <button onclick="copyToClipboard('${d.term}: ${d.definition}'); triggerHaptic('light');" class="text-slate-300 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
                     </div>
-                    <p class="text-[11px] leading-relaxed text-slate-200 dark:text-slate-200">${d.definition}</p>
+                    <p class="text-[11px] leading-relaxed text-slate-100 dark:text-slate-100 font-medium">${d.definition}</p>
                 </div>
             `).join('');
         }
@@ -678,47 +702,47 @@
             const q = normalizeNumbers(filter);
             if(q.length > 0) list = list.filter(l => normalizeNumbers(l.title).includes(q) || normalizeNumbers(l.content).includes(q));
             if(counterElem) counterElem.innerText = `${list.length} قانون`;
-            c.innerHTML = list.map(l => `<div class="ultra-glass p-3.5 rounded-2xl space-y-1.5 shadow"><h3 class="font-bold text-xs text-red-400">${l.title}</h3><p class="text-[11px] font-bold text-amber-300">${l.summary || ''}</p><p class="text-[11px] text-slate-200">${l.content}</p></div>`).join('');
+            c.innerHTML = list.map(l => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><h3 class="font-bold text-xs text-red-400">${l.title}</h3><p class="text-[11px] font-bold text-amber-300">${l.summary || ''}</p><p class="text-[11px] text-slate-100 dark:text-slate-100 leading-relaxed font-medium">${l.content}</p></div>`).join('');
         }
 
         function renderShareCards() {
             const c = document.getElementById('shareCardsContainer');
-            if(c) c.innerHTML = (appData.shareCards || []).map(card => `<div class="card-bg-glass p-4 rounded-3xl space-y-2 shadow-xl"><span class="font-bold text-amber-400 text-xs">${card.title}</span><p class="text-[11px] text-white">${card.text}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.shareCards || []).map(card => `<div class="card-bg-glass p-4 rounded-3xl space-y-2 shadow-xl"><span class="font-bold text-amber-300 text-xs">${card.title}</span><p class="text-[11px] text-slate-100 leading-relaxed font-medium">${card.text}</p></div>`).join('');
         }
 
         function renderNews() {
             const c = document.getElementById('newsContainer');
-            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-3.5 rounded-2xl space-y-1 shadow"><div class="text-[9px] text-slate-400">${n.date || ''}</div><h3 class="font-bold text-xs text-red-400">${n.title}</h3><p class="text-[11px] text-slate-200">${n.summary}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-4 rounded-2xl space-y-1.5 shadow-md"><div class="text-[9px] text-slate-300">${n.date || ''}</div><h3 class="font-bold text-xs text-red-400">${n.title}</h3><p class="text-[11px] text-slate-100 leading-relaxed font-medium">${n.summary}</p></div>`).join('');
         }
 
         function renderPublicFaqs() {
             const c = document.getElementById('publicFaqContainer');
-            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2 shadow"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="text-[11px] bg-black/40 p-3 rounded-2xl text-slate-200">${pf.answer}</div></div>`).join('');
+            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2 shadow-md"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="text-[11px] bg-black/50 p-3 rounded-2xl text-slate-100 leading-relaxed font-medium">${pf.answer}</div></div>`).join('');
         }
 
         function renderInstagram() {
             const c = document.getElementById('instagramContainer');
-            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-md"><img src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] text-slate-200 font-medium">${ig.title}</span></a>`).join('');
+            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-md"><img src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] text-slate-100 font-medium">${ig.title}</span></a>`).join('');
         }
 
         function renderPodcasts() {
             const c = document.getElementById('podcastsContainer');
-            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3 rounded-2xl space-y-2 shadow"><h4 class="font-bold text-xs text-red-400">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
+            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3.5 rounded-2xl space-y-2 shadow-md"><h4 class="font-bold text-xs text-red-400">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
         function renderFiles() {
             const c = document.getElementById('filesContainer');
-            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-400">${f.title}</h3><p class="text-[11px] text-slate-200">${f.description}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-400">${f.title}</h3><p class="text-[11px] text-slate-100 leading-relaxed font-medium">${f.description}</p></div>`).join('');
         }
 
         function renderInfographics() {
             const c = document.getElementById('infographicsContainer');
-            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4></div>`).join('');
         }
 
         function renderSeries() {
             const c = document.getElementById('seriesContainer');
-            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-400 truncate">${ser.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-400 truncate">${ser.title}</h4></div>`).join('');
         }
 
         function openMediaModal(idx, type) {
@@ -767,7 +791,7 @@
             bar.innerHTML = (appData.shareCards || []).map((card, idx) => `
                 <div onclick="openStorySheet(${idx})" class="flex flex-col items-center space-y-1 flex-shrink-0 cursor-pointer">
                     <div class="story-ring"><div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-amber-400 text-xs font-bold shadow-inner"><i class="fa-solid fa-certificate"></i></div></div>
-                    <span class="text-[9px] text-slate-300 max-w-[50px] truncate">${card.title}</span>
+                    <span class="text-[9px] text-slate-200 max-w-[50px] truncate">${card.title}</span>
                 </div>
             `).join('');
         }
@@ -776,12 +800,11 @@
             const card = appData.shareCards[idx];
             if(!card) return;
             document.getElementById('mediaModalTitle').innerText = card.title;
-            document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 text-slate-200 text-xs leading-relaxed overflow-y-auto">${card.text}</div>`;
+            document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 text-slate-100 text-xs leading-relaxed overflow-y-auto font-medium">${card.text}</div>`;
             document.getElementById('mediaModalExternalBtn').classList.add('hidden');
             document.getElementById('mediaModal').classList.remove('hidden');
         }
 
-        // محاسبه‌گرهای کامل ابزارها
         function calculateCourtFee() {
             const amt = parseFloat(document.getElementById('claimAmountInput').value) || 0;
             document.getElementById('feeResult').innerText = `هزینه دادرسی بدوی: ${Math.round(amt * 0.035).toLocaleString()} ریال`;
@@ -823,7 +846,7 @@
             }
             container.innerHTML = chatConversationHistory.map(msg => `
                 <div class="flex justify-${msg.role === 'user' ? 'end' : 'start'}">
-                    <div class="${msg.role === 'user' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-100'} p-2.5 rounded-2xl max-w-[85%] text-[11px] shadow">
+                    <div class="${msg.role === 'user' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-100'} p-2.5 rounded-2xl max-w-[85%] text-[11px] shadow font-medium">
                         ${msg.text.replace(/\n/g, '<br>')}
                     </div>
                 </div>
@@ -859,7 +882,7 @@
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
-            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer hover:bg-white/15 rounded">${d.term}</div>`).join('') || '<div class="p-2 text-slate-400 text-xs">موردی یافت نشد.</div>';
+            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer hover:bg-white/15 rounded">${d.term}</div>`).join('') || '<div class="p-2 text-slate-300 text-xs">موردی یافت نشد.</div>';
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -895,7 +918,7 @@
                         <div class="bg-slate-900 p-2.5 rounded-xl text-white text-[10px] space-y-1 border border-white/10 shadow">
                             <div class="text-amber-400 font-bold">کد: ${f.trackingCode}</div>
                             <div><b>سوال:</b> ${f.question}</div>
-                            <div class="text-emerald-400">${f.answer ? 'پاسخ: ' + f.answer : 'در حال بررسی...'}</div>
+                            <div class="text-emerald-400 font-medium">${f.answer ? 'پاسخ: ' + f.answer : 'در حال بررسی...'}</div>
                         </div>
                     `).join('');
                 }
@@ -924,19 +947,21 @@
             window.scrollTo(0, 0);
         }
 
-        // انیمیشن داینامیک کوچک شدن هدر هنگام اسکرول
+        // اسکرول هدر: محو شدن تدریجی به سمت بالا هنگام اسکرول به پایین و بازگشت هنگام اسکرول به بالا
         function initScrollHeaderEffect() {
             const header = document.getElementById('appHeader');
+            let lastScrollY = window.scrollY;
             window.addEventListener('scroll', () => {
-                if (window.scrollY > 30) {
-                    header.classList.add('header-shrunken');
+                const currentScrollY = window.scrollY;
+                if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                    header.classList.add('header-hidden');
                 } else {
-                    header.classList.remove('header-shrunken');
+                    header.classList.remove('header-hidden');
                 }
-            });
+                lastScrollY = currentScrollY;
+            }, { passive: true });
         }
 
-        // بازخورد موجی نوری (Ripple Effect) روی دکمه‌ها
         function initRippleEffect() {
             document.addEventListener('click', function(e) {
                 const target = e.target.closest('button, .clickable-card');
@@ -956,7 +981,6 @@
             });
         }
 
-        // مدیریت بستن مودال با جسچر کشیدن به پایین (Swipe to Close)
         function initSwipeToClose() {
             ['mediaModal', 'advancedSearchModal'].forEach(modalId => {
                 const modal = document.getElementById(modalId);
@@ -969,6 +993,12 @@
                     }
                 }, {passive: true});
             });
+        }
+
+        function toggleOledMode() {
+            document.body.classList.toggle('oled-mode');
+            const isOled = document.body.classList.contains('oled-mode');
+            localStorage.setItem('oled_mode', isOled);
         }
 
         function manualRefresh() { localStorage.removeItem('mizan_cache'); location.reload(); }

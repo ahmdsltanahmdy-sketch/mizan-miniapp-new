@@ -75,7 +75,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* رفع کامل مشکل خوانایی متن با تضاد رنگی بالا در حالت‌های روشن و تیره */
         .ultra-glass {
             background: rgba(15, 23, 42, 0.97);
             backdrop-filter: blur(25px);
@@ -100,8 +99,8 @@
 
         .settings-glass {
             background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             color: #ffffff;
         }
@@ -111,8 +110,21 @@
             color: #0f172a;
         }
 
+        /* ناوبری شناور با افکت بلور عمیق */
+        .floating-nav {
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 15px rgba(197, 27, 36, 0.2);
+        }
+        .light .floating-nav, body:not(.dark):not(.oled-mode) .floating-nav {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
         .glass-tab { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
-        .dark .glass-tab, body.oled-mode .glass-tab { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.15); }
 
         .header-bg {
             background-image: url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/mizan-miniapp-new/main/photo_2026-09-15_10-06-27.jpg');
@@ -128,15 +140,40 @@
             color: #ffffff;
         }
 
-        /* انیمیشن بسیار نرم محو شدن هدر هنگام اسکرول */
+        /* انیمیشن بسیار آرام و تدریجی محو شدن هدر هنگام اسکرول */
         #appHeader {
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             will-change: transform, opacity;
         }
         .header-hidden {
             transform: translateY(-100%);
             opacity: 0;
             pointer-events: none;
+        }
+
+        /* اسکلتون‌های اختصاصی پیشرفته */
+        .custom-skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: customSkeletonAnim 1.5s infinite ease-in-out;
+            border-radius: 14px;
+        }
+        @keyframes customSkeletonAnim {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* لودر اختصاصی مینی‌اپ */
+        .custom-loader {
+            width: 32px; height: 32px;
+            border: 3px solid rgba(197, 27, 36, 0.2);
+            border-top-color: #c51b24;
+            border-radius: 50%;
+            animation: spinLoader 0.8s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spinLoader {
+            to { transform: rotate(360deg); }
         }
 
         .ripple-container { position: relative; overflow: hidden; }
@@ -159,17 +196,6 @@
         @keyframes fadeInScale {
             from { opacity: 0; transform: translateY(8px) scale(0.99); }
             to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 75%);
-            background-size: 200% 100%;
-            animation: skeletonLoading 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 12px;
-        }
-        @keyframes skeletonLoading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
         }
 
         .story-ring {
@@ -209,6 +235,7 @@
         document.documentElement.style.setProperty('--selected-font', savedFont);
         const savedFontSize = localStorage.getItem('mizan_font_size') || '12px';
         document.documentElement.style.setProperty('--app-font-size', savedFontSize);
+        document.body.style.fontSize = savedFontSize;
 
         let tgSettings = { haptic: localStorage.getItem('tg_haptic') !== 'false' };
 
@@ -221,7 +248,7 @@
         }
     </script>
 
-    <!-- هدر با انیمیشن محو شدن نرم هنگام اسکرول -->
+    <!-- هدر با انیمیشن محو شدن بسیار آرام -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
         <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -240,7 +267,7 @@
                 <button onclick="toggleNotificationsModal();" class="relative p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-bell text-xs text-amber-300"></i><span id="notifBadge" class="hidden absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-ping"></span></button>
                 <span id="headerWeatherWidget" class="font-medium">تهران...</span>
                 <button onclick="manualRefresh();" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
-                <button onclick="toggleSettingsMenu(event);" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
+                <button id="settingsBtn" onclick="toggleSettingsMenu(event);" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
 
@@ -330,8 +357,8 @@
                 <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="dictionaryContainer" class="space-y-2 mt-2">
-                <div class="skeleton h-20 w-full"></div>
-                <div class="skeleton h-20 w-full"></div>
+                <div class="custom-skeleton h-20 w-full"></div>
+                <div class="custom-skeleton h-20 w-full"></div>
             </div>
         </section>
 
@@ -339,7 +366,7 @@
         <section id="legal-tab" class="page-section hidden">
             <h2 class="font-black text-xs mb-2 text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> سامانه‌های قضایی</h2>
             <div id="legalSystemsContainer" class="space-y-3">
-                <div class="skeleton h-16 w-full"></div>
+                <div class="custom-skeleton h-16 w-full"></div>
             </div>
         </section>
 
@@ -375,20 +402,20 @@
         <!-- تب ۵: قوانین -->
         <section id="laws-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> آرشیو قوانین</h2>
-            <div id="lawsContainer" class="space-y-2.5"><div class="skeleton h-24 w-full"></div></div>
+            <div id="lawsContainer" class="space-y-2.5"><div class="custom-skeleton h-24 w-full"></div></div>
         </section>
 
         <!-- تب ۶: کارت‌ها -->
         <section id="cards-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-id-card ml-1 text-red-500"></i> کارت‌های حقوقی</h2>
             <div class="flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar py-2" id="storyHighlightsBar"></div>
-            <div id="shareCardsContainer" class="space-y-3 mt-2"><div class="skeleton h-32 w-full"></div></div>
+            <div id="shareCardsContainer" class="space-y-3 mt-2"><div class="custom-skeleton h-32 w-full"></div></div>
         </section>
 
         <!-- تب ۷: اطلاعیه‌ها -->
         <section id="news-tab" class="page-section hidden space-y-4">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-bullhorn ml-1 text-red-500"></i> اخبار رسمی</h2>
-            <div id="newsContainer" class="space-y-3"><div class="skeleton h-20 w-full"></div></div>
+            <div id="newsContainer" class="space-y-3"><div class="custom-skeleton h-20 w-full"></div></div>
         </section>
 
         <!-- تب ۸: ابزارها -->
@@ -440,7 +467,7 @@
         <!-- تب ۹: سوالات عمومی -->
         <section id="public-faq-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-clipboard-question ml-1 text-red-500"></i> بانک سوالات عمومی</h2>
-            <div id="publicFaqContainer" class="space-y-3"><div class="skeleton h-24 w-full"></div></div>
+            <div id="publicFaqContainer" class="space-y-3"><div class="custom-skeleton h-24 w-full"></div></div>
         </section>
 
         <!-- تب ۱۰: اینستاگرام -->
@@ -486,6 +513,11 @@
         </section>
     </main>
 
+    <!-- دکمه بازگشت به بالای صفحه (Back-to-Top) -->
+    <button id="backToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="fixed bottom-24 left-4 z-40 hidden w-10 h-10 rounded-full ultra-glass text-amber-300 shadow-2xl flex items-center justify-center transition hover:scale-110">
+        <i class="fa-solid fa-arrow-up text-xs"></i>
+    </button>
+
     <!-- مودال رسانه -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
         <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
@@ -509,8 +541,8 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین -->
-    <nav class="fixed bottom-3 left-3 right-3 ultra-glass rounded-3xl border border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
+    <!-- ناوبری پایین شناور با افکت بلور عمیق -->
+    <nav class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center text-red-500 font-bold px-2.5 py-1"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
         <button onclick="switchTab('laws-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
@@ -543,7 +575,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.8.1 (اصلاح نهایی خوانایی متن‌ها و حالت روز/شب)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.9.0 (مجهز به اسکلتون‌های سفارشی، ناوبری بلور عمیق و دکمه Back-to-Top)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -576,6 +608,7 @@
             initScrollHeaderEffect();
             initRippleEffect();
             initSwipeToClose();
+            initOutsideClickForSettings();
         });
 
         function applySavedSettings() {
@@ -596,6 +629,10 @@
             document.documentElement.style.setProperty('--app-font-size', val);
             localStorage.setItem('mizan_font_size', val);
             document.body.style.fontSize = val;
+            // اعمال مستقیم روی تگ‌های متن داخلی برای پایداری ۱۰۰ درصدی
+            document.querySelectorAll('.page-section p, .page-section span, .ultra-glass').forEach(el => {
+                el.style.fontSize = val;
+            });
         }
 
         function changeCalendarType(type) {
@@ -677,13 +714,14 @@
                 clearBtn.classList.add('hidden');
             }
             if(counterElem) counterElem.innerText = `${list.length} واژه`;
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
             container.innerHTML = list.map(d => `
                 <div class="ultra-glass p-3.5 rounded-xl border border-white/15 space-y-1.5 shadow-md">
                     <div class="flex justify-between items-center">
-                        <div class="font-black text-red-600 dark:text-red-400 text-xs">${d.term}</div>
+                        <div class="font-black text-red-600 dark:text-red-400 text-xs" style="font-size: ${currentSize}">${d.term}</div>
                         <button onclick="copyToClipboard('${d.term}: ${d.definition}'); triggerHaptic('light');" class="text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
                     </div>
-                    <p class="text-[11px] leading-relaxed font-semibold">${d.definition}</p>
+                    <p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${d.definition}</p>
                 </div>
             `).join('');
         }
@@ -695,7 +733,8 @@
 
         function renderLegalSystems() {
             const c = document.getElementById('legalSystemsContainer');
-            if(c) c.innerHTML = (appData.legalSystems || []).map(s => `<div class="ultra-glass p-4 rounded-2xl flex justify-between items-center shadow"><span class="font-bold text-red-600 dark:text-red-400">${s.title}</span><a href="${s.url}" target="_blank" class="bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">ورود</a></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.legalSystems || []).map(s => `<div class="ultra-glass p-4 rounded-2xl flex justify-between items-center shadow"><span class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${s.title}</span><a href="${s.url}" target="_blank" class="bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">ورود</a></div>`).join('');
         }
 
         function renderLaws(filter = '') {
@@ -706,22 +745,26 @@
             const q = normalizeNumbers(filter);
             if(q.length > 0) list = list.filter(l => normalizeNumbers(l.title).includes(q) || normalizeNumbers(l.content).includes(q));
             if(counterElem) counterElem.innerText = `${list.length} قانون`;
-            c.innerHTML = list.map(l => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${l.title}</h3><p class="text-[11px] font-bold text-amber-600 dark:text-amber-300">${l.summary || ''}</p><p class="text-[11px] leading-relaxed font-semibold">${l.content}</p></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            c.innerHTML = list.map(l => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><h3 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${l.title}</h3><p class="font-bold text-amber-600 dark:text-amber-300" style="font-size: ${currentSize}">${l.summary || ''}</p><p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${l.content}</p></div>`).join('');
         }
 
         function renderShareCards() {
             const c = document.getElementById('shareCardsContainer');
-            if(c) c.innerHTML = (appData.shareCards || []).map(card => `<div class="card-bg-glass p-4 rounded-3xl space-y-2 shadow-xl"><span class="font-bold text-amber-300 text-xs">${card.title}</span><p class="text-[11px] text-white leading-relaxed font-semibold">${card.text}</p></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.shareCards || []).map(card => `<div class="card-bg-glass p-4 rounded-3xl space-y-2 shadow-xl"><span class="font-bold text-amber-300" style="font-size: ${currentSize}">${card.title}</span><p class="text-white leading-relaxed font-semibold" style="font-size: ${currentSize}">${card.text}</p></div>`).join('');
         }
 
         function renderNews() {
             const c = document.getElementById('newsContainer');
-            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-4 rounded-2xl space-y-1.5 shadow-md"><div class="text-[9px] text-slate-500 dark:text-slate-300">${n.date || ''}</div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${n.title}</h3><p class="text-[11px] leading-relaxed font-semibold">${n.summary}</p></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-4 rounded-2xl space-y-1.5 shadow-md"><div class="text-[9px] text-slate-500 dark:text-slate-300">${n.date || ''}</div><h3 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${n.title}</h3><p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${n.summary}</p></div>`).join('');
         }
 
         function renderPublicFaqs() {
             const c = document.getElementById('publicFaqContainer');
-            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2 shadow-md"><div class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="text-[11px] bg-slate-200 dark:bg-black/50 p-3 rounded-2xl leading-relaxed font-semibold">${pf.answer}</div></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2 shadow-md"><div class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="bg-slate-200 dark:bg-black/50 p-3 rounded-2xl leading-relaxed font-semibold" style="font-size: ${currentSize}">${pf.answer}</div></div>`).join('');
         }
 
         function renderInstagram() {
@@ -731,22 +774,26 @@
 
         function renderPodcasts() {
             const c = document.getElementById('podcastsContainer');
-            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3.5 rounded-2xl space-y-2 shadow-md"><h4 class="font-bold text-xs text-red-600 dark:text-red-400">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3.5 rounded-2xl space-y-2 shadow-md"><h4 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
         function renderFiles() {
             const c = document.getElementById('filesContainer');
-            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-600 dark:text-red-400">${f.title}</h3><p class="text-[11px] leading-relaxed font-semibold">${f.description}</p></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-red-600 dark:text-red-400" style="font-size: calc(${currentSize} + 2px)">${f.title}</h3><p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${f.description}</p></div>`).join('');
         }
 
         function renderInfographics() {
             const c = document.getElementById('infographicsContainer');
-            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-600 dark:text-red-400">${inf.title}</h4></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${inf.title}</h4></div>`).join('');
         }
 
         function renderSeries() {
             const c = document.getElementById('seriesContainer');
-            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-600 dark:text-red-400 truncate">${ser.title}</h4></div>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
         function openMediaModal(idx, type) {
@@ -775,7 +822,8 @@
 
         function renderLiveChannels() {
             const c = document.getElementById('liveChannelsSelector');
-            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1 shadow"><div class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] opacity-80">${st.description}</div></button>`).join('');
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1 shadow"><div class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] opacity-80">${st.description}</div></button>`).join('');
         }
 
         function playSelectedStream(st) {
@@ -804,7 +852,8 @@
             const card = appData.shareCards[idx];
             if(!card) return;
             document.getElementById('mediaModalTitle').innerText = card.title;
-            document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 text-xs leading-relaxed overflow-y-auto font-semibold">${card.text}</div>`;
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+            document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 leading-relaxed overflow-y-auto font-semibold" style="font-size: ${currentSize}">${card.text}</div>`;
             document.getElementById('mediaModalExternalBtn').classList.add('hidden');
             document.getElementById('mediaModal').classList.remove('hidden');
         }
@@ -848,9 +897,10 @@
                 container.innerHTML = `<div class="text-center text-[10px] text-slate-300 py-4">سلام! سوال خود را بپرسید...</div>`;
                 return;
             }
+            const currentSize = localStorage.getItem('mizan_font_size') || '12px';
             container.innerHTML = chatConversationHistory.map(msg => `
                 <div class="flex justify-${msg.role === 'user' ? 'end' : 'start'}">
-                    <div class="${msg.role === 'user' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-100'} p-2.5 rounded-2xl max-w-[85%] text-[11px] shadow font-medium">
+                    <div class="${msg.role === 'user' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-100'} p-2.5 rounded-2xl max-w-[85%] shadow font-medium" style="font-size: ${currentSize}">
                         ${msg.text.replace(/\n/g, '<br>')}
                     </div>
                 </div>
@@ -951,17 +1001,25 @@
             window.scrollTo(0, 0);
         }
 
+        // انیمیشن بسیار آرام و تدریجی هدر هنگام اسکرول + کنترل دکمه Back-to-Top
         function initScrollHeaderEffect() {
             const header = document.getElementById('appHeader');
+            const backToTopBtn = document.getElementById('backToTopBtn');
             let lastScrollY = window.scrollY;
             window.addEventListener('scroll', () => {
                 const currentScrollY = window.scrollY;
-                if (currentScrollY > lastScrollY && currentScrollY > 40) {
+                if (currentScrollY > lastScrollY && currentScrollY > 60) {
                     header.classList.add('header-hidden');
                 } else {
                     header.classList.remove('header-hidden');
                 }
                 lastScrollY = currentScrollY;
+
+                if (currentScrollY > 300) {
+                    backToTopBtn.classList.remove('hidden');
+                } else {
+                    backToTopBtn.classList.add('hidden');
+                }
             }, { passive: true });
         }
 
@@ -995,6 +1053,19 @@
                         modal.classList.add('hidden');
                     }
                 }, {passive: true});
+            });
+        }
+
+        // بستن منوی تنظیمات با کلیک روی صفحه
+        function initOutsideClickForSettings() {
+            document.addEventListener('click', (e) => {
+                const dropdown = document.getElementById('settingsDropdown');
+                const settingsBtn = document.getElementById('settingsBtn');
+                if (dropdown && !dropdown.classList.contains('hidden')) {
+                    if (!dropdown.contains(e.target) && !settingsBtn.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                    }
+                }
             });
         }
 

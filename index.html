@@ -130,15 +130,25 @@
             transform: scale(1.15) translateY(-2px);
         }
 
-        /* منوی کشویی گروه‌بندی شده (Segmented Drawer) */
+        /* منوی کشویی اصلاح‌شده و کاملاً در دسترس */
         #moreDrawer {
-            transform: translateY(100%);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            visibility: hidden;
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            max-width: 28rem;
+            margin: 0 auto;
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+            padding: 1rem;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            animation: slideUpDrawer 0.3s ease forwards;
         }
-        #moreDrawer.open {
-            transform: translateY(0);
-            visibility: visible;
+        @keyframes slideUpDrawer {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .glass-tab { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
@@ -578,7 +588,7 @@
     </main>
 
     <!-- منوی کشویی گروه‌بندی شده (Segmented More Drawer) -->
-    <div id="moreDrawer" class="fixed inset-x-0 bottom-0 z-50 ultra-glass rounded-t-3xl p-4 shadow-2xl max-w-md mx-auto space-y-3">
+    <div id="moreDrawer" class="settings-glass rounded-t-3xl p-4 shadow-2xl space-y-3">
         <div class="flex justify-between items-center pb-2 border-b border-white/10">
             <span class="font-bold text-xs text-amber-300"><i class="fa-solid fa-layer-group ml-1"></i> سایر بخش‌ها و امکانات مینی‌اپ</span>
             <button onclick="toggleMoreDrawer()" class="text-slate-300 hover:text-white p-1"><i class="fa-solid fa-xmark text-sm"></i></button>
@@ -623,7 +633,7 @@
         </div>
     </div>
 
-    <!-- تب‌بار اصلی پایین (با دکمه کشویی «بیشتر» هم‌رنگ و استاندارد) -->
+    <!-- تب‌بار اصلی پایین (گزینه بیشتر کاملاً استاندارد و هم‌رنگ با بقیه تب‌ها) -->
     <nav class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center justify-around whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-2.5 py-1 relative"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -632,8 +642,8 @@
         <button onclick="switchTab('lawyer-tab', this); triggerHaptic('light'); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
         <button onclick="switchTab('chatbot-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
         <button onclick="switchTab('tools-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
-        <!-- دکمه منوی کشویی بیشتر هم‌رنگ با بقیه تب‌ها -->
-        <button onclick="toggleMoreDrawer(); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-bars-staggered text-sm mb-0.5"></i><span class="text-[8px]">بیشتر</span><span id="badgeMore" class="badge-dot hidden"></span></button>
+        <!-- دکمه منوی کشویی بیشتر کاملاً هم‌رنگ با بقیه -->
+        <button onclick="toggleMoreDrawer(event);" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-bars-staggered text-sm mb-0.5"></i><span class="text-[8px]">بیشتر</span><span id="badgeMore" class="badge-dot hidden"></span></button>
     </nav>
 
     <script>
@@ -651,7 +661,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.2.0 (حذف FAB، یکپارچه‌سازی ظاهر دکمه بیشتر و رفع ایراد منوی کشویی)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.3.0 (رفع کامل ایراد منوی کشویی و یکپارچه‌سازی ظاهر تب‌ها)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -1077,9 +1087,14 @@
             } catch(e) {}
         }
 
-        function toggleMoreDrawer() {
+        function toggleMoreDrawer(event) {
+            if(event) event.stopPropagation();
             const drawer = document.getElementById('moreDrawer');
-            drawer.classList.toggle('open');
+            if (drawer.style.display === 'block') {
+                drawer.style.display = 'none';
+            } else {
+                drawer.style.display = 'block';
+            }
             triggerHaptic('light');
         }
 
@@ -1182,9 +1197,9 @@
                 }
                 const drawer = document.getElementById('moreDrawer');
                 const moreBtn = document.querySelector('button[onclick*="toggleMoreDrawer"]');
-                if (drawer && drawer.classList.contains('open')) {
+                if (drawer && drawer.style.display === 'block') {
                     if (!drawer.contains(e.target) && !moreBtn.contains(e.target)) {
-                        drawer.classList.remove('open');
+                        drawer.style.display = 'none';
                     }
                 }
             });

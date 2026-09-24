@@ -38,7 +38,6 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* پس‌زمینه مش و خوانایی کامل */
         .mesh-bg {
             background-color: #0b0f19;
             background-image: 
@@ -51,7 +50,6 @@
             background-image: none;
         }
 
-        /* حالت مطالعه تاریک مطلق OLED */
         body.oled-mode {
             background-color: #000000 !important;
             color: #f8fafc !important;
@@ -77,23 +75,27 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* رفع مشکل کنتراست و تداخل رنگ متن‌ها در کارت‌ها */
+        /* رفع کامل مشکل خوانایی متن با تضاد رنگی بالا در حالت‌های روشن و تیره */
         .ultra-glass {
-            background: rgba(15, 23, 42, 0.96);
+            background: rgba(15, 23, 42, 0.97);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
-            color: #f1f5f9;
+            color: #ffffff;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .light .ultra-glass, body:not(.dark):not(.oled-mode) .ultra-glass {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.99);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.18);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-            color: #0f172a;
+            color: #0f172a !important;
+        }
+        .light .ultra-glass p, body:not(.dark):not(.oled-mode) .ultra-glass p,
+        .light .ultra-glass span, body:not(.dark):not(.oled-mode) .ultra-glass span {
+            color: #1e293b !important;
         }
 
         .settings-glass {
@@ -126,9 +128,9 @@
             color: #ffffff;
         }
 
-        /* انیمیشن محو شدن و بازگشت هدر هنگام اسکرول */
+        /* انیمیشن بسیار نرم محو شدن هدر هنگام اسکرول */
         #appHeader {
-            transition: transform 0.35s ease, opacity 0.35s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             will-change: transform, opacity;
         }
         .header-hidden {
@@ -191,7 +193,11 @@
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             sessionStorage.setItem('mizan_user_id', userId);
         }
-        if (localStorage.getItem('mizan_theme') === 'dark') {
+        if (localStorage.getItem('mizan_theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.body.classList.remove('dark');
+            document.body.classList.add('light');
+        } else {
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
         }
@@ -215,7 +221,7 @@
         }
     </script>
 
-    <!-- هدر با قابلیت محو شدن هنگام اسکرول -->
+    <!-- هدر با انیمیشن محو شدن نرم هنگام اسکرول -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
         <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -241,7 +247,7 @@
         <!-- منوی تنظیمات کامل -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-85 p-4 settings-glass rounded-3xl space-y-3 text-xs shadow-2xl max-h-[75vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
-                <span class="font-bold">حالت نمایش:</span>
+                <span class="font-bold">حالت نمایش (روز / شب):</span>
                 <button onclick="toggleTheme();" class="bg-white/20 px-3 py-1 rounded-xl font-medium">تیره / روشن</button>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
@@ -537,7 +543,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.8.0 (بهینه‌سازی کامل خوانایی متن‌ها، اسکرول هدر و حالت OLED)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.8.1 (اصلاح نهایی خوانایی متن‌ها و حالت روز/شب)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -586,11 +592,9 @@
             localStorage.setItem('mizan_font', val);
         }
 
-        // اصلاح کامل تابع تغییر اندازه متن
         function changeAppFontSize(val) {
             document.documentElement.style.setProperty('--app-font-size', val);
             localStorage.setItem('mizan_font_size', val);
-            // اعمال مستقیم روی بدنه برای بازخورد آنی
             document.body.style.fontSize = val;
         }
 
@@ -676,10 +680,10 @@
             container.innerHTML = list.map(d => `
                 <div class="ultra-glass p-3.5 rounded-xl border border-white/15 space-y-1.5 shadow-md">
                     <div class="flex justify-between items-center">
-                        <div class="font-black text-red-400 text-xs">${d.term}</div>
-                        <button onclick="copyToClipboard('${d.term}: ${d.definition}'); triggerHaptic('light');" class="text-slate-300 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
+                        <div class="font-black text-red-600 dark:text-red-400 text-xs">${d.term}</div>
+                        <button onclick="copyToClipboard('${d.term}: ${d.definition}'); triggerHaptic('light');" class="text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
                     </div>
-                    <p class="text-[11px] leading-relaxed text-slate-100 dark:text-slate-100 font-medium">${d.definition}</p>
+                    <p class="text-[11px] leading-relaxed font-semibold">${d.definition}</p>
                 </div>
             `).join('');
         }
@@ -691,7 +695,7 @@
 
         function renderLegalSystems() {
             const c = document.getElementById('legalSystemsContainer');
-            if(c) c.innerHTML = (appData.legalSystems || []).map(s => `<div class="ultra-glass p-4 rounded-2xl flex justify-between items-center shadow"><span class="font-bold text-red-400">${s.title}</span><a href="${s.url}" target="_blank" class="bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">ورود</a></div>`).join('');
+            if(c) c.innerHTML = (appData.legalSystems || []).map(s => `<div class="ultra-glass p-4 rounded-2xl flex justify-between items-center shadow"><span class="font-bold text-red-600 dark:text-red-400">${s.title}</span><a href="${s.url}" target="_blank" class="bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">ورود</a></div>`).join('');
         }
 
         function renderLaws(filter = '') {
@@ -702,47 +706,47 @@
             const q = normalizeNumbers(filter);
             if(q.length > 0) list = list.filter(l => normalizeNumbers(l.title).includes(q) || normalizeNumbers(l.content).includes(q));
             if(counterElem) counterElem.innerText = `${list.length} قانون`;
-            c.innerHTML = list.map(l => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><h3 class="font-bold text-xs text-red-400">${l.title}</h3><p class="text-[11px] font-bold text-amber-300">${l.summary || ''}</p><p class="text-[11px] text-slate-100 dark:text-slate-100 leading-relaxed font-medium">${l.content}</p></div>`).join('');
+            c.innerHTML = list.map(l => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${l.title}</h3><p class="text-[11px] font-bold text-amber-600 dark:text-amber-300">${l.summary || ''}</p><p class="text-[11px] leading-relaxed font-semibold">${l.content}</p></div>`).join('');
         }
 
         function renderShareCards() {
             const c = document.getElementById('shareCardsContainer');
-            if(c) c.innerHTML = (appData.shareCards || []).map(card => `<div class="card-bg-glass p-4 rounded-3xl space-y-2 shadow-xl"><span class="font-bold text-amber-300 text-xs">${card.title}</span><p class="text-[11px] text-slate-100 leading-relaxed font-medium">${card.text}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.shareCards || []).map(card => `<div class="card-bg-glass p-4 rounded-3xl space-y-2 shadow-xl"><span class="font-bold text-amber-300 text-xs">${card.title}</span><p class="text-[11px] text-white leading-relaxed font-semibold">${card.text}</p></div>`).join('');
         }
 
         function renderNews() {
             const c = document.getElementById('newsContainer');
-            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-4 rounded-2xl space-y-1.5 shadow-md"><div class="text-[9px] text-slate-300">${n.date || ''}</div><h3 class="font-bold text-xs text-red-400">${n.title}</h3><p class="text-[11px] text-slate-100 leading-relaxed font-medium">${n.summary}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-4 rounded-2xl space-y-1.5 shadow-md"><div class="text-[9px] text-slate-500 dark:text-slate-300">${n.date || ''}</div><h3 class="font-bold text-xs text-red-600 dark:text-red-400">${n.title}</h3><p class="text-[11px] leading-relaxed font-semibold">${n.summary}</p></div>`).join('');
         }
 
         function renderPublicFaqs() {
             const c = document.getElementById('publicFaqContainer');
-            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2 shadow-md"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="text-[11px] bg-black/50 p-3 rounded-2xl text-slate-100 leading-relaxed font-medium">${pf.answer}</div></div>`).join('');
+            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2 shadow-md"><div class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="text-[11px] bg-slate-200 dark:bg-black/50 p-3 rounded-2xl leading-relaxed font-semibold">${pf.answer}</div></div>`).join('');
         }
 
         function renderInstagram() {
             const c = document.getElementById('instagramContainer');
-            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-md"><img src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] text-slate-100 font-medium">${ig.title}</span></a>`).join('');
+            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-md"><img src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] font-bold">${ig.title}</span></a>`).join('');
         }
 
         function renderPodcasts() {
             const c = document.getElementById('podcastsContainer');
-            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3.5 rounded-2xl space-y-2 shadow-md"><h4 class="font-bold text-xs text-red-400">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
+            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3.5 rounded-2xl space-y-2 shadow-md"><h4 class="font-bold text-xs text-red-600 dark:text-red-400">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
         function renderFiles() {
             const c = document.getElementById('filesContainer');
-            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-400">${f.title}</h3><p class="text-[11px] text-slate-100 leading-relaxed font-medium">${f.description}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-600 dark:text-red-400">${f.title}</h3><p class="text-[11px] leading-relaxed font-semibold">${f.description}</p></div>`).join('');
         }
 
         function renderInfographics() {
             const c = document.getElementById('infographicsContainer');
-            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-600 dark:text-red-400">${inf.title}</h4></div>`).join('');
         }
 
         function renderSeries() {
             const c = document.getElementById('seriesContainer');
-            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-400 truncate">${ser.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-600 dark:text-red-400 truncate">${ser.title}</h4></div>`).join('');
         }
 
         function openMediaModal(idx, type) {
@@ -771,7 +775,7 @@
 
         function renderLiveChannels() {
             const c = document.getElementById('liveChannelsSelector');
-            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1 shadow"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] text-slate-300">${st.description}</div></button>`).join('');
+            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1 shadow"><div class="font-bold text-xs text-red-600 dark:text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] opacity-80">${st.description}</div></button>`).join('');
         }
 
         function playSelectedStream(st) {
@@ -791,7 +795,7 @@
             bar.innerHTML = (appData.shareCards || []).map((card, idx) => `
                 <div onclick="openStorySheet(${idx})" class="flex flex-col items-center space-y-1 flex-shrink-0 cursor-pointer">
                     <div class="story-ring"><div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-amber-400 text-xs font-bold shadow-inner"><i class="fa-solid fa-certificate"></i></div></div>
-                    <span class="text-[9px] text-slate-200 max-w-[50px] truncate">${card.title}</span>
+                    <span class="text-[9px] font-bold max-w-[50px] truncate">${card.title}</span>
                 </div>
             `).join('');
         }
@@ -800,7 +804,7 @@
             const card = appData.shareCards[idx];
             if(!card) return;
             document.getElementById('mediaModalTitle').innerText = card.title;
-            document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 text-slate-100 text-xs leading-relaxed overflow-y-auto font-medium">${card.text}</div>`;
+            document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 text-xs leading-relaxed overflow-y-auto font-semibold">${card.text}</div>`;
             document.getElementById('mediaModalExternalBtn').classList.add('hidden');
             document.getElementById('mediaModal').classList.remove('hidden');
         }
@@ -882,7 +886,7 @@
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
-            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer hover:bg-white/15 rounded">${d.term}</div>`).join('') || '<div class="p-2 text-slate-300 text-xs">موردی یافت نشد.</div>';
+            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-xs cursor-pointer hover:bg-black/10 rounded font-bold">${d.term}</div>`).join('') || '<div class="p-2 text-xs font-bold">موردی یافت نشد.</div>';
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -947,13 +951,12 @@
             window.scrollTo(0, 0);
         }
 
-        // اسکرول هدر: محو شدن تدریجی به سمت بالا هنگام اسکرول به پایین و بازگشت هنگام اسکرول به بالا
         function initScrollHeaderEffect() {
             const header = document.getElementById('appHeader');
             let lastScrollY = window.scrollY;
             window.addEventListener('scroll', () => {
                 const currentScrollY = window.scrollY;
-                if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                if (currentScrollY > lastScrollY && currentScrollY > 40) {
                     header.classList.add('header-hidden');
                 } else {
                     header.classList.remove('header-hidden');
@@ -995,6 +998,13 @@
             });
         }
 
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            document.body.classList.toggle('dark', isDark);
+            document.body.classList.toggle('light', !isDark);
+            localStorage.setItem('mizan_theme', isDark ? 'dark' : 'light');
+        }
+
         function toggleOledMode() {
             document.body.classList.toggle('oled-mode');
             const isOled = document.body.classList.contains('oled-mode');
@@ -1004,7 +1014,6 @@
         function manualRefresh() { localStorage.removeItem('mizan_cache'); location.reload(); }
         function toggleNotificationsModal() { document.getElementById('notificationsModal').classList.toggle('hidden'); }
         function toggleSettingsMenu(e) { e.stopPropagation(); document.getElementById('settingsDropdown').classList.toggle('hidden'); }
-        function toggleTheme() { document.documentElement.classList.toggle('dark'); }
         function toggleFullScreen() { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
         function openAboutModal() { alert(appData.about[0].text); }
         function closeAboutModal() { document.getElementById('aboutModal').classList.add('hidden'); }

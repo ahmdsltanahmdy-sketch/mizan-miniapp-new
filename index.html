@@ -134,9 +134,11 @@
         #moreDrawer {
             transform: translateY(100%);
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            visibility: hidden;
         }
         #moreDrawer.open {
             transform: translateY(0);
+            visibility: visible;
         }
 
         .glass-tab { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
@@ -171,25 +173,6 @@
             pointer-events: none;
         }
 
-        /* تنظیم مکان دکمه‌های شناور برای عدم تداخل */
-        .smart-fab {
-            position: fixed;
-            bottom: 84px;
-            left: 16px;
-            z-index: 45;
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #c51b24, #9b131a);
-            color: white;
-            box-shadow: 0 10px 25px rgba(197, 27, 36, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .smart-fab:hover { transform: scale(1.1) rotate(15deg); }
-
         #backToTopBtn {
             position: fixed;
             bottom: 84px;
@@ -197,7 +180,6 @@
             z-index: 45;
         }
 
-        /* نشانگر وضعیت پویا (Badge) */
         .badge-dot {
             position: absolute;
             top: 2px;
@@ -613,12 +595,7 @@
         </div>
     </div>
 
-    <!-- دکمه اکشن شناور (FAB) سمت چپ -->
-    <div onclick="switchTab('chatbot-tab'); triggerHaptic('medium');" class="smart-fab" title="دستیار هوشمند">
-        <i class="fa-solid fa-robot text-base"></i>
-    </div>
-
-    <!-- دکمه بازگشت به بالا سمت راست (بدون تداخل با FAB) -->
+    <!-- دکمه بازگشت به بالا سمت راست -->
     <button id="backToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="hidden w-11 h-11 rounded-full ultra-glass text-amber-300 shadow-2xl flex items-center justify-center transition hover:scale-110">
         <i class="fa-solid fa-arrow-up text-xs"></i>
     </button>
@@ -646,7 +623,7 @@
         </div>
     </div>
 
-    <!-- تب‌بار اصلی پایین (با دکمه کشویی «بیشتر» و نشانگرهای پویا) -->
+    <!-- تب‌بار اصلی پایین (با دکمه کشویی «بیشتر» هم‌رنگ و استاندارد) -->
     <nav class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center justify-around whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-2.5 py-1 relative"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -655,8 +632,8 @@
         <button onclick="switchTab('lawyer-tab', this); triggerHaptic('light'); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
         <button onclick="switchTab('chatbot-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
         <button onclick="switchTab('tools-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
-        <!-- دکمه منوی کشویی بیشتر -->
-        <button onclick="toggleMoreDrawer(); triggerHaptic('light');" class="nav-btn flex flex-col items-center text-amber-400 font-bold px-2.5 py-1 relative"><i class="fa-solid fa-bars-staggered text-sm mb-0.5"></i><span class="text-[8px]">بیشتر</span><span id="badgeMore" class="badge-dot"></span></button>
+        <!-- دکمه منوی کشویی بیشتر هم‌رنگ با بقیه تب‌ها -->
+        <button onclick="toggleMoreDrawer(); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-bars-staggered text-sm mb-0.5"></i><span class="text-[8px]">بیشتر</span><span id="badgeMore" class="badge-dot hidden"></span></button>
     </nav>
 
     <script>
@@ -674,7 +651,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.1.0 (منوی کشویی تب‌بار، رفع مشکل کلیک جستجو و تنظیمات دکمه‌ها)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.2.0 (حذف FAB، یکپارچه‌سازی ظاهر دکمه بیشتر و رفع ایراد منوی کشویی)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -1036,7 +1013,6 @@
             }
         }
 
-        // رفع مشکل کلیک روی نتایج جستجوی زنده (هدایت دقیق به اصطلاح)
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }

@@ -38,21 +38,53 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* افکت گرادینت مش پویا و نویز ملایم (Mesh Gradients & Noise) */
+        .mesh-bg {
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 10% 15%, rgba(197, 27, 36, 0.18) 0px, transparent 55%),
+                radial-gradient(at 90% 85%, rgba(245, 158, 11, 0.12) 0px, transparent 55%),
+                radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.98) 0px, transparent 100%);
+        }
+        .light .mesh-bg, body:not(.dark) .mesh-bg {
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 10% 15%, rgba(197, 27, 36, 0.08) 0px, transparent 55%),
+                radial-gradient(at 90% 85%, rgba(245, 158, 11, 0.06) 0px, transparent 55%),
+                radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.98) 0px, transparent 100%);
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.025'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* گرادینت متن برای عناوین مهم (Gradient Text) */
+        .text-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* افکت شیشه‌ای پیشرفته با خوانایی بالا */
         .ultra-glass {
-            background: rgba(15, 23, 42, 0.96);
+            background: rgba(15, 23, 42, 0.94);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            color: #ffffff;
-            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            color: #f8fafc;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             color: #0f172a;
         }
 
@@ -60,8 +92,8 @@
             background: rgba(15, 23, 42, 0.98);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #f8fafc;
         }
         .light .settings-glass, body:not(.dark) .settings-glass {
             background: rgba(255, 255, 255, 0.98);
@@ -69,7 +101,7 @@
             color: #0f172a;
         }
 
-        .glass-tab { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.25); color: #ffffff !important; }
+        .glass-tab { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
         .dark .glass-tab { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.15); }
 
         .header-bg {
@@ -82,26 +114,42 @@
             background-image: linear-gradient(rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.98)), url('https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png');
             background-size: cover;
             background-position: center;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: #ffffff;
+        }
+
+        /* انیمیشن داینامیک هدر هنگام اسکرول (Shrinking Header on Scroll) */
+        #appHeader { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .header-shrunken { padding: 4px 0 !important; transform: scale(0.985); box-shadow: 0 10px 25px rgba(0,0,0,0.4); opacity: 0.97; }
+
+        /* بازخورد موجی کلیک (Ripple Effect) */
+        .ripple-container { position: relative; overflow: hidden; }
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(0);
+            animation: rippleAnim 0.55s linear;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim {
+            to { transform: scale(4); opacity: 0; }
         }
 
         button, a, .clickable-card { transition: transform 0.15s ease, opacity 0.2s ease; }
         button:active, a:active, .clickable-card:active { transform: scale(0.96); }
 
-        /* انیمیشن روان تعویض تب (Page Transitions) */
         .page-section { animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeInScale {
-            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            from { opacity: 0; transform: translateY(8px) scale(0.99); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* اسکلتون لودینگ پیشرفته‌تر (Skeleton Screens) */
         .skeleton {
             background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 75%);
             background-size: 200% 100%;
             animation: skeletonLoading 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 14px;
+            border-radius: 12px;
         }
         @keyframes skeletonLoading {
             0% { background-position: 200% 0; }
@@ -117,7 +165,9 @@
         }
     </style>
 </head>
-<body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col relative">
+<body id="bodyRoot" class="mesh-bg text-slate-900 dark:text-slate-100 min-h-screen flex flex-col relative">
+
+    <div class="noise-overlay"></div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyrMOSKpL5rwv5C9okpDQvbKE07-1JFP2ZE5xt7Xt4Y9sSvIUwbXZWU6ssTbBgQRgSZ/exec'; 
@@ -153,19 +203,19 @@
         <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
             <div class="flex items-center space-x-2 space-x-reverse">
                 <i class="fa-regular fa-calendar-days text-amber-400"></i>
-                <span id="headerCalendarWidget">تقویم...</span>
+                <span id="headerCalendarWidget" class="font-medium">تقویم...</span>
             </div>
             
-            <div class="flex items-center space-x-2 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/75 to-slate-900 border border-red-500/50 backdrop-blur-xl">
+            <div class="flex items-center space-x-2 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/75 to-slate-900 border border-red-500/50 backdrop-blur-xl shadow-lg">
                 <div class="w-5 h-5 rounded-lg overflow-hidden border border-white/30 flex-shrink-0">
                     <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" loading="lazy" class="w-full h-full object-cover" alt="Logo">
                 </div>
-                <span class="font-black tracking-[0.2em] text-[12px] text-amber-300">SIJT</span>
+                <span class="font-black tracking-[0.2em] text-[12px] text-gradient">SIJT</span>
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse">
                 <button onclick="toggleNotificationsModal();" class="relative p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-bell text-xs text-amber-300"></i><span id="notifBadge" class="hidden absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-ping"></span></button>
-                <span id="headerWeatherWidget">تهران...</span>
+                <span id="headerWeatherWidget" class="font-medium">تهران...</span>
                 <button onclick="manualRefresh();" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
                 <button onclick="toggleSettingsMenu(event);" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
@@ -175,11 +225,11 @@
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-85 p-4 settings-glass rounded-3xl space-y-3 text-xs shadow-2xl max-h-[75vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
-                <button onclick="toggleTheme();" class="bg-white/20 px-3 py-1 rounded-xl">تیره / روشن</button>
+                <button onclick="toggleTheme();" class="bg-white/20 px-3 py-1 rounded-xl font-medium">تیره / روشن</button>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">تمام‌صفحه هوشمند:</span>
-                <button onclick="toggleFullScreen();" class="bg-red-600/30 text-red-300 px-3 py-1 rounded-xl">ورود/خروج</button>
+                <button onclick="toggleFullScreen();" class="bg-red-600/30 text-red-300 px-3 py-1 rounded-xl font-medium">ورود/خروج</button>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">قلم تخصصی مینی‌اپ:</span>
@@ -221,7 +271,7 @@
         <div class="max-w-md mx-auto px-4 py-2.5 relative z-20">
             <div class="flex space-x-2 space-x-reverse relative items-center">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اصطلاحات..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/30">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اصطلاحات..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/30 shadow-inner">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
                     <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                 </div>
@@ -239,16 +289,16 @@
         <!-- تب ۱: اصطلاحات -->
         <section id="dictionary-tab" class="page-section space-y-3">
             <div class="flex items-center justify-between mb-1">
-                <h2 class="font-bold text-xs flex items-center text-red-500"><i class="fa-solid fa-book ml-1.5"></i> فرهنگ اصطلاحات حقوقی</h2>
+                <h2 class="font-black text-xs flex items-center text-gradient"><i class="fa-solid fa-book ml-1.5 text-red-500"></i> فرهنگ اصطلاحات حقوقی</h2>
                 <span id="dictCounter" class="text-[9px] text-amber-300 font-bold"></span>
             </div>
             <div class="flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar pb-1 text-[11px]">
-                <button onclick="filterDictCategory('all', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-red-600 text-white font-bold flex-shrink-0">همه</button>
+                <button onclick="filterDictCategory('all', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-red-600 text-white font-bold flex-shrink-0 shadow">همه</button>
                 <button onclick="filterDictCategory('مدنی', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-slate-800 text-slate-200 border border-white/15 flex-shrink-0">حقوق مدنی</button>
                 <button onclick="filterDictCategory('کیفری', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-slate-800 text-slate-200 border border-white/15 flex-shrink-0">کیفری</button>
             </div>
             <div class="relative">
-                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته در واژگان حقوقی..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/30 focus:outline-none">
+                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته در واژگان حقوقی..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/30 focus:outline-none shadow-inner">
                 <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
                 <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -260,6 +310,7 @@
 
         <!-- تب ۲: سامانه‌ها -->
         <section id="legal-tab" class="page-section hidden">
+            <h2 class="font-black text-xs mb-2 text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> سامانه های قضایی</h2>
             <div id="legalSystemsContainer" class="space-y-3">
                 <div class="skeleton h-16 w-full"></div>
             </div>
@@ -267,74 +318,74 @@
 
         <!-- تب ۳: مشاور -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
-            <div class="ultra-glass p-4 rounded-3xl space-y-4">
-                <h2 class="font-extrabold text-xs text-red-500">مشاور و وکیل آنلاین SIJT</h2>
+            <div class="ultra-glass p-4 rounded-3xl space-y-4 shadow-xl">
+                <h2 class="font-extrabold text-xs text-gradient">مشاور و وکیل آنلاین SIJT</h2>
                 <select id="questionCategory" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20">
                     <option value="حقوقی عمومی">حقوقی عمومی / قراردادها</option>
                     <option value="کیفری و جرایم">کیفری و جرایم</option>
                     <option value="خانواده و مهریه">خانواده و مهریه</option>
                 </select>
-                <textarea id="questionInput" placeholder="سوال حقوقی..." class="w-full bg-slate-900 text-amber-200 rounded-2xl p-3 text-xs h-24 resize-none border border-white/20"></textarea>
-                <button onclick="submitQuestion();" class="w-full bg-red-600 py-2.5 text-xs font-bold text-white rounded-xl">ارسال سوال</button>
+                <textarea id="questionInput" placeholder="سوال حقوقی..." class="w-full bg-slate-900 text-amber-200 rounded-2xl p-3 text-xs h-24 resize-none border border-white/20 shadow-inner"></textarea>
+                <button onclick="submitQuestion();" class="w-full bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white rounded-xl shadow-md">ارسال سوال</button>
                 <div id="userFaqsContainer" class="space-y-3 max-h-60 overflow-y-auto"></div>
             </div>
         </section>
 
         <!-- تب ۴: چت‌بات -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
-            <div class="ultra-glass p-4 rounded-3xl space-y-3">
-                <h2 class="font-extrabold text-xs text-red-500">دستیار هوشمند حقوقی SIJT</h2>
-                <div id="chatMessagesContainer" class="space-y-2.5 h-[48vh] overflow-y-auto p-2.5 bg-slate-900 rounded-2xl text-[11px] text-slate-100">
+            <div class="ultra-glass p-4 rounded-3xl space-y-3 shadow-xl">
+                <h2 class="font-extrabold text-xs text-gradient">دستیار هوشمند حقوقی SIJT</h2>
+                <div id="chatMessagesContainer" class="space-y-2.5 h-[48vh] overflow-y-auto p-2.5 bg-slate-900 rounded-2xl text-[11px] text-slate-100 shadow-inner">
                     <div class="text-center text-slate-300 py-4">سلام! سوال خود را بپرسید...</div>
                 </div>
                 <div class="flex space-x-2 space-x-reverse">
-                    <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-amber-200 rounded-xl p-2.5 text-xs h-14 resize-none border border-white/20"></textarea>
-                    <button onclick="runAiAssistant();" class="bg-red-600 text-white px-4 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane"></i></button>
+                    <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-amber-200 rounded-xl p-2.5 text-xs h-14 resize-none border border-white/20 shadow-inner"></textarea>
+                    <button onclick="runAiAssistant();" class="bg-red-600 text-white px-4 rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </section>
 
         <!-- تب ۵: قوانین -->
         <section id="laws-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs text-red-500"><i class="fa-solid fa-scale-balanced ml-1"></i> آرشیو قوانین</h2>
+            <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> آرشیو قوانین</h2>
             <div id="lawsContainer" class="space-y-2.5"><div class="skeleton h-24 w-full"></div></div>
         </section>
 
         <!-- تب ۶: کارت‌ها -->
         <section id="cards-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs text-red-500"><i class="fa-solid fa-id-card ml-1"></i> کارت‌های حقوقی</h2>
+            <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-id-card ml-1 text-red-500"></i> کارت‌های حقوقی</h2>
             <div class="flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar py-2" id="storyHighlightsBar"></div>
             <div id="shareCardsContainer" class="space-y-3 mt-2"><div class="skeleton h-32 w-full"></div></div>
         </section>
 
         <!-- تب ۷: اطلاعیه‌ها -->
         <section id="news-tab" class="page-section hidden space-y-4">
-            <h2 class="font-bold text-xs text-red-500"><i class="fa-solid fa-bullhorn ml-1"></i> اخبار رسمی</h2>
+            <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-bullhorn ml-1 text-red-500"></i> اخبار رسمی</h2>
             <div id="newsContainer" class="space-y-3"><div class="skeleton h-20 w-full"></div></div>
         </section>
 
         <!-- تب ۸: ابزارها -->
         <section id="tools-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs mb-2 text-red-500"><i class="fa-solid fa-toolbox ml-1"></i> ابزارهای هوشمند حقوقی</h2>
+            <h2 class="font-black text-xs mb-2 text-gradient"><i class="fa-solid fa-toolbox ml-1 text-red-500"></i> ابزارهای هوشمند حقوقی</h2>
             
-            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+            <div class="ultra-glass p-4 rounded-2xl space-y-3 shadow-lg">
                 <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی</h3>
-                <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20">
-                <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه هزینه دادرسی</button>
+                <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 shadow-inner">
+                <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه هزینه دادرسی</button>
                 <div id="feeResult" class="text-[11px] font-bold text-amber-300"></div>
             </div>
 
-            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+            <div class="ultra-glass p-4 rounded-2xl space-y-3 shadow-lg">
                 <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز</h3>
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="mahariyehAmount" placeholder="تعداد سکه..." class="bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20">
-                    <input type="number" id="marriageYear" placeholder="سال عقد (مثلا 1395)..." class="bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20">
+                    <input type="number" id="mahariyehAmount" placeholder="تعداد سکه..." class="bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 shadow-inner">
+                    <input type="number" id="marriageYear" placeholder="سال عقد (مثلا 1395)..." class="bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 shadow-inner">
                 </div>
-                <button onclick="calculateMahariyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه ارزش روز</button>
+                <button onclick="calculateMahariyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه ارزش روز</button>
                 <div id="mahariyehResult" class="text-[11px] font-bold text-amber-300"></div>
             </div>
 
-            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+            <div class="ultra-glass p-4 rounded-2xl space-y-3 shadow-lg">
                 <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر دیه</h3>
                 <select id="diyehType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20">
                     <option value="complete">دیه کامل یک مرد مسلمان (ماه غیرحرام)</option>
@@ -342,48 +393,51 @@
                     <option value="finger">دیه یک انگشت (یک دهم)</option>
                     <option value="eye">دیه یک چشم (نصف دیه)</option>
                 </select>
-                <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه مبلغ دیه</button>
+                <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه مبلغ دیه</button>
                 <div id="diyehResult" class="text-[11px] font-bold text-amber-300"></div>
             </div>
 
-            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+            <div class="ultra-glass p-4 rounded-2xl space-y-3 shadow-lg">
                 <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-file-invoice-dollar ml-1"></i> محاسبه‌گر سهم‌الارث (طبقه اول)</h3>
-                <input type="number" id="estateAmount" placeholder="مبلغ کل ترکه به ریال..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20">
+                <input type="number" id="estateAmount" placeholder="مبلغ کل ترکه به ریال..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20 shadow-inner">
                 <select id="heirsType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20">
                     <option value="wife_son_daughter">همسر + فرزند (پسر و دختر)</option>
                     <option value="husband_son_daughter">شوهر + فرزند (پسر و دختر)</option>
                     <option value="only_parents">فقط پدر و مادر</option>
                 </select>
-                <button onclick="calculateInheritance()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه سهم وراث</button>
+                <button onclick="calculateInheritance()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold shadow">محاسبه سهم وراث</button>
                 <div id="inheritanceResult" class="text-[11px] font-bold text-amber-300"></div>
             </div>
         </section>
 
         <!-- تب ۹: سوالات عمومی -->
         <section id="public-faq-tab" class="page-section hidden space-y-3">
+            <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-clipboard-question ml-1 text-red-500"></i> بانک سوالات عمومی</h2>
             <div id="publicFaqContainer" class="space-y-3"><div class="skeleton h-24 w-full"></div></div>
         </section>
 
         <!-- تب ۱۰: اینستاگرام -->
         <section id="instagram-tab" class="page-section hidden space-y-3">
+            <h2 class="font-black text-xs mb-2 text-gradient"><i class="fa-brands fa-instagram ml-1 text-red-500"></i> کانال‌های اینستاگرام</h2>
             <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center"></div>
         </section>
 
         <!-- تب ۱۱: پادکست -->
         <section id="podcasts-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs text-red-500 mb-2">پادکست‌ها</h2>
+            <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-podcast ml-1 text-red-500"></i> پادکست‌های حقوقی</h2>
             <div id="podcastsContainer" class="space-y-3"></div>
         </section>
 
         <!-- تب ۱۲: پرونده‌ها -->
         <section id="files-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs text-red-500 mb-2">پرونده‌های ویژه</h2>
+            <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-folder-open ml-1 text-red-500"></i> پرونده‌های ویژه</h2>
             <div id="filesContainer" class="space-y-3"></div>
         </section>
 
         <!-- تب ۱۳: پخش زنده -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
-            <div class="ultra-glass rounded-3xl overflow-hidden p-3 space-y-3">
+            <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-tower-broadcast ml-1 text-red-500"></i> پخش زنده شبکه‌ها</h2>
+            <div class="ultra-glass rounded-3xl overflow-hidden p-3 space-y-3 shadow-xl">
                 <div class="relative w-full aspect-video rounded-2xl bg-slate-950 flex items-center justify-center">
                     <iframe id="liveStreamIframe" class="w-full h-full border-0" allowfullscreen></iframe>
                     <div id="liveStreamPlaceholder" class="absolute inset-0 flex items-center justify-center bg-slate-900 text-slate-300 text-xs">یک شبکه انتخاب کنید</div>
@@ -394,18 +448,18 @@
 
         <!-- تب ۱۴: اینفوگرافیک -->
         <section id="infographics-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs text-red-500 mb-2">اینفوگرافیک‌ها</h2>
+            <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-image ml-1 text-red-500"></i> اینفوگرافیک‌ها</h2>
             <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
         <!-- تب ۱۵: سریال -->
         <section id="series-tab" class="page-section hidden space-y-3">
-            <h2 class="font-bold text-xs text-red-500 mb-2">سریال‌ها و ویدیوها</h2>
+            <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-film ml-1 text-red-500"></i> سریال‌ها و ویدیوها</h2>
             <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
     </main>
 
-    <!-- مودال رسانه با قابلیت Swipe to Close -->
+    <!-- مودال رسانه -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
         <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -417,7 +471,7 @@
         </div>
     </div>
 
-    <!-- مودال جستجوی گوگل با قابلیت Swipe to Close -->
+    <!-- مودال جستجوی گوگل -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
         <div id="searchModalBox" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeAdvancedSearchModal();" class="absolute top-3 left-3 text-slate-300 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -428,7 +482,7 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین با چیدمان و اسکرول نرم -->
+    <!-- ناوبری پایین -->
     <nav class="fixed bottom-3 left-3 right-3 ultra-glass rounded-3xl border border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center text-red-500 font-bold px-2.5 py-1"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -462,7 +516,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.6.1 (بهینه‌سازی شده با رابط کاربری روان و شیشه‌ای)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.7.0 (با افکت‌های مش‌گرادینت، نویز و تعاملات نوری پیشرفته)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -492,6 +546,8 @@
             loadUserFaqs();
             renderChatUI();
             applySavedSettings();
+            initScrollHeaderEffect();
+            initRippleEffect();
             initSwipeToClose();
         });
 
@@ -571,10 +627,10 @@
         function filterDictCategory(cat, btn) {
             selectedDictCat = cat;
             document.querySelectorAll('.dict-chip').forEach(b => {
-                b.classList.remove('bg-red-600', 'text-white', 'font-bold');
+                b.classList.remove('bg-red-600', 'text-white', 'font-bold', 'shadow');
                 b.classList.add('bg-slate-800', 'text-slate-200');
             });
-            btn.classList.add('bg-red-600', 'text-white', 'font-bold');
+            btn.classList.add('bg-red-600', 'text-white', 'font-bold', 'shadow');
             renderDictionary(document.getElementById('dictAdvancedSearchInput').value);
         }
 
@@ -594,12 +650,12 @@
             }
             if(counterElem) counterElem.innerText = `${list.length} واژه`;
             container.innerHTML = list.map(d => `
-                <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1">
+                <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1 shadow">
                     <div class="flex justify-between items-center">
-                        <div class="font-bold text-red-500 text-xs">${d.term}</div>
+                        <div class="font-extrabold text-red-500 text-xs">${d.term}</div>
                         <button onclick="copyToClipboard('${d.term}: ${d.definition}'); triggerHaptic('light');" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
                     </div>
-                    <p class="text-[11px] leading-relaxed text-slate-200">${d.definition}</p>
+                    <p class="text-[11px] leading-relaxed text-slate-200 dark:text-slate-200">${d.definition}</p>
                 </div>
             `).join('');
         }
@@ -611,7 +667,7 @@
 
         function renderLegalSystems() {
             const c = document.getElementById('legalSystemsContainer');
-            if(c) c.innerHTML = (appData.legalSystems || []).map(s => `<div class="ultra-glass p-4 rounded-2xl flex justify-between items-center"><span class="font-bold text-red-400">${s.title}</span><a href="${s.url}" target="_blank" class="bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">ورود</a></div>`).join('');
+            if(c) c.innerHTML = (appData.legalSystems || []).map(s => `<div class="ultra-glass p-4 rounded-2xl flex justify-between items-center shadow"><span class="font-bold text-red-400">${s.title}</span><a href="${s.url}" target="_blank" class="bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">ورود</a></div>`).join('');
         }
 
         function renderLaws(filter = '') {
@@ -622,47 +678,47 @@
             const q = normalizeNumbers(filter);
             if(q.length > 0) list = list.filter(l => normalizeNumbers(l.title).includes(q) || normalizeNumbers(l.content).includes(q));
             if(counterElem) counterElem.innerText = `${list.length} قانون`;
-            c.innerHTML = list.map(l => `<div class="ultra-glass p-3.5 rounded-2xl space-y-1.5"><h3 class="font-bold text-xs text-red-400">${l.title}</h3><p class="text-[11px] font-bold text-amber-300">${l.summary || ''}</p><p class="text-[11px] text-slate-200">${l.content}</p></div>`).join('');
+            c.innerHTML = list.map(l => `<div class="ultra-glass p-3.5 rounded-2xl space-y-1.5 shadow"><h3 class="font-bold text-xs text-red-400">${l.title}</h3><p class="text-[11px] font-bold text-amber-300">${l.summary || ''}</p><p class="text-[11px] text-slate-200">${l.content}</p></div>`).join('');
         }
 
         function renderShareCards() {
             const c = document.getElementById('shareCardsContainer');
-            if(c) c.innerHTML = (appData.shareCards || []).map(card => `<div class="card-bg-glass p-4 rounded-3xl space-y-2"><span class="font-bold text-amber-400 text-xs">${card.title}</span><p class="text-[11px] text-white">${card.text}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.shareCards || []).map(card => `<div class="card-bg-glass p-4 rounded-3xl space-y-2 shadow-xl"><span class="font-bold text-amber-400 text-xs">${card.title}</span><p class="text-[11px] text-white">${card.text}</p></div>`).join('');
         }
 
         function renderNews() {
             const c = document.getElementById('newsContainer');
-            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-3.5 rounded-2xl space-y-1"><div class="text-[9px] text-slate-400">${n.date || ''}</div><h3 class="font-bold text-xs text-red-400">${n.title}</h3><p class="text-[11px] text-slate-200">${n.summary}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-3.5 rounded-2xl space-y-1 shadow"><div class="text-[9px] text-slate-400">${n.date || ''}</div><h3 class="font-bold text-xs text-red-400">${n.title}</h3><p class="text-[11px] text-slate-200">${n.summary}</p></div>`).join('');
         }
 
         function renderPublicFaqs() {
             const c = document.getElementById('publicFaqContainer');
-            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="text-[11px] bg-black/40 p-3 rounded-2xl text-slate-200">${pf.answer}</div></div>`).join('');
+            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2 shadow"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="text-[11px] bg-black/40 p-3 rounded-2xl text-slate-200">${pf.answer}</div></div>`).join('');
         }
 
         function renderInstagram() {
             const c = document.getElementById('instagramContainer');
-            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center"><img src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] text-slate-200">${ig.title}</span></a>`).join('');
+            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-md"><img src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] text-slate-200 font-medium">${ig.title}</span></a>`).join('');
         }
 
         function renderPodcasts() {
             const c = document.getElementById('podcastsContainer');
-            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><h4 class="font-bold text-xs text-red-400">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
+            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3 rounded-2xl space-y-2 shadow"><h4 class="font-bold text-xs text-red-400">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
         function renderFiles() {
             const c = document.getElementById('filesContainer');
-            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-400">${f.title}</h3><p class="text-[11px] text-slate-200">${f.description}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-400">${f.title}</h3><p class="text-[11px] text-slate-200">${f.description}</p></div>`).join('');
         }
 
         function renderInfographics() {
             const c = document.getElementById('infographicsContainer');
-            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4></div>`).join('');
         }
 
         function renderSeries() {
             const c = document.getElementById('seriesContainer');
-            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-400 truncate">${ser.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-400 truncate">${ser.title}</h4></div>`).join('');
         }
 
         function openMediaModal(idx, type) {
@@ -691,7 +747,7 @@
 
         function renderLiveChannels() {
             const c = document.getElementById('liveChannelsSelector');
-            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] text-slate-300">${st.description}</div></button>`).join('');
+            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1 shadow"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] text-slate-300">${st.description}</div></button>`).join('');
         }
 
         function playSelectedStream(st) {
@@ -710,7 +766,7 @@
             if(!bar) return;
             bar.innerHTML = (appData.shareCards || []).map((card, idx) => `
                 <div onclick="openStorySheet(${idx})" class="flex flex-col items-center space-y-1 flex-shrink-0 cursor-pointer">
-                    <div class="story-ring"><div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-amber-400 text-xs font-bold"><i class="fa-solid fa-certificate"></i></div></div>
+                    <div class="story-ring"><div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-amber-400 text-xs font-bold shadow-inner"><i class="fa-solid fa-certificate"></i></div></div>
                     <span class="text-[9px] text-slate-300 max-w-[50px] truncate">${card.title}</span>
                 </div>
             `).join('');
@@ -767,7 +823,7 @@
             }
             container.innerHTML = chatConversationHistory.map(msg => `
                 <div class="flex justify-${msg.role === 'user' ? 'end' : 'start'}">
-                    <div class="${msg.role === 'user' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-100'} p-2.5 rounded-2xl max-w-[85%] text-[11px]">
+                    <div class="${msg.role === 'user' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-100'} p-2.5 rounded-2xl max-w-[85%] text-[11px] shadow">
                         ${msg.text.replace(/\n/g, '<br>')}
                     </div>
                 </div>
@@ -803,7 +859,7 @@
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
-            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer hover:bg-white/10 rounded">${d.term}</div>`).join('') || '<div class="p-2 text-slate-400 text-xs">موردی یافت نشد.</div>';
+            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer hover:bg-white/15 rounded">${d.term}</div>`).join('') || '<div class="p-2 text-slate-400 text-xs">موردی یافت نشد.</div>';
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -836,7 +892,7 @@
                 const data = await res.json();
                 if (data && data.faqs) {
                     container.innerHTML = data.faqs.map(f => `
-                        <div class="bg-slate-900 p-2.5 rounded-xl text-white text-[10px] space-y-1 border border-white/10">
+                        <div class="bg-slate-900 p-2.5 rounded-xl text-white text-[10px] space-y-1 border border-white/10 shadow">
                             <div class="text-amber-400 font-bold">کد: ${f.trackingCode}</div>
                             <div><b>سوال:</b> ${f.question}</div>
                             <div class="text-emerald-400">${f.answer ? 'پاسخ: ' + f.answer : 'در حال بررسی...'}</div>
@@ -868,7 +924,39 @@
             window.scrollTo(0, 0);
         }
 
-        // پیاده‌سازی قابلیت Swipe to Close برای مودال‌ها
+        // انیمیشن داینامیک کوچک شدن هدر هنگام اسکرول
+        function initScrollHeaderEffect() {
+            const header = document.getElementById('appHeader');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 30) {
+                    header.classList.add('header-shrunken');
+                } else {
+                    header.classList.remove('header-shrunken');
+                }
+            });
+        }
+
+        // بازخورد موجی نوری (Ripple Effect) روی دکمه‌ها
+        function initRippleEffect() {
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('button, .clickable-card');
+                if (!target) return;
+                const circle = document.createElement('span');
+                const diameter = Math.max(target.clientWidth, target.clientHeight);
+                const radius = diameter / 2;
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${e.clientX - target.getBoundingClientRect().left - radius}px`;
+                circle.style.top = `${e.clientY - target.getBoundingClientRect().top - radius}px`;
+                circle.classList.add('ripple-effect');
+                
+                target.classList.add('ripple-container');
+                const ripple = target.getElementsByClassName('ripple-effect')[0];
+                if (ripple) ripple.remove();
+                target.appendChild(circle);
+            });
+        }
+
+        // مدیریت بستن مودال با جسچر کشیدن به پایین (Swipe to Close)
         function initSwipeToClose() {
             ['mediaModal', 'advancedSearchModal'].forEach(modalId => {
                 const modal = document.getElementById(modalId);

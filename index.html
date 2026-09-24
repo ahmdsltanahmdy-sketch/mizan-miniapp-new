@@ -38,15 +38,6 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    .light .ultra-glass, body:not(.dark) .ultra-glass {
-    background: rgba(255, 255, 255, 0.85); /* شفاف‌تر و ملایم‌تر */
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-    color: #1e293b;
-}
-        }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(35px);
@@ -94,7 +85,6 @@
 <body id="bodyRoot" class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col relative">
 
     <script>
-        // لینک نهایی و معتبر گوگل اسکریپت
         const API_URL = 'https://script.google.com/macros/s/AKfycbyrMOSKpL5rwv5C9okpDQvbKE07-1JFP2ZE5xt7Xt4Y9sSvIUwbXZWU6ssTbBgQRgSZ/exec'; 
         
         let userId = sessionStorage.getItem('mizan_user_id');
@@ -1192,13 +1182,22 @@
             container.scrollTop = container.scrollHeight;
 
             try {
-                const recentHistory = chatConversationHistory.slice(-4);
+                // ارسال فقط ۲ پیام آخر جهت کاهش حجم داده و جلوگیری از کندی و ارور تایم‌اوت
+                const recentHistory = chatConversationHistory.slice(-2);
+                
+                // استفاده از AbortController برای کنترل تایم‌اوت سریع‌تر
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 25000);
+
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: 'ai_search', history: recentHistory, specialty: specialty }),
-                    redirect: "follow"
+                    redirect: "follow",
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
+
                 const data = await res.json();
                 
                 let aiResult = "";
@@ -1214,6 +1213,10 @@
 
                 if (aiResult) {
                     chatConversationHistory.push({ role: 'model', text: aiResult });
+                    // محدودسازی تاریخچه ذخیره شده در سشن به 6 پیام آخر برای جلوگیری از سنگین شدن
+                    if(chatConversationHistory.length > 6) {
+                        chatConversationHistory = chatConversationHistory.slice(-6);
+                    }
                     sessionStorage.setItem('mizan_active_chat', JSON.stringify(chatConversationHistory));
                     renderChatUI();
                 } else {
@@ -1223,7 +1226,7 @@
             } catch(e) {
                 const loadingElem = document.getElementById(loadingId);
                 if(loadingElem) loadingElem.remove();
-                chatConversationHistory.push({ role: 'model', text: 'خطا در ارتباط با سرور. لطفا چند لحظه دیگر امتحان کنید.' });
+                chatConversationHistory.push({ role: 'model', text: 'خطا در ارتباط با سرور یا کندی شبکه. لطفاً دوباره تلاش کنید.' });
                 renderChatUI();
             }
         }
@@ -1240,7 +1243,6 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...`;
 
             try {
-                // استفاده از URLSearchParams برای ساخت دقیق و امن پارامترها
                 const params = new URLSearchParams({
                     action: 'add_faq',
                     userId: userId,

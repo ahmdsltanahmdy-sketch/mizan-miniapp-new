@@ -45,6 +45,7 @@
             border: 1px solid rgba(255, 255, 255, 0.22);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             color: #ffffff;
+            transition: all 0.3s ease;
         }
         .light .ultra-glass, body:not(.dark) .ultra-glass {
             background: rgba(255, 255, 255, 0.98);
@@ -85,20 +86,22 @@
             color: #ffffff;
         }
 
-        button, a, .clickable-card { transition: transform 0.15s ease; }
+        button, a, .clickable-card { transition: transform 0.15s ease, opacity 0.2s ease; }
         button:active, a:active, .clickable-card:active { transform: scale(0.96); }
 
-        .page-section { animation: fadeInScale 0.35s ease forwards; }
+        /* انیمیشن روان تعویض تب (Page Transitions) */
+        .page-section { animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeInScale {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
+        /* اسکلتون لودینگ پیشرفته‌تر (Skeleton Screens) */
         .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.08) 75%);
+            background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 75%);
             background-size: 200% 100%;
-            animation: skeletonLoading 1.5s infinite;
-            border-radius: 12px;
+            animation: skeletonLoading 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 14px;
         }
         @keyframes skeletonLoading {
             0% { background-position: 200% 0; }
@@ -155,7 +158,7 @@
             
             <div class="flex items-center space-x-2 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/75 to-slate-900 border border-red-500/50 backdrop-blur-xl">
                 <div class="w-5 h-5 rounded-lg overflow-hidden border border-white/30 flex-shrink-0">
-                    <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" class="w-full h-full object-cover" alt="Logo">
+                    <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" loading="lazy" class="w-full h-full object-cover" alt="Logo">
                 </div>
                 <span class="font-black tracking-[0.2em] text-[12px] text-amber-300">SIJT</span>
             </div>
@@ -249,11 +252,18 @@
                 <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
                 <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="dictionaryContainer" class="space-y-2 mt-2"><div class="skeleton h-20 w-full"></div></div>
+            <div id="dictionaryContainer" class="space-y-2 mt-2">
+                <div class="skeleton h-20 w-full"></div>
+                <div class="skeleton h-20 w-full"></div>
+            </div>
         </section>
 
         <!-- تب ۲: سامانه‌ها -->
-        <section id="legal-tab" class="page-section hidden"><div id="legalSystemsContainer" class="space-y-3"><div class="skeleton h-16 w-full"></div></div></section>
+        <section id="legal-tab" class="page-section hidden">
+            <div id="legalSystemsContainer" class="space-y-3">
+                <div class="skeleton h-16 w-full"></div>
+            </div>
+        </section>
 
         <!-- تب ۳: مشاور -->
         <section id="lawyer-tab" class="page-section hidden space-y-4">
@@ -303,7 +313,7 @@
             <div id="newsContainer" class="space-y-3"><div class="skeleton h-20 w-full"></div></div>
         </section>
 
-        <!-- تب ۸: ابزارها (کامل با تمام محاسبه‌گرها) -->
+        <!-- تب ۸: ابزارها -->
         <section id="tools-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs mb-2 text-red-500"><i class="fa-solid fa-toolbox ml-1"></i> ابزارهای هوشمند حقوقی</h2>
             
@@ -395,9 +405,9 @@
         </section>
     </main>
 
-    <!-- مودال رسانه -->
-    <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+    <!-- مودال رسانه با قابلیت Swipe to Close -->
+    <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
+        <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 id="mediaModalTitle" class="font-bold text-xs text-amber-300 pt-1"></h3>
             <div id="mediaModalContent" class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10"></div>
@@ -407,9 +417,9 @@
         </div>
     </div>
 
-    <!-- مودال جستجوی گوگل -->
+    <!-- مودال جستجوی گوگل با قابلیت Swipe to Close -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
-        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+        <div id="searchModalBox" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeAdvancedSearchModal();" class="absolute top-3 left-3 text-slate-300 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 class="font-bold text-xs text-red-500 pt-1"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته در گوگل</h3>
             <p class="text-[10px] text-slate-300 text-right">عبارت مورد نظر خود را برای جستجو در گوگل وارد کنید:</p>
@@ -418,7 +428,7 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین -->
+    <!-- ناوبری پایین با چیدمان و اسکرول نرم -->
     <nav class="fixed bottom-3 left-3 right-3 ultra-glass rounded-3xl border border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center text-red-500 font-bold px-2.5 py-1"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -452,7 +462,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.6.0 (کامل و جامع با تمام محاسبه‌گرها)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.6.1 (بهینه‌سازی شده با رابط کاربری روان و شیشه‌ای)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -482,6 +492,7 @@
             loadUserFaqs();
             renderChatUI();
             applySavedSettings();
+            initSwipeToClose();
         });
 
         function applySavedSettings() {
@@ -631,7 +642,7 @@
 
         function renderInstagram() {
             const c = document.getElementById('instagramContainer');
-            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center"><img src="${ig.image}" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] text-slate-200">${ig.title}</span></a>`).join('');
+            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center"><img src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] text-slate-200">${ig.title}</span></a>`).join('');
         }
 
         function renderPodcasts() {
@@ -641,17 +652,17 @@
 
         function renderFiles() {
             const c = document.getElementById('filesContainer');
-            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2"><img src="${f.image}" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-400">${f.title}</h3><p class="text-[11px] text-slate-200">${f.description}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-400">${f.title}</h3><p class="text-[11px] text-slate-200">${f.description}</p></div>`).join('');
         }
 
         function renderInfographics() {
             const c = document.getElementById('infographicsContainer');
-            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500"><img src="${inf.image}" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4></div>`).join('');
         }
 
         function renderSeries() {
             const c = document.getElementById('seriesContainer');
-            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-400 truncate">${ser.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-400 truncate">${ser.title}</h4></div>`).join('');
         }
 
         function openMediaModal(idx, type) {
@@ -667,7 +678,7 @@
                 extBtn.classList.remove('hidden');
                 extBtn.href = item.url;
             } else {
-                content.innerHTML = `<img src="${item.image}" class="w-full h-full object-contain">`;
+                content.innerHTML = `<img src="${item.image}" loading="lazy" class="w-full h-full object-contain">`;
                 extBtn.classList.add('hidden');
             }
             document.getElementById('mediaModal').classList.remove('hidden');
@@ -855,6 +866,21 @@
                 btn.classList.add('text-red-500', 'font-bold');
             }
             window.scrollTo(0, 0);
+        }
+
+        // پیاده‌سازی قابلیت Swipe to Close برای مودال‌ها
+        function initSwipeToClose() {
+            ['mediaModal', 'advancedSearchModal'].forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                let startY = 0;
+                modal.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive: true});
+                modal.addEventListener('touchmove', e => {
+                    let currentY = e.touches[0].clientY;
+                    if (currentY - startY > 120) {
+                        modal.classList.add('hidden');
+                    }
+                }, {passive: true});
+            });
         }
 
         function manualRefresh() { localStorage.removeItem('mizan_cache'); location.reload(); }

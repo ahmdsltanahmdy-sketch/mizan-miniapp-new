@@ -303,13 +303,49 @@
             <div id="newsContainer" class="space-y-3"><div class="skeleton h-20 w-full"></div></div>
         </section>
 
-        <!-- تب ۸: ابزارها -->
+        <!-- تب ۸: ابزارها (کامل با تمام محاسبه‌گرها) -->
         <section id="tools-tab" class="page-section hidden space-y-3">
+            <h2 class="font-bold text-xs mb-2 text-red-500"><i class="fa-solid fa-toolbox ml-1"></i> ابزارهای هوشمند حقوقی</h2>
+            
             <div class="ultra-glass p-4 rounded-2xl space-y-3">
-                <h3 class="font-bold text-xs text-amber-300">محاسبه‌گر هزینه دادرسی</h3>
-                <input type="number" id="claimAmountInput" placeholder="مبلغ به ریال..." class="w-full bg-slate-900 text-amber-200 rounded-xl p-2 text-xs border border-white/20">
-                <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه</button>
+                <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-calculator ml-1"></i> محاسبه‌گر هزینه‌های دادرسی</h3>
+                <input type="number" id="claimAmountInput" placeholder="مبلغ خواسته به ریال..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20">
+                <button onclick="calculateCourtFee()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه هزینه دادرسی</button>
                 <div id="feeResult" class="text-[11px] font-bold text-amber-300"></div>
+            </div>
+
+            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+                <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر مهریه به نرخ روز</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="mahariyehAmount" placeholder="تعداد سکه..." class="bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20">
+                    <input type="number" id="marriageYear" placeholder="سال عقد (مثلا 1395)..." class="bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20">
+                </div>
+                <button onclick="calculateMahariyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه ارزش روز</button>
+                <div id="mahariyehResult" class="text-[11px] font-bold text-amber-300"></div>
+            </div>
+
+            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+                <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-heart-pulse ml-1"></i> محاسبه‌گر دیه</h3>
+                <select id="diyehType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20">
+                    <option value="complete">دیه کامل یک مرد مسلمان (ماه غیرحرام)</option>
+                    <option value="haram">دیه کامل در ماه‌های حرام (تغلیظ دیه)</option>
+                    <option value="finger">دیه یک انگشت (یک دهم)</option>
+                    <option value="eye">دیه یک چشم (نصف دیه)</option>
+                </select>
+                <button onclick="calculateDiyeh()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه مبلغ دیه</button>
+                <div id="diyehResult" class="text-[11px] font-bold text-amber-300"></div>
+            </div>
+
+            <div class="ultra-glass p-4 rounded-2xl space-y-3">
+                <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-file-invoice-dollar ml-1"></i> محاسبه‌گر سهم‌الارث (طبقه اول)</h3>
+                <input type="number" id="estateAmount" placeholder="مبلغ کل ترکه به ریال..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2 text-xs border border-white/20">
+                <select id="heirsType" class="w-full bg-slate-900 text-white rounded-xl p-2.5 text-xs border border-white/20">
+                    <option value="wife_son_daughter">همسر + فرزند (پسر و دختر)</option>
+                    <option value="husband_son_daughter">شوهر + فرزند (پسر و دختر)</option>
+                    <option value="only_parents">فقط پدر و مادر</option>
+                </select>
+                <button onclick="calculateInheritance()" class="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-bold">محاسبه سهم وراث</button>
+                <div id="inheritanceResult" class="text-[11px] font-bold text-amber-300"></div>
             </div>
         </section>
 
@@ -359,7 +395,7 @@
         </section>
     </main>
 
-    <!-- مودال رسانه برای سریال و اینفوگرافیک -->
+    <!-- مودال رسانه -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -416,7 +452,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.5.0 (پایدار و جامع)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.6.0 (کامل و جامع با تمام محاسبه‌گرها)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -513,27 +549,69 @@
             renderStoryHighlights();
         }
 
-        function renderDictionary() {
+        function normalizeNumbers(str) {
+            if (!str) return '';
+            let output = String(str).replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/ۀ/g, 'ه');
+            const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+            for (let i = 0; i < 10; i++) output = output.replace(persianNumbers[i], i);
+            return output.toLowerCase().trim();
+        }
+
+        function filterDictCategory(cat, btn) {
+            selectedDictCat = cat;
+            document.querySelectorAll('.dict-chip').forEach(b => {
+                b.classList.remove('bg-red-600', 'text-white', 'font-bold');
+                b.classList.add('bg-slate-800', 'text-slate-200');
+            });
+            btn.classList.add('bg-red-600', 'text-white', 'font-bold');
+            renderDictionary(document.getElementById('dictAdvancedSearchInput').value);
+        }
+
+        function renderDictionary(filter = '') {
             const container = document.getElementById('dictionaryContainer');
+            const counterElem = document.getElementById('dictCounter');
+            const clearBtn = document.getElementById('clearDictBtn');
             if (!container) return;
             let list = appData.dictionary || [];
             if (selectedDictCat !== 'all') list = list.filter(d => (d.category || '').includes(selectedDictCat));
+            const q = normalizeNumbers(filter);
+            if (q.length > 0) {
+                clearBtn.classList.remove('hidden');
+                list = list.filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q));
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            if(counterElem) counterElem.innerText = `${list.length} واژه`;
             container.innerHTML = list.map(d => `
                 <div class="ultra-glass p-3 rounded-xl border border-white/10 space-y-1">
-                    <div class="font-bold text-red-400 text-xs">${d.term}</div>
-                    <p class="text-[11px] text-slate-200">${d.definition}</p>
+                    <div class="flex justify-between items-center">
+                        <div class="font-bold text-red-500 text-xs">${d.term}</div>
+                        <button onclick="copyToClipboard('${d.term}: ${d.definition}'); triggerHaptic('light');" class="text-slate-400 hover:text-white text-[10px]"><i class="fa-solid fa-copy"></i></button>
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-slate-200">${d.definition}</p>
                 </div>
             `).join('');
         }
 
-        function renderLegalSystems() {
-            const c = document.getElementById('legalSystemsContainer');
-            if(c) c.innerHTML = (appData.legalSystems || []).map(s => `<div class="ultra-glass p-4 rounded-2xl flex justify-between items-center"><span class="font-bold text-red-400">${s.title}</span><a href="${s.url}" target="_blank" class="bg-red-600 text-white px-3 py-1 rounded-xl text-xs">ورود</a></div>`).join('');
+        function clearDictSearch() {
+            document.getElementById('dictAdvancedSearchInput').value = '';
+            renderDictionary('');
         }
 
-        function renderLaws() {
+        function renderLegalSystems() {
+            const c = document.getElementById('legalSystemsContainer');
+            if(c) c.innerHTML = (appData.legalSystems || []).map(s => `<div class="ultra-glass p-4 rounded-2xl flex justify-between items-center"><span class="font-bold text-red-400">${s.title}</span><a href="${s.url}" target="_blank" class="bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">ورود</a></div>`).join('');
+        }
+
+        function renderLaws(filter = '') {
             const c = document.getElementById('lawsContainer');
-            if(c) c.innerHTML = (appData.laws || []).map(l => `<div class="ultra-glass p-3 rounded-2xl space-y-1"><h3 class="font-bold text-xs text-red-400">${l.title}</h3><p class="text-[11px] text-slate-200">${l.content}</p></div>`).join('');
+            const counterElem = document.getElementById('lawsCounter');
+            if(!c) return;
+            let list = appData.laws || [];
+            const q = normalizeNumbers(filter);
+            if(q.length > 0) list = list.filter(l => normalizeNumbers(l.title).includes(q) || normalizeNumbers(l.content).includes(q));
+            if(counterElem) counterElem.innerText = `${list.length} قانون`;
+            c.innerHTML = list.map(l => `<div class="ultra-glass p-3.5 rounded-2xl space-y-1.5"><h3 class="font-bold text-xs text-red-400">${l.title}</h3><p class="text-[11px] font-bold text-amber-300">${l.summary || ''}</p><p class="text-[11px] text-slate-200">${l.content}</p></div>`).join('');
         }
 
         function renderShareCards() {
@@ -543,17 +621,17 @@
 
         function renderNews() {
             const c = document.getElementById('newsContainer');
-            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-3 rounded-2xl"><h3 class="font-bold text-xs text-red-400">${n.title}</h3><p class="text-[11px] text-slate-200">${n.summary}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.news || []).map(n => `<div class="ultra-glass p-3.5 rounded-2xl space-y-1"><div class="text-[9px] text-slate-400">${n.date || ''}</div><h3 class="font-bold text-xs text-red-400">${n.title}</h3><p class="text-[11px] text-slate-200">${n.summary}</p></div>`).join('');
         }
 
         function renderPublicFaqs() {
             const c = document.getElementById('publicFaqContainer');
-            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-3 rounded-2xl"><div class="font-bold text-xs text-red-400">${pf.question}</div><div class="text-[11px] text-slate-200">${pf.answer}</div></div>`).join('');
+            if(c) c.innerHTML = (appData.publicFaqs || []).map(pf => `<div class="ultra-glass p-4 rounded-3xl space-y-2"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-question ml-1"></i> ${pf.question}</div><div class="text-[11px] bg-black/40 p-3 rounded-2xl text-slate-200">${pf.answer}</div></div>`).join('');
         }
 
         function renderInstagram() {
             const c = document.getElementById('instagramContainer');
-            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="ultra-glass p-2 rounded-xl text-center"><img src="${ig.image}" class="w-12 h-12 rounded-full mx-auto mb-1 object-cover"><span class="text-[10px] text-slate-200">${ig.title}</span></a>`).join('');
+            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center"><img src="${ig.image}" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] text-slate-200">${ig.title}</span></a>`).join('');
         }
 
         function renderPodcasts() {
@@ -563,17 +641,17 @@
 
         function renderFiles() {
             const c = document.getElementById('filesContainer');
-            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-3 rounded-2xl space-y-2"><img src="${f.image}" class="w-full h-28 object-cover rounded-xl"><h3 class="font-bold text-xs text-red-400">${f.title}</h3><p class="text-[11px] text-slate-200">${f.description}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2"><img src="${f.image}" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-sm text-red-400">${f.title}</h3><p class="text-[11px] text-slate-200">${f.description}</p></div>`).join('');
         }
 
         function renderInfographics() {
             const c = document.getElementById('infographicsContainer');
-            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-2 rounded-xl text-center cursor-pointer"><img src="${inf.image}" class="w-full h-24 object-cover rounded-lg mb-1"><span class="text-[10px] text-red-400">${inf.title}</span></div>`).join('');
+            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500"><img src="${inf.image}" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-[11px] text-red-400">${inf.title}</h4></div>`).join('');
         }
 
         function renderSeries() {
             const c = document.getElementById('seriesContainer');
-            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-2 rounded-xl text-center cursor-pointer"><img src="${ser.image}" class="w-full h-24 object-cover rounded-lg mb-1"><span class="text-[10px] text-red-400">${ser.title}</span></div>`).join('');
+            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-[11px] text-red-400 truncate">${ser.title}</h4></div>`).join('');
         }
 
         function openMediaModal(idx, type) {
@@ -586,13 +664,11 @@
                 let url = item.url || '';
                 if(url.includes('aparat.com/v/')) url = url.replace('aparat.com/v/', 'aparat.com/v/embed/');
                 content.innerHTML = `<iframe src="${url}" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-                if(extBtn) {
-                    extBtn.classList.remove('hidden');
-                    extBtn.href = item.url;
-                }
+                extBtn.classList.remove('hidden');
+                extBtn.href = item.url;
             } else {
                 content.innerHTML = `<img src="${item.image}" class="w-full h-full object-contain">`;
-                if(extBtn) extBtn.classList.add('hidden');
+                extBtn.classList.add('hidden');
             }
             document.getElementById('mediaModal').classList.remove('hidden');
         }
@@ -604,7 +680,7 @@
 
         function renderLiveChannels() {
             const c = document.getElementById('liveChannelsSelector');
-            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1"><div class="font-bold text-xs text-red-400">${st.title}</div></button>`).join('');
+            if(c) c.innerHTML = (appData.livestream || []).map(st => `<button onclick='playSelectedStream(${JSON.stringify(st)})' class="p-3 ultra-glass rounded-2xl text-right border hover:border-red-500 space-y-1"><div class="font-bold text-xs text-red-400"><i class="fa-solid fa-tv ml-1"></i> ${st.title}</div><div class="text-[10px] text-slate-300">${st.description}</div></button>`).join('');
         }
 
         function playSelectedStream(st) {
@@ -634,14 +710,41 @@
             if(!card) return;
             document.getElementById('mediaModalTitle').innerText = card.title;
             document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 text-slate-200 text-xs leading-relaxed overflow-y-auto">${card.text}</div>`;
-            const extBtn = document.getElementById('mediaModalExternalBtn');
-            if(extBtn) extBtn.classList.add('hidden');
+            document.getElementById('mediaModalExternalBtn').classList.add('hidden');
             document.getElementById('mediaModal').classList.remove('hidden');
         }
 
+        // محاسبه‌گرهای کامل ابزارها
         function calculateCourtFee() {
             const amt = parseFloat(document.getElementById('claimAmountInput').value) || 0;
-            document.getElementById('feeResult').innerText = `هزینه دادرسی: ${Math.round(amt * 0.035).toLocaleString()} ریال`;
+            document.getElementById('feeResult').innerText = `هزینه دادرسی بدوی: ${Math.round(amt * 0.035).toLocaleString()} ریال`;
+        }
+        function calculateMahariyeh() {
+            const cnt = parseFloat(document.getElementById('mahariyehAmount').value) || 0;
+            document.getElementById('mahariyehResult').innerText = `ارزش تقریبی روز: حدود ${Math.round(cnt * 450000000).toLocaleString()} ریال`;
+        }
+        function calculateDiyeh() {
+            const type = document.getElementById('diyehType').value;
+            let base = 1600000000;
+            if(type === 'haram') base *= 1.33;
+            if(type === 'finger') base *= 0.1;
+            if(type === 'eye') base *= 0.5;
+            document.getElementById('diyehResult').innerText = `مبلغ تقریبی دیه: ${Math.round(base).toLocaleString()} ریال`;
+        }
+        function calculateInheritance() {
+            const estate = parseFloat(document.getElementById('estateAmount').value) || 0;
+            const type = document.getElementById('heirsType').value;
+            let resText = "";
+            if(type === 'wife_son_daughter') {
+                let wife = estate * 0.125;
+                resText = `سهم همسر: ${Math.round(wife).toLocaleString()} ریال<br>باقیمانده بین فرزندان: ${Math.round(estate - wife).toLocaleString()} ریال`;
+            } else if(type === 'husband_son_daughter') {
+                let husband = estate * 0.25;
+                resText = `سهم شوهر: ${Math.round(husband).toLocaleString()} ریال<br>باقیمانده بین فرزندان: ${Math.round(estate - husband).toLocaleString()} ریال`;
+            } else {
+                resText = `مادر (۱/۳) و پدر (۲/۳) از کل ترکه.`;
+            }
+            document.getElementById('inheritanceResult').innerHTML = resText;
         }
 
         function renderChatUI() {
@@ -689,7 +792,7 @@
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
-            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer">${d.term}</div>`).join('') || '<div class="p-2 text-slate-400 text-xs">موردی یافت نشد.</div>';
+            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer hover:bg-white/10 rounded">${d.term}</div>`).join('') || '<div class="p-2 text-slate-400 text-xs">موردی یافت نشد.</div>';
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -755,11 +858,12 @@
         }
 
         function manualRefresh() { localStorage.removeItem('mizan_cache'); location.reload(); }
-        function toggleNotificationsModal() {}
+        function toggleNotificationsModal() { document.getElementById('notificationsModal').classList.toggle('hidden'); }
         function toggleSettingsMenu(e) { e.stopPropagation(); document.getElementById('settingsDropdown').classList.toggle('hidden'); }
         function toggleTheme() { document.documentElement.classList.toggle('dark'); }
         function toggleFullScreen() { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
         function openAboutModal() { alert(appData.about[0].text); }
+        function closeAboutModal() { document.getElementById('aboutModal').classList.add('hidden'); }
         function clearSearchInput() { document.getElementById('searchInput').value = ''; document.getElementById('liveSuggestionsBox').classList.add('hidden'); }
     </script>
 </body>

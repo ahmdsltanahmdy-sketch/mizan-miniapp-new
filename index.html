@@ -161,29 +161,30 @@
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse">
-                <button onclick="toggleNotificationsModal();" class="relative p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-bell text-xs text-amber-300"></i></button>
+                <button onclick="toggleNotificationsModal();" class="relative p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-bell text-xs text-amber-300"></i><span id="notifBadge" class="hidden absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-ping"></span></button>
                 <span id="headerWeatherWidget">تهران...</span>
                 <button onclick="manualRefresh();" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
                 <button onclick="toggleSettingsMenu(event);" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
         </div>
 
-        <!-- منوی تنظیمات -->
+        <!-- منوی تنظیمات کامل و بازگردانده شده -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-85 p-4 settings-glass rounded-3xl space-y-3 text-xs shadow-2xl max-h-[75vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش:</span>
                 <button onclick="toggleTheme();" class="bg-white/20 px-3 py-1 rounded-xl">تیره / روشن</button>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
-                <span class="font-bold">تمام‌صفحه:</span>
+                <span class="font-bold">تمام‌صفحه هوشمند:</span>
                 <button onclick="toggleFullScreen();" class="bg-red-600/30 text-red-300 px-3 py-1 rounded-xl">ورود/خروج</button>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
-                <span class="font-bold">قلم مینی‌اپ:</span>
+                <span class="font-bold">قلم تخصصی مینی‌اپ:</span>
                 <select id="fontSelect" onchange="changeFontFamily(this.value);" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px]">
                     <option value="Tahoma">Tahoma</option>
-                    <option value="Vazirmatn">Vazirmatn</option>
-                    <option value="Shabnam">Shabnam</option>
+                    <option value="Vazirmatn">وزیر (Vazirmatn)</option>
+                    <option value="Shabnam">شبنم (Shabnam)</option>
+                    <option value="Sahel">ساحل (Sahel)</option>
                 </select>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
@@ -193,6 +194,21 @@
                     <button onclick="changeAppFontSize('12px')" class="px-2 py-0.5 bg-white/20 rounded-lg">متوسط</button>
                     <button onclick="changeAppFontSize('14px')" class="px-2 py-0.5 bg-white/20 rounded-lg">بزرگ</button>
                 </div>
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20" onclick="event.stopPropagation();">
+                <span class="font-bold">نوع تقویم نمایشی:</span>
+                <select id="calendarSelect" onchange="changeCalendarType(this.value); event.stopPropagation();" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none cursor-pointer">
+                    <option value="persian">هجری شمسی (جلالی)</option>
+                    <option value="gregorian">میلادی (Gregorian)</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">بازخورد لرزشی (Haptic):</span>
+                <input type="checkbox" id="tgHapticCheck" onchange="updateTgSetting('haptic', this.checked)" checked class="accent-red-600 w-4 h-4">
+            </div>
+            <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                <span class="font-bold">حافظه موقت و کش:</span>
+                <button onclick="localStorage.removeItem('mizan_cache'); sessionStorage.removeItem('mizan_active_chat'); location.reload();" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش</button>
             </div>
             <div class="text-center pt-1">
                 <button onclick="openAboutModal();" class="text-amber-400 font-bold">درباره ما و پشتیبانی</button>
@@ -205,7 +221,10 @@
                     <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اصطلاحات..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/30">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
                 </div>
-                <button onclick="openAdvancedSearchModal();" class="glass-tab p-2.5 rounded-xl text-xs text-amber-300"><i class="fa-solid fa-earth-americas text-sm"></i></button>
+                <!-- دکمه اتصال به جستجوی پیشرفته گوگل اصلاح و متصل شد -->
+                <button onclick="openAdvancedSearchModal(); triggerHaptic('light');" title="جستجوی پیشرفته در گوگل" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
+                    <i class="fa-solid fa-earth-americas text-sm"></i>
+                </button>
             </div>
             <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-full mt-1.5 ultra-glass rounded-2xl shadow-2xl z-[100] max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
         </div>
@@ -300,13 +319,13 @@
             <div id="podcastsContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۱۲: پرونده‌ها -->
+        <!-- تب ۱۲: پرونده‌ها (اصلاح‌شده برای نمایش کامل) -->
         <section id="files-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs text-red-500 mb-2">پرونده‌های ویژه</h2>
             <div id="filesContainer" class="space-y-3"></div>
         </section>
 
-        <!-- تب ۱۳: پخش زنده -->
+        <!-- تب ۱۳: پخش زنده (با قابلیت قطع صوت/تصویر هنگام خروج از تب) -->
         <section id="multimedia-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass rounded-3xl overflow-hidden p-3 space-y-3">
                 <div class="relative w-full aspect-video rounded-2xl bg-slate-950 flex items-center justify-center">
@@ -317,62 +336,83 @@
             <div id="liveChannelsSelector" class="grid grid-cols-2 gap-2"></div>
         </section>
 
-        <!-- تب ۱۴: اینفوگرافیک -->
+        <!-- تب ۱۴: اینفوگرافیک (با مودال بزرگ‌نمایی) -->
         <section id="infographics-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs text-red-500 mb-2">اینفوگرافیک‌ها</h2>
             <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
-        <!-- تب ۱۵: سریال -->
+        <!-- تب ۱۵: سریال (با مودال پخش و دکمه تماشای خارجی) -->
         <section id="series-tab" class="page-section hidden space-y-3">
             <h2 class="font-bold text-xs text-red-500 mb-2">سریال‌ها و ویدیوها</h2>
             <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
     </main>
 
-    <!-- مودال رسانه برای سریال و اینفوگرافیک -->
+    <!-- مودال رسانه (سریال، اینفوگرافیک و استوری‌ها) با دکمه تماشای خارجی -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4">
         <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 id="mediaModalTitle" class="font-bold text-xs text-amber-300 pt-1"></h3>
             <div id="mediaModalContent" class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10"></div>
+            <!-- بازگرداندن دکمه تماشای خارجی -->
+            <a id="mediaModalExternalBtn" href="#" target="_blank" class="hidden block w-full bg-red-600/30 text-red-200 border border-red-500/40 py-2 rounded-xl text-xs font-bold transition hover:bg-red-600 hover:text-white">
+                <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای خارجی در پلتفرم اصلی
+            </a>
+        </div>
+    </div>
+
+    <!-- مودال جستجوی پیشرفته گوگل -->
+    <div id="advancedSearchModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center">
+            <button onclick="closeAdvancedSearchModal();" class="absolute top-3 left-3 text-slate-300 p-2 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="font-bold text-xs text-red-500 pt-1"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته در گوگل</h3>
+            <p class="text-[10px] text-slate-300 text-right">عبارت مورد نظر خود را برای جستجو در گوگل وارد کنید:</p>
+            <input type="text" id="googleSearchInput" placeholder="عبارت جستجو..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2.5 text-xs border border-white/20 focus:outline-none">
+            <button onclick="executeGoogleSearch()" class="w-full bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold shadow">جستجو در گوگل</button>
         </div>
     </div>
 
     <!-- ناوبری پایین -->
     <nav class="fixed bottom-3 left-3 right-3 ultra-glass rounded-3xl border border-white/20 max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 shadow-2xl items-center whitespace-nowrap">
-        <button onclick="switchTab('dictionary-tab', this)" class="nav-btn flex flex-col items-center text-red-500 font-bold px-2 py-1"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
-        <button onclick="switchTab('legal-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
-        <button onclick="switchTab('laws-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
-        <button onclick="switchTab('cards-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-id-card text-sm mb-0.5"></i><span class="text-[8px]">کارت‌ها</span></button>
-        <button onclick="switchTab('lawyer-tab', this); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
-        <button onclick="switchTab('chatbot-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
-        <button onclick="switchTab('news-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
-        <button onclick="switchTab('tools-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
-        <button onclick="switchTab('public-faq-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
-        <button onclick="switchTab('instagram-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-brands fa-instagram text-sm mb-0.5"></i><span class="text-[8px]">اینستاگرام</span></button>
-        <button onclick="switchTab('podcasts-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
-        <button onclick="switchTab('files-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
-        <button onclick="switchTab('multimedia-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
-        <button onclick="switchTab('infographics-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
-        <button onclick="switchTab('series-tab', this)" class="nav-btn flex flex-col items-center opacity-70 px-2 py-1"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
+        <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center text-red-500 font-bold px-2.5 py-1"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
+        <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
+        <button onclick="switchTab('laws-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
+        <button onclick="switchTab('cards-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-id-card text-sm mb-0.5"></i><span class="text-[8px]">کارت‌ها</span></button>
+        <button onclick="switchTab('lawyer-tab', this); triggerHaptic('light'); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
+        <button onclick="switchTab('chatbot-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
+        <button onclick="switchTab('news-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
+        <button onclick="switchTab('tools-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
+        <button onclick="switchTab('public-faq-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
+        <button onclick="switchTab('instagram-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-brands fa-instagram text-sm mb-0.5"></i><span class="text-[8px]">اینستاگرام</span></button>
+        <button onclick="switchTab('podcasts-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
+        <button onclick="switchTab('files-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
+        <button onclick="switchTab('multimedia-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
+        <button onclick="switchTab('infographics-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
+        <button onclick="switchTab('series-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
     </nav>
 
+    <!-- اسکریپت جامع -->
     <script>
         let fallbackData = {
-            legalSystems: [{ title: "سامانه ثنا", description: "ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
-            dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی.", category: "کیفری" }],
-            news: [{ title: "اطلاعیه مهم", summary: "تغییرات ابلاغ الکترونیک", date: "۱۴۰۵/۰۶/۲۸" }],
-            publicFaqs: [{ question: "اعتراض به چک برگشتی؟", answer: "از طریق دفاتر خدمات الکترونیک." }],
-            instagram: [{ title: "مشاوره", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://instagram.com" }],
-            series: [{ title: "مجموعه آقای قاضی", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://www.aparat.com/v/example" }],
-            podcasts: [{ title: "پادکست حقوقی ۱", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }],
-            files: [{ title: "پرونده ویژه", description: "بررسی ابعاد حقوقی قراردادها", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "#" }],
-            infographics: [{ title: "اینفوگرافیک مراحل دعوا", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" }],
+            legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
+            dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان.", category: "کیفری" }],
+            news: [{ title: "اطلاعیه مهم حقوقی", summary: "تغییرات جدید در نحوه ابلاغ الکترونیک", date: "۱۴۰۵/۰۶/۲۸" }],
+            quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
+            publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
+            instagram: [{ title: "مشاوره کیفری", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://instagram.com" }],
+            series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://www.aparat.com/v/example" }],
+            podcasts: [{ title: "پادکست حقوقی شماره ۱", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }],
+            files: [{ title: "پرونده ویژه حقوقی", description: "بررسی ابعاد حقوقی قراردادهای پیش‌فروش مسکن", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "#" }],
+            infographics: [{ title: "اینفوگرافیک مراحل دعوای حقوقی", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" }],
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
-            laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
-            shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی حقوقی SIJT\nنسخه: 4.1.0 (پایدار)" }]
+            laws: [
+                { title: "قانون صدور چک", summary: "مقررات جدید صدور و انتقال چک صیادی", content: "طبق قانون جدید، تمامی چک‌ها باید در سامانه صیاد ثبت و به نام گیرنده انتقال یابند." }
+            ],
+            shareCards: [
+                { title: "نکته طلایی قراردادها", text: "هیچ‌گاه قراردادی را بدون حضور حداقل دو شاهد امضا نکنید و حتماً نسخه‌ای از آن را نزد خود نگه دارید." }
+            ],
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 4.2.0 (کامل و بدون نقص)\nپشتیبانی از طریق ربات تلگرام مینی‌اپ برقرار است." }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -401,12 +441,44 @@
             fetchTehranWeather();
             loadUserFaqs();
             renderChatUI();
+            applySavedSettings();
         });
+
+        function applySavedSettings() {
+            const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';
+            const fontSel = document.getElementById('fontSelect');
+            if(fontSel) fontSel.value = savedFont;
+            const savedCalendar = localStorage.getItem('mizan_calendar') || 'persian';
+            const calSel = document.getElementById('calendarSelect');
+            if(calSel) calSel.value = savedCalendar;
+        }
+
+        function changeFontFamily(val) {
+            document.documentElement.style.setProperty('--selected-font', val);
+            localStorage.setItem('mizan_font', val);
+        }
+
+        function changeAppFontSize(val) {
+            document.documentElement.style.setProperty('--app-font-size', val);
+            localStorage.setItem('mizan_font_size', val);
+        }
+
+        function changeCalendarType(type) {
+            localStorage.setItem('mizan_calendar', type);
+            updateDateTime();
+        }
 
         function updateDateTime() {
             const now = new Date();
+            const calType = localStorage.getItem('mizan_calendar') || 'persian';
             const calElem = document.getElementById('headerCalendarWidget');
-            if(calElem) calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
+            if(calElem) {
+                if(calType === 'gregorian') {
+                    calElem.innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                } else {
+                    calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
+                }
+            }
         }
 
         async function fetchTehranWeather() {
@@ -505,12 +577,16 @@
             if(!item) return;
             document.getElementById('mediaModalTitle').innerText = item.title;
             const content = document.getElementById('mediaModalContent');
+            const extBtn = document.getElementById('mediaModalExternalBtn');
             if(type === 'series') {
                 let url = item.url || '';
                 if(url.includes('aparat.com/v/')) url = url.replace('aparat.com/v/', 'aparat.com/v/embed/');
-                content.innerHTML = `<iframe src="${url}" class="w-full h-full border-0" allowfullscreen></iframe>`;
+                content.innerHTML = `<iframe src="${url}" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+                extBtn.classList.remove('hidden');
+                extBtn.href = item.url;
             } else {
                 content.innerHTML = `<img src="${item.image}" class="w-full h-full object-contain">`;
+                extBtn.classList.add('hidden');
             }
             document.getElementById('mediaModal').classList.remove('hidden');
         }
@@ -526,7 +602,9 @@
         }
 
         function playSelectedStream(st) {
-            document.getElementById('liveStreamIframe').src = st.url;
+            let url = st.url;
+            if(url.includes('telewebion.com/live/')) url = url.replace('telewebion.com/live/', 'telewebion.com/embed/live/');
+            document.getElementById('liveStreamIframe').src = url;
             document.getElementById('liveStreamPlaceholder').classList.add('hidden');
         }
 
@@ -545,7 +623,8 @@
             const card = appData.shareCards[idx];
             if(!card) return;
             document.getElementById('mediaModalTitle').innerText = card.title;
-            document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 text-slate-200 text-xs leading-relaxed">${card.text}</div>`;
+            document.getElementById('mediaModalContent').innerHTML = `<div class="p-4 text-slate-200 text-xs leading-relaxed overflow-y-auto">${card.text}</div>`;
+            document.getElementById('mediaModalExternalBtn').classList.add('hidden');
             document.getElementById('mediaModal').classList.remove('hidden');
         }
 
@@ -596,6 +675,21 @@
             }
         }
 
+        function handleLiveSearch(query) {
+            const box = document.getElementById('liveSuggestionsBox');
+            if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
+            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer">${d.term}</div>`).join('') || '<div class="p-2 text-slate-400 text-xs">موردی یافت نشد.</div>';
+        }
+
+        function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
+        function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
+        function executeGoogleSearch() {
+            const query = document.getElementById('googleSearchInput').value.trim();
+            if(!query) return alert('عبارت جستجو را وارد کنید.');
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+            closeAdvancedSearchModal();
+        }
+
         async function submitQuestion() {
             const q = document.getElementById('questionInput').value.trim();
             const cat = document.getElementById('questionCategory').value;
@@ -627,15 +721,18 @@
             } catch(e) {}
         }
 
-        function handleLiveSearch(query) {
-            const box = document.getElementById('liveSuggestionsBox');
-            if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
-            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-white text-[11px] cursor-pointer">${d.term}</div>`).join('') || '<div class="p-2 text-slate-400 text-xs">موردی یافت نشد.</div>';
-        }
-
+        // قطع کامل پخش زنده هنگام خروج از تب
         function switchTab(sectionId, btn) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(sectionId).classList.remove('hidden');
+
+            if (sectionId !== 'multimedia-tab') {
+                const iframe = document.getElementById('liveStreamIframe');
+                if(iframe) iframe.src = "";
+                const placeholder = document.getElementById('liveStreamPlaceholder');
+                if(placeholder) placeholder.classList.remove('hidden');
+            }
+
             if (btn) {
                 document.querySelectorAll('nav button').forEach(b => {
                     b.classList.remove('text-red-500', 'font-bold');
@@ -653,8 +750,6 @@
         function toggleTheme() { document.documentElement.classList.toggle('dark'); }
         function toggleFullScreen() { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
         function openAboutModal() { alert(appData.about[0].text); }
-        function changeFontFamily(val) { document.documentElement.style.setProperty('--selected-font', val); localStorage.setItem('mizan_font', val); }
-        function changeAppFontSize(val) { document.documentElement.style.setProperty('--app-font-size', val); localStorage.setItem('mizan_font_size', val); }
         function clearSearchInput() { document.getElementById('searchInput').value = ''; document.getElementById('liveSuggestionsBox').classList.add('hidden'); }
     </script>
 </body>

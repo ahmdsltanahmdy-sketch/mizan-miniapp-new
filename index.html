@@ -110,7 +110,7 @@
             color: #0f172a;
         }
 
-        /* ناوبری شناور با افکت بلور عمیق و انیمیشن فیزیک فنری (Spring Physics Tab Bar) */
+        /* ناوبری پایین شناور مدرن */
         .floating-nav {
             background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(35px);
@@ -130,6 +130,15 @@
             transform: scale(1.15) translateY(-2px);
         }
 
+        /* منوی کشویی گروه‌بندی شده (Segmented Drawer) */
+        #moreDrawer {
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #moreDrawer.open {
+            transform: translateY(0);
+        }
+
         .glass-tab { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff !important; }
 
         .header-bg {
@@ -146,7 +155,6 @@
             color: #ffffff;
         }
 
-        /* هدر داینامیک با بلور زنده هنگام اسکرول (Live Frosted Header) */
         #appHeader {
             transition: backdrop-filter 0.4s ease, background-color 0.4s ease, transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             will-change: transform, opacity, backdrop-filter;
@@ -163,13 +171,13 @@
             pointer-events: none;
         }
 
-        /* دکمه اکشن شناور جامع (Smart FAB) */
+        /* تنظیم مکان دکمه‌های شناور برای عدم تداخل */
         .smart-fab {
             position: fixed;
-            bottom: 88px;
-            left: 20px;
+            bottom: 84px;
+            left: 16px;
             z-index: 45;
-            width: 48px; height: 48px;
+            width: 44px; height: 44px;
             border-radius: 50%;
             background: linear-gradient(135deg, #c51b24, #9b131a);
             color: white;
@@ -180,11 +188,27 @@
             cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .smart-fab:hover {
-            transform: scale(1.1) rotate(15deg);
+        .smart-fab:hover { transform: scale(1.1) rotate(15deg); }
+
+        #backToTopBtn {
+            position: fixed;
+            bottom: 84px;
+            right: 16px;
+            z-index: 45;
         }
 
-        /* قابلیت زوم و نمایش کامل اینفوگرافیک */
+        /* نشانگر وضعیت پویا (Badge) */
+        .badge-dot {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            width: 7px;
+            height: 7px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #ef4444;
+        }
+
         .zoomable-container {
             overflow: auto;
             position: relative;
@@ -278,7 +302,6 @@
 
         let tgSettings = { haptic: localStorage.getItem('tg_haptic') !== 'false' };
 
-        // سیستم بازخورد صوتی و لرزشی هماهنگ (Haptic-Audio Synchronization)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
             try {
@@ -307,7 +330,7 @@
         }
     </script>
 
-    <!-- هدر داینامیک با بلور زنده و انیمیشن اسکرول -->
+    <!-- هدر -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
         <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -330,7 +353,7 @@
             </div>
         </div>
 
-        <!-- منوی تنظیمات کامل -->
+        <!-- منوی تنظیمات -->
         <div id="settingsDropdown" class="hidden absolute left-4 top-12 z-50 max-w-xs w-85 p-4 settings-glass rounded-3xl space-y-3 text-xs shadow-2xl max-h-[75vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حالت نمایش (روز / شب):</span>
@@ -572,17 +595,35 @@
         </section>
     </main>
 
-    <!-- دکمه اکشن شناور جامع (Smart FAB) -->
+    <!-- منوی کشویی گروه‌بندی شده (Segmented More Drawer) -->
+    <div id="moreDrawer" class="fixed inset-x-0 bottom-0 z-50 ultra-glass rounded-t-3xl p-4 shadow-2xl max-w-md mx-auto space-y-3">
+        <div class="flex justify-between items-center pb-2 border-b border-white/10">
+            <span class="font-bold text-xs text-amber-300"><i class="fa-solid fa-layer-group ml-1"></i> سایر بخش‌ها و امکانات مینی‌اپ</span>
+            <button onclick="toggleMoreDrawer()" class="text-slate-300 hover:text-white p-1"><i class="fa-solid fa-xmark text-sm"></i></button>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
+            <button onclick="switchTab('news-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1 relative"><i class="fa-solid fa-bullhorn text-red-500 text-sm"></i><span>اطلاعیه‌ها</span><span id="badgeNews" class="badge-dot hidden"></span></button>
+            <button onclick="switchTab('public-faq-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-clipboard-question text-amber-400 text-sm"></i><span>بانک سوال</span></button>
+            <button onclick="switchTab('instagram-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-brands fa-instagram text-pink-500 text-sm"></i><span>اینستاگرام</span></button>
+            <button onclick="switchTab('podcasts-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-podcast text-emerald-400 text-sm"></i><span>پادکست</span></button>
+            <button onclick="switchTab('files-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-folder-open text-blue-400 text-sm"></i><span>پرونده‌ها</span></button>
+            <button onclick="switchTab('multimedia-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-tower-broadcast text-purple-400 text-sm"></i><span>پخش زنده</span></button>
+            <button onclick="switchTab('infographics-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-image text-indigo-400 text-sm"></i><span>اینفوگرافیک</span></button>
+            <button onclick="switchTab('series-tab'); toggleMoreDrawer();" class="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 flex flex-col items-center space-y-1"><i class="fa-solid fa-film text-rose-400 text-sm"></i><span>سریال</span></button>
+        </div>
+    </div>
+
+    <!-- دکمه اکشن شناور (FAB) سمت چپ -->
     <div onclick="switchTab('chatbot-tab'); triggerHaptic('medium');" class="smart-fab" title="دستیار هوشمند">
         <i class="fa-solid fa-robot text-base"></i>
     </div>
 
-    <!-- دکمه بازگشت به بالای صفحه (Back-to-Top) -->
-    <button id="backToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="fixed bottom-24 left-4 z-40 hidden w-10 h-10 rounded-full ultra-glass text-amber-300 shadow-2xl flex items-center justify-center transition hover:scale-110">
+    <!-- دکمه بازگشت به بالا سمت راست (بدون تداخل با FAB) -->
+    <button id="backToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="hidden w-11 h-11 rounded-full ultra-glass text-amber-300 shadow-2xl flex items-center justify-center transition hover:scale-110">
         <i class="fa-solid fa-arrow-up text-xs"></i>
     </button>
 
-    <!-- مودال رسانه با قابلیت زوم کامل اینفوگرافیک -->
+    <!-- مودال رسانه -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
         <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-sm w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -605,23 +646,17 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین شناور با فیزیک مقیاس و بلور عمیق -->
-    <nav class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center whitespace-nowrap">
-        <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-2.5 py-1"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
-        <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
-        <button onclick="switchTab('laws-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
-        <button onclick="switchTab('cards-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-id-card text-sm mb-0.5"></i><span class="text-[8px]">کارت‌ها</span></button>
-        <button onclick="switchTab('lawyer-tab', this); triggerHaptic('light'); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
-        <button onclick="switchTab('chatbot-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
-        <button onclick="switchTab('news-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-bullhorn text-sm mb-0.5"></i><span class="text-[8px]">اطلاعیه‌ها</span></button>
-        <button onclick="switchTab('tools-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
-        <button onclick="switchTab('public-faq-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-clipboard-question text-sm mb-0.5"></i><span class="text-[8px]">بانک سوال</span></button>
-        <button onclick="switchTab('instagram-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-brands fa-instagram text-sm mb-0.5"></i><span class="text-[8px]">اینستاگرام</span></button>
-        <button onclick="switchTab('podcasts-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-podcast text-sm mb-0.5"></i><span class="text-[8px]">پادکست</span></button>
-        <button onclick="switchTab('files-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-folder-open text-sm mb-0.5"></i><span class="text-[8px]">پرونده‌ها</span></button>
-        <button onclick="switchTab('multimedia-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-tower-broadcast text-sm mb-0.5"></i><span class="text-[8px]">پخش زنده</span></button>
-        <button onclick="switchTab('infographics-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-image text-sm mb-0.5"></i><span class="text-[8px]">اینفوگرافیک</span></button>
-        <button onclick="switchTab('series-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1"><i class="fa-solid fa-film text-sm mb-0.5"></i><span class="text-[8px]">سریال</span></button>
+    <!-- تب‌بار اصلی پایین (با دکمه کشویی «بیشتر» و نشانگرهای پویا) -->
+    <nav class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center justify-around whitespace-nowrap">
+        <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-2.5 py-1 relative"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
+        <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
+        <button onclick="switchTab('laws-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
+        <button onclick="switchTab('cards-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-id-card text-sm mb-0.5"></i><span class="text-[8px]">کارت‌ها</span></button>
+        <button onclick="switchTab('lawyer-tab', this); triggerHaptic('light'); loadUserFaqs();" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-user-tie text-sm mb-0.5"></i><span class="text-[8px]">مشاور</span></button>
+        <button onclick="switchTab('chatbot-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-robot text-sm mb-0.5"></i><span class="text-[8px]">چت‌بات</span></button>
+        <button onclick="switchTab('tools-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-2.5 py-1 relative"><i class="fa-solid fa-toolbox text-sm mb-0.5"></i><span class="text-[8px]">ابزارها</span></button>
+        <!-- دکمه منوی کشویی بیشتر -->
+        <button onclick="toggleMoreDrawer(); triggerHaptic('light');" class="nav-btn flex flex-col items-center text-amber-400 font-bold px-2.5 py-1 relative"><i class="fa-solid fa-bars-staggered text-sm mb-0.5"></i><span class="text-[8px]">بیشتر</span><span id="badgeMore" class="badge-dot"></span></button>
     </nav>
 
     <script>
@@ -639,7 +674,7 @@
             livestream: [{ title: "شبکه خبر", description: "پخش زنده سراسری", url: "https://www.telewebion.com/live/khabar" }],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.0.0 (فیزیک مقیاس تب‌بار، دکمه FAB، بلور زنده و زوم اینفوگرافیک)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.1.0 (منوی کشویی تب‌بار، رفع مشکل کلیک جستجو و تنظیمات دکمه‌ها)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -859,7 +894,6 @@
             if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
-        // نمایش کامل اینفوگرافیک با قابلیت زوم تعاملی
         function openMediaModal(idx, type) {
             const item = type === 'series' ? appData.series[idx] : appData.infographics[idx];
             if(!item) return;
@@ -1002,10 +1036,29 @@
             }
         }
 
+        // رفع مشکل کلیک روی نتایج جستجوی زنده (هدایت دقیق به اصطلاح)
         function handleLiveSearch(query) {
             const box = document.getElementById('liveSuggestionsBox');
             if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
-            box.innerHTML = (appData.dictionary || []).filter(d => d.term.includes(query)).map(d => `<div onclick="switchTab('dictionary-tab')" class="p-2 text-xs cursor-pointer hover:bg-black/10 rounded font-bold">${d.term}</div>`).join('') || '<div class="p-2 text-xs font-bold">موردی یافت نشد.</div>';
+            
+            const results = (appData.dictionary || []).filter(d => d.term.includes(query));
+            if (results.length > 0) {
+                box.innerHTML = results.map(d => `
+                    <div onclick="selectSearchResult('${d.term}')" class="p-2 text-xs cursor-pointer hover:bg-white/15 rounded font-bold transition">
+                        <i class="fa-solid fa-book-bookmark text-red-400 ml-1"></i> ${d.term}
+                    </div>
+                `).join('');
+            } else {
+                box.innerHTML = '<div class="p-2 text-xs font-bold text-slate-300">موردی یافت نشد.</div>';
+            }
+        }
+
+        function selectSearchResult(term) {
+            document.getElementById('liveSuggestionsBox').classList.add('hidden');
+            document.getElementById('searchInput').value = term;
+            switchTab('dictionary-tab');
+            document.getElementById('dictAdvancedSearchInput').value = term;
+            renderDictionary(term);
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -1048,6 +1101,12 @@
             } catch(e) {}
         }
 
+        function toggleMoreDrawer() {
+            const drawer = document.getElementById('moreDrawer');
+            drawer.classList.toggle('open');
+            triggerHaptic('light');
+        }
+
         function switchTab(sectionId, btn) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(sectionId).classList.remove('hidden');
@@ -1067,7 +1126,6 @@
                 btn.classList.remove('opacity-70');
                 btn.classList.add('text-red-500', 'font-bold', 'active-tab');
             } else {
-                // Find matching button in nav
                 const targetBtn = Array.from(document.querySelectorAll('nav button')).find(b => b.getAttribute('onclick')?.includes(sectionId));
                 if(targetBtn) {
                     targetBtn.classList.remove('opacity-70');
@@ -1077,7 +1135,6 @@
             window.scrollTo(0, 0);
         }
 
-        // اسکرول هدر داینامیک و بلور زنده
         function initScrollHeaderEffect() {
             const header = document.getElementById('appHeader');
             const backToTopBtn = document.getElementById('backToTopBtn');
@@ -1145,6 +1202,13 @@
                 if (dropdown && !dropdown.classList.contains('hidden')) {
                     if (!dropdown.contains(e.target) && !settingsBtn.contains(e.target)) {
                         dropdown.classList.add('hidden');
+                    }
+                }
+                const drawer = document.getElementById('moreDrawer');
+                const moreBtn = document.querySelector('button[onclick*="toggleMoreDrawer"]');
+                if (drawer && drawer.classList.contains('open')) {
+                    if (!drawer.contains(e.target) && !moreBtn.contains(e.target)) {
+                        drawer.classList.remove('open');
                     }
                 }
             });

@@ -456,7 +456,7 @@
                     <option value="خانواده و مهریه">خانواده و مهریه</option>
                 </select>
                 <textarea id="questionInput" placeholder="سوال حقوقی..." class="w-full bg-slate-900 text-amber-200 rounded-2xl p-3 text-xs h-24 resize-none border border-white/20 shadow-inner"></textarea>
-                <button id="submitQuestionBtn" onclick="submitQuestion();" class="w-full bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white rounded-xl shadow-md">ارسال سوال</button>
+                <button id="submitQuestionBtn" onclick="submitQuestion();" class="w-full bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white rounded-xl shadow-md flex items-center justify-center space-x-2 space-x-reverse"><span>ارسال سوال</span></button>
                 <div id="userFaqsContainer" class="space-y-3 max-h-60 overflow-y-auto"></div>
             </div>
         </section>
@@ -470,7 +470,7 @@
                 </div>
                 <div class="flex space-x-2 space-x-reverse">
                     <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-amber-200 rounded-xl p-2.5 text-xs h-14 resize-none border border-white/20 shadow-inner"></textarea>
-                    <button id="aiSendBtn" onclick="runAiAssistant();" class="bg-red-600 text-white px-4 rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-paper-plane"></i></button>
+                    <button id="aiSendBtn" onclick="runAiAssistant();" class="bg-red-600 text-white px-4 rounded-xl text-xs font-bold shadow flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </section>
@@ -635,7 +635,7 @@
             <h3 class="font-bold text-xs text-red-500 pt-1"><i class="fa-solid fa-earth-americas ml-1"></i> جستجوی پیشرفته در گوگل</h3>
             <p class="text-[10px] text-slate-300 text-right">عبارت مورد نظر خود را برای جستجو در گوگل وارد کنید:</p>
             <input type="text" id="googleSearchInput" placeholder="عبارت جستجو..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-3 py-2.5 text-xs border border-white/20 focus:outline-none">
-            <button onclick="executeGoogleSearch()" class="w-full bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold shadow">جستجو در گوگل</button>
+            <button id="googleSearchBtn" onclick="executeGoogleSearch()" class="w-full bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold shadow flex items-center justify-center space-x-2 space-x-reverse"><span>جستجو در گوگل</span></button>
         </div>
     </div>
 
@@ -658,17 +658,17 @@
             quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
             publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
             instagram: [{ title: "مشاوره کیفری", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://instagram.com" }],
-            series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://www.w3schools.com/html/mov_bbb.mp4" }],
+            series: [{ title: "مجموعه آقای قاضی - قسمت اول", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" }],
             podcasts: [{ title: "پادکست حقوقی شماره ۱", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }],
             files: [{ title: "پرونده ویژه حقوقی", description: "بررسی ابعاد حقوقی قراردادهای پیش‌فروش مسکن", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png", url: "#" }],
             infographics: [{ title: "اینفوگرافیک مراحل دعوای حقوقی", image: "https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" }],
             livestream: [
-                { title: "شبکه یک سیما", description: "پخش زنده سراسری", url: "https://www.w3schools.com/html/mov_bbb.mp4" },
-                { title: "شبکه خبر", description: "پخش زنده اخبار", url: "https://www.w3schools.com/html/mov_bbb.mp4" }
+                { title: "شبکه یک سیما", description: "پخش زنده سراسری", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" },
+                { title: "شبکه خبر", description: "پخش زنده اخبار", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.6.0 (سرعت بالا، پلیر اختصاصی سریال، فیکس تب faq گوگل‌شیت و بازخورد لحظه‌ای)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.7.0 (پلیر فعال سریال، لودینگ چرخان دکمه‌ها و فیکس پخش زنده)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -888,7 +888,7 @@
             if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
-        // پلیر اختصاصی داخلی برای سریال‌ها با بازخورد لرزشی و زوم اینفوگرافیک
+        // پلیر اختصاصی داخلی برای سریال‌ها به همراه پخش خارجی و زوم اینفوگرافیک
         function openMediaModal(idx, type) {
             const item = type === 'series' ? appData.series[idx] : appData.infographics[idx];
             if(!item) return;
@@ -915,6 +915,8 @@
         function closeMediaModal() {
             document.getElementById('mediaModal').classList.add('hidden');
             document.getElementById('mediaModalContent').innerHTML = '';
+            const video = document.querySelector('#mediaModalContent video');
+            if(video) video.pause();
         }
 
         function renderLiveChannels() {
@@ -1009,7 +1011,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // بازخورد لحظه‌ای (Loading States) برای ارسال چت
+        // بازخورد لحظه‌ای (Loading State با چرخش آیکون) برای چت‌بات
         async function runAiAssistant() {
             const input = document.getElementById('aiPromptInput');
             const sendBtn = document.getElementById('aiSendBtn');
@@ -1071,22 +1073,34 @@
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
         function closeAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.add('hidden'); }
+        
+        // بازخورد لحظه‌ای (Loading State با چرخش آیکون) برای جستجوی گوگل
         function executeGoogleSearch() {
             const query = document.getElementById('googleSearchInput').value.trim();
+            const searchBtn = document.getElementById('googleSearchBtn');
             if(!query) return alert('عبارت جستجو را وارد کنید.');
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-            closeAdvancedSearchModal();
+
+            const originalBtnHtml = searchBtn.innerHTML;
+            searchBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال جستجو در گوگل...`;
+            searchBtn.disabled = true;
+
+            setTimeout(() => {
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+                searchBtn.innerHTML = originalBtnHtml;
+                searchBtn.disabled = false;
+                closeAdvancedSearchModal();
+            }, 500);
         }
 
-        // اتصال دقیق بخش مشاور به تب faq در گوگل شیت با بازخورد لحظه‌ای دکمه
+        // اتصال دقیق بخش مشاور به تب faq در گوگل شیت همراه با چرخش آیکون لودینگ
         async function submitQuestion() {
             const q = document.getElementById('questionInput').value.trim();
             const cat = document.getElementById('questionCategory').value;
             const submitBtn = document.getElementById('submitQuestionBtn');
             if(!q) return alert('متن سوال را وارد کنید.');
 
-            const originalText = submitBtn.innerText;
-            submitBtn.innerText = "در حال ارسال و ثبت در سامانه...";
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال ارسال به تب faq...`;
             submitBtn.disabled = true;
 
             try {
@@ -1099,7 +1113,7 @@
                 alert('سوال شما ثبت شد.');
                 document.getElementById('questionInput').value = '';
             } finally {
-                submitBtn.innerText = originalText;
+                submitBtn.innerHTML = originalBtnHtml;
                 submitBtn.disabled = false;
             }
         }

@@ -1388,30 +1388,48 @@
             }, 500);
         }
 
-        async function submitQuestion() {
-            const q = document.getElementById('questionInput').value.trim();
-            const cat = document.getElementById('questionCategory').value;
-            const submitBtn = document.getElementById('submitQuestionBtn');
-            if(!q) return alert('متن سوال را وارد کنید.');
+let isSubmittingQuestion = false; // قفل محافظ برای جلوگیری از ارسال دوبار
 
-            const originalBtnHtml = submitBtn.innerHTML;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال ارسال به تب faq...`;
-            submitBtn.disabled = true;
+async function submitQuestion() {
+    if (isSubmittingQuestion) return; // اگر در حال ارسال است، از اجرای مجدد جلوگیری کن
 
-            try {
-                const res = await fetch(`${API_URL}?action=add_faq&tab=faq&userId=${userId}&category=${encodeURIComponent(cat)}&question=${encodeURIComponent(q)}`);
-                const data = await res.json();
-                document.getElementById('questionInput').value = '';
-                alert('سوال شما با موفقیت در تب faq ثبت شد. کد رهگیری: ' + (data.trackingCode || 'ثبت شد'));
-                loadUserFaqs();
-            } catch(e) {
-                alert('سوال شما ثبت شد.');
-                document.getElementById('questionInput').value = '';
-            } finally {
-                submitBtn.innerHTML = originalBtnHtml;
-                submitBtn.disabled = false;
-            }
-        }
+    const qInput = document.getElementById('questionInput');
+    const q = qInput.value.trim();
+    const cat = document.getElementById('questionCategory').value;
+    const submitBtn = document.getElementById('submitQuestionBtn');
+    
+    if(!q) return alert('متن سوال را وارد کنید.');
+
+    isSubmittingQuestion = true; // قفل کردن
+    const originalBtnHtml = submitBtn.innerHTML;
+    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال ارسال...`;
+    submitBtn.disabled = true;
+
+    try {
+        // تغییر متد به POST برای جلوگیری از خطاهای ریدایرکت و 404 گوگل اسکریپت
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'add_faq',
+                tab: 'faq',
+                userId: userId,
+                category: cat,
+                question: q
+            })
+        });
+        const data = await res.json();
+        qInput.value = '';
+        alert('سوال شما با موفقیت ثبت شد. کد رهگیری: ' + (data.trackingCode || 'ثبت شد'));
+        loadUserFaqs();
+    } catch(e) {
+        alert('خطا در ارسال سوال. لطفاً مجدد تلاش کنید.');
+    } finally {
+        isSubmittingQuestion = false; // آزاد کردن قفل
+        submitBtn.innerHTML = originalBtnHtml;
+        submitBtn.disabled = false;
+    }
+}
 
         async function loadUserFaqs() {
             const container = document.getElementById('userFaqsContainer');

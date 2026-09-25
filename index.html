@@ -230,15 +230,16 @@
             user-select: none;
         }
 
+        /* پلیر ویدئویی حرفه‌ای، لوکس و شیشه‌ای (Pro Video Player) */
         .pro-video-wrapper {
             position: relative;
             width: 100%;
             aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 1rem;
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            border-radius: 1.25rem;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.85), 0 0 25px rgba(197, 27, 36, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .pro-video-wrapper video {
             width: 100%;
@@ -246,7 +247,19 @@
             object-fit: cover;
         }
 
-        /* استایل جلوگیری از پرش صفحه (Zero Layout Shift) */
+        /* حالت تمام‌صفحه سینمایی (Cinematic Immersion Mode) */
+        .cinematic-mode-box {
+            max-width: 98vw !important;
+            width: 98vw !important;
+            background: rgba(5, 5, 5, 0.99) !important;
+            border: 1px solid rgba(245, 158, 11, 0.3) !important;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(197, 27, 36, 0.4) !important;
+        }
+        .cinematic-mode-box .pro-video-wrapper {
+            aspect-ratio: 21/9 !important;
+            max-height: 75vh;
+        }
+
         .content-box-stable {
             min-height: 90px;
             contain: layout style paint;
@@ -431,9 +444,11 @@
         <div class="max-w-md mx-auto px-4 py-2.5 relative z-20">
             <div class="flex space-x-2 space-x-reverse relative items-center">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اصطلاحات..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs focus:outline-none border border-white/30 shadow-inner">
+                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اصطلاحات..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-12 text-xs focus:outline-none border border-white/30 shadow-inner">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
-                    <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+                    <!-- دکمه دستیار صوتی (Voice-to-Text) -->
+                    <button onclick="startVoiceDictation('searchInput')" title="جستجوی صوتی" class="absolute left-7 top-2.5 text-amber-400 hover:text-white p-1 text-xs"><i class="fa-solid fa-microphone"></i></button>
+                    <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <button onclick="openAdvancedSearchModal(); triggerHaptic('light');" title="جستجوی پیشرفته در گوگل" class="glass-tab p-2.5 rounded-xl text-xs flex items-center justify-center transition text-amber-300 shadow hover:bg-white/25">
                     <i class="fa-solid fa-earth-americas text-sm"></i>
@@ -458,9 +473,10 @@
                 <button onclick="filterDictCategory('کیفری', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-slate-800 text-slate-200 border border-white/15 flex-shrink-0">کیفری</button>
             </div>
             <div class="relative">
-                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته فازی (پشتیبانی از غلط املایی)..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/30 focus:outline-none shadow-inner">
+                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته فازی..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-12 text-xs border border-white/30 focus:outline-none shadow-inner">
                 <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
-                <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="startVoiceDictation('dictAdvancedSearchInput')" title="گفتار به متن" class="absolute left-7 top-2.5 text-amber-400 hover:text-white p-1 text-xs"><i class="fa-solid fa-microphone"></i></button>
+                <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="dictionaryContainer" class="space-y-2 mt-2 content-box-stable">
                 <div class="custom-skeleton h-20 w-full"></div>
@@ -485,7 +501,10 @@
                     <option value="کیفری و جرایم">کیفری و جرایم</option>
                     <option value="خانواده و مهریه">خانواده و مهریه</option>
                 </select>
-                <textarea id="questionInput" placeholder="سوال حقوقی..." class="w-full bg-slate-900 text-amber-200 rounded-2xl p-3 text-xs h-24 resize-none border border-white/20 shadow-inner"></textarea>
+                <div class="relative">
+                    <textarea id="questionInput" placeholder="سوال حقوقی..." class="w-full bg-slate-900 text-amber-200 rounded-2xl p-3 pl-8 text-xs h-24 resize-none border border-white/20 shadow-inner"></textarea>
+                    <button onclick="startVoiceDictation('questionInput')" title="تایپ صوتی" class="absolute left-2.5 top-3 text-amber-400 hover:text-white text-xs"><i class="fa-solid fa-microphone"></i></button>
+                </div>
                 <button id="submitQuestionBtn" onclick="submitQuestion();" class="w-full bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white rounded-xl shadow-md flex items-center justify-center space-x-2 space-x-reverse"><span>ارسال سوال</span></button>
                 <div id="userFaqsContainer" class="space-y-3 max-h-60 overflow-y-auto content-box-stable"></div>
             </div>
@@ -498,8 +517,9 @@
                 <div id="chatMessagesContainer" class="space-y-2.5 h-[48vh] overflow-y-auto p-2.5 bg-slate-900 rounded-2xl text-[11px] text-slate-100 shadow-inner">
                     <div class="text-center text-slate-300 py-4">سلام! سوال خود را بپرسید...</div>
                 </div>
-                <div class="flex space-x-2 space-x-reverse">
-                    <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-amber-200 rounded-xl p-2.5 text-xs h-14 resize-none border border-white/20 shadow-inner"></textarea>
+                <div class="flex space-x-2 space-x-reverse relative">
+                    <textarea id="aiPromptInput" placeholder="پیام خود را بنویسید..." class="flex-grow bg-slate-900 text-amber-200 rounded-xl p-2.5 pl-8 text-xs h-14 resize-none border border-white/20 shadow-inner"></textarea>
+                    <button onclick="startVoiceDictation('aiPromptInput')" title="تایپ صوتی" class="absolute left-14 top-3 text-amber-400 hover:text-white text-xs p-1"><i class="fa-solid fa-microphone"></i></button>
                     <button id="aiSendBtn" onclick="runAiAssistant();" class="bg-red-600 text-white px-4 rounded-xl text-xs font-bold shadow flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -646,18 +666,21 @@
         <i class="fa-solid fa-arrow-up text-xs"></i>
     </button>
 
-    <!-- مودال رسانه -->
+    <!-- مودال رسانه مجهز به حالت تمام‌صفحه سینمایی و پلیر حرفه‌ای -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
         <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-lg w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 id="mediaModalTitle" class="font-bold text-xs text-amber-300 pt-1"></h3>
             <div id="mediaModalContent" class="relative w-full rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10"></div>
-            <div class="flex space-x-2 space-x-reverse">
+            <div class="flex flex-wrap gap-2 justify-between">
+                <button id="cinematicBtn" onclick="toggleCinematicMode()" class="hidden flex-1 bg-indigo-600/30 text-indigo-200 border border-indigo-500/40 py-2 rounded-xl text-xs font-bold transition hover:bg-indigo-600 hover:text-white">
+                    <i class="fa-solid fa-film ml-1"></i> حالت سینمایی
+                </button>
                 <button id="pipBtn" onclick="togglePiP()" class="hidden flex-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 py-2 rounded-xl text-xs font-bold transition hover:bg-amber-500 hover:text-black">
                     <i class="fa-solid fa-clone ml-1"></i> تصویر در تصویر (PiP)
                 </button>
                 <a id="mediaModalExternalBtn" href="#" target="_blank" class="hidden flex-1 bg-red-600/30 text-red-200 border border-red-500/40 py-2 rounded-xl text-xs font-bold transition hover:bg-red-600 hover:text-white">
-                    <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای مستقیم خارجی
+                    <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای مستقیم
                 </a>
             </div>
         </div>
@@ -707,14 +730,49 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 7.0.0 (کش پیشرفته IndexedDB، جستجوی فازی، بارگذاری تنبل و Frosted Blur Dock)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 7.5.0 (حالت سینمایی ویدیو، دستیار صوتی دیکته و پلیرهای فوق‌پیشرفته)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
         let chatConversationHistory = JSON.parse(sessionStorage.getItem('mizan_active_chat')) || [];
         let selectedDictCat = 'all';
 
-        // پیاده‌سازی سیستم کش پیشرفته IndexedDB برای ذخیره فوق‌سریع داده‌ها
+        // پیاده‌سازی سیستم جستجوی صوتی (Voice-to-Text Dictation)
+        function startVoiceDictation(targetInputId) {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('مرورگر شما از جستجوی صوتی پشتیبانی نمی‌کند.');
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'fa-IR';
+            recognition.interimResults = false;
+            triggerHaptic('light');
+            
+            const input = document.getElementById(targetInputId);
+            if(input) input.placeholder = "در حال گوش دادن... صحبت کنید";
+            
+            recognition.onresult = function(event) {
+                const speechToText = event.results[0][0].transcript;
+                if(input) {
+                    input.value = speechToText;
+                    if(targetInputId === 'searchInput') handleLiveSearch(speechToText);
+                    if(targetInputId === 'dictAdvancedSearchInput') renderDictionary(speechToText);
+                }
+            };
+            
+            recognition.onerror = function() {
+                if(input) input.placeholder = "خطا در تشخیص صوت.";
+            };
+            
+            recognition.onend = function() {
+                if(input) input.placeholder = "جستجوی آنی در اصطلاحات...";
+            };
+            
+            recognition.start();
+        }
+
+        // سیستم کش پیشرفته IndexedDB
         const dbName = "SIJT_DB";
         const storeName = "cacheStore";
 
@@ -737,7 +795,7 @@
                 const db = await openIndexedDB();
                 const tx = db.transaction(storeName, "readwrite");
                 tx.objectStore(storeName).put(data, key);
-            } catch (e) { console.log("IndexedDB save error", e); }
+            } catch (e) {}
         }
 
         async function getFromIndexedDB(key) {
@@ -758,13 +816,12 @@
                 const tx = db.transaction(storeName, "readwrite");
                 tx.objectStore(storeName).clear();
                 localStorage.removeItem('mizan_cache');
-                alert('کش IndexedDB و حافظه موقت پاک شد.');
+                alert('کش IndexedDB پاک شد.');
                 location.reload();
             } catch (e) { alert('خطا در پاکسازی کش'); }
         }
 
         async function initApp() {
-            // بارگذاری آنی از کش محلی برای سرعت زیر 0.5 ثانیه
             const cachedDbData = await getFromIndexedDB('app_data');
             if (cachedDbData) {
                 appData = cachedDbData;
@@ -802,7 +859,6 @@
             initLazyLoadingObserver();
         });
 
-        // سیستم بارگذاری تنبل هوشمند (Smart Lazy Loading با Intersection Observer)
         function initLazyLoadingObserver() {
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -899,7 +955,6 @@
             return output.toLowerCase().trim();
         }
 
-        // الگوریتم جستجوی هوشمند فازی (Fuzzy Search Engine برای پوشش غلط املایی و شباهت واژگان)
         function calculateLevenshteinDistance(a, b) {
             const matrix = [];
             for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
@@ -921,7 +976,6 @@
             const t = normalizeNumbers(text);
             if (!q) return true;
             if (t.includes(q)) return true;
-            // تطبیق کلمه به کلمه با فاصله مجاز ویرایشی (Fuzzy)
             const queryWords = q.split(' ');
             const textWords = t.split(' ');
             let matches = 0;
@@ -1044,6 +1098,7 @@
             if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img data-src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
+        // پلیر اختصاصی ویدیو همراه با حالت سینمایی (Cinematic Immersion Mode) و PiP
         function openMediaModal(idx, type) {
             const item = type === 'series' ? appData.series[idx] : appData.infographics[idx];
             if(!item) return;
@@ -1051,12 +1106,14 @@
             const content = document.getElementById('mediaModalContent');
             const extBtn = document.getElementById('mediaModalExternalBtn');
             const pipBtn = document.getElementById('pipBtn');
+            const cinematicBtn = document.getElementById('cinematicBtn');
 
             if(type === 'series') {
                 let url = item.url || '';
                 content.innerHTML = `<div class="pro-video-wrapper"><video id="modalVideoPlayer" src="${url}" controls autoplay playsinline webkit-playsinline preload="auto"></video></div>`;
                 extBtn.classList.remove('hidden');
                 extBtn.href = url;
+                cinematicBtn.classList.remove('hidden');
                 if (document.pictureInPictureEnabled) {
                     pipBtn.classList.remove('hidden');
                 }
@@ -1064,9 +1121,16 @@
                 content.innerHTML = `<div class="zoomable-container" id="zoomContainer"><img src="${item.image}" loading="lazy" class="zoomable-img" id="zoomImg" onclick="toggleZoom(this)" title="برای زوم کلیک کنید"></div>`;
                 extBtn.classList.add('hidden');
                 pipBtn.classList.add('hidden');
+                cinematicBtn.classList.add('hidden');
                 initPanAndZoom();
             }
             document.getElementById('mediaModal').classList.remove('hidden');
+        }
+
+        function toggleCinematicMode() {
+            const modalBox = document.getElementById('mediaModalBox');
+            modalBox.classList.toggle('cinematic-mode-box');
+            triggerHaptic('light');
         }
 
         async function togglePiP() {
@@ -1146,6 +1210,8 @@
             document.getElementById('mediaModal').classList.add('hidden');
             document.getElementById('mediaModalContent').innerHTML = '';
             document.getElementById('pipBtn').classList.add('hidden');
+            document.getElementById('cinematicBtn').classList.add('hidden');
+            document.getElementById('mediaModalBox').classList.remove('cinematic-mode-box');
             scale = 1;
             const video = document.querySelector('#mediaModalContent video');
             if(video) video.pause();
@@ -1404,7 +1470,6 @@
             window.scrollTo(0, 0);
         }
 
-        // ناوبری پویا با هوش اسکرول (Dynamic Island / Frosted Blur Dock)
         function initScrollHeaderEffect() {
             const header = document.getElementById('appHeader');
             const backToTopBtn = document.getElementById('backToTopBtn');

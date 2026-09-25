@@ -34,7 +34,7 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: var(--selected-font, Tahoma), Arial, sans-serif; font-size: var(--app-font-size, 12px); line-height: 1.8; }
+        body { font-family: var(--selected-font, Tahoma), Arial, sans-serif; font-size: var(--app-font-size, 12px); line-height: 1.8; overflow-x: hidden; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -110,17 +110,19 @@
             color: #0f172a;
         }
 
-        /* ناوبری شناور پویا با قابلیت جمع‌شوندگی هنگام اسکرول (Dynamic Island / Floating Navigation) */
+        /* تب‌بار معلق شناور با پس‌زمینه محوشونده پیشرفته (Advanced Frosted Blur Dock) و حالت Dynamic Island */
         .floating-nav {
-            background: rgba(15, 23, 42, 0.88);
-            backdrop-filter: blur(35px);
-            -webkit-backdrop-filter: blur(35px);
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 15px rgba(197, 27, 36, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 20px rgba(197, 27, 36, 0.25);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s ease, width 0.4s ease;
         }
         .light .floating-nav, body:not(.dark):not(.oled-mode) .floating-nav {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
             border: 1px solid rgba(0, 0, 0, 0.15);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
@@ -219,9 +221,7 @@
             border-radius: 1rem;
             cursor: grab;
         }
-        .zoomable-container:active {
-            cursor: grabbing;
-        }
+        .zoomable-container:active { cursor: grabbing; }
         .zoomable-img {
             transition: transform 0.2s ease;
             max-width: 100%;
@@ -230,7 +230,6 @@
             user-select: none;
         }
 
-        /* استایل‌های اختصاصی و لوکس پلیر ویدیو */
         .pro-video-wrapper {
             position: relative;
             width: 100%;
@@ -245,6 +244,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        /* استایل جلوگیری از پرش صفحه (Zero Layout Shift) */
+        .content-box-stable {
+            min-height: 90px;
+            contain: layout style paint;
         }
 
         .custom-skeleton {
@@ -416,7 +421,7 @@
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
                 <span class="font-bold">حافظه موقت و کش:</span>
-                <button onclick="localStorage.removeItem('mizan_cache'); sessionStorage.removeItem('mizan_active_chat'); location.reload();" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش</button>
+                <button onclick="clearIndexedDBCache(); location.reload();" class="bg-red-500/20 text-red-300 px-2.5 py-1 rounded-xl font-bold">پاکسازی کش (IndexedDB)</button>
             </div>
             <div class="text-center pt-1">
                 <button onclick="openAboutModal();" class="text-amber-400 font-bold">درباره ما و پشتیبانی</button>
@@ -447,12 +452,17 @@
                 <h2 class="font-black text-xs flex items-center text-gradient"><i class="fa-solid fa-book ml-1.5 text-red-500"></i> فرهنگ اصطلاحات حقوقی</h2>
                 <span id="dictCounter" class="text-[9px] text-amber-300 font-bold"></span>
             </div>
+            <div class="flex space-x-2 space-x-reverse overflow-x-auto hide-scrollbar pb-1 text-[11px]">
+                <button onclick="filterDictCategory('all', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-red-600 text-white font-bold flex-shrink-0 shadow">همه</button>
+                <button onclick="filterDictCategory('مدنی', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-slate-800 text-slate-200 border border-white/15 flex-shrink-0">حقوق مدنی</button>
+                <button onclick="filterDictCategory('کیفری', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-slate-800 text-slate-200 border border-white/15 flex-shrink-0">کیفری</button>
+            </div>
             <div class="relative">
-                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته در واژگان حقوقی..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/30 focus:outline-none shadow-inner">
+                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته فازی (پشتیبانی از غلط املایی)..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-8 text-xs border border-white/30 focus:outline-none shadow-inner">
                 <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
                 <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2.5 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="dictionaryContainer" class="space-y-2 mt-2">
+            <div id="dictionaryContainer" class="space-y-2 mt-2 content-box-stable">
                 <div class="custom-skeleton h-20 w-full"></div>
                 <div class="custom-skeleton h-20 w-full"></div>
             </div>
@@ -461,7 +471,7 @@
         <!-- تب ۲: سامانه‌ها -->
         <section id="legal-tab" class="page-section hidden">
             <h2 class="font-black text-xs mb-2 text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> سامانه‌های قضایی</h2>
-            <div id="legalSystemsContainer" class="space-y-3">
+            <div id="legalSystemsContainer" class="space-y-3 content-box-stable">
                 <div class="custom-skeleton h-16 w-full"></div>
             </div>
         </section>
@@ -477,7 +487,7 @@
                 </select>
                 <textarea id="questionInput" placeholder="سوال حقوقی..." class="w-full bg-slate-900 text-amber-200 rounded-2xl p-3 text-xs h-24 resize-none border border-white/20 shadow-inner"></textarea>
                 <button id="submitQuestionBtn" onclick="submitQuestion();" class="w-full bg-gradient-to-r from-red-600 to-red-700 py-2.5 text-xs font-bold text-white rounded-xl shadow-md flex items-center justify-center space-x-2 space-x-reverse"><span>ارسال سوال</span></button>
-                <div id="userFaqsContainer" class="space-y-3 max-h-60 overflow-y-auto"></div>
+                <div id="userFaqsContainer" class="space-y-3 max-h-60 overflow-y-auto content-box-stable"></div>
             </div>
         </section>
 
@@ -498,20 +508,20 @@
         <!-- تب ۵: قوانین -->
         <section id="laws-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> آرشیو قوانین</h2>
-            <div id="lawsContainer" class="space-y-2.5"><div class="custom-skeleton h-24 w-full"></div></div>
+            <div id="lawsContainer" class="space-y-2.5 content-box-stable"><div class="custom-skeleton h-24 w-full"></div></div>
         </section>
 
         <!-- تب ۶: کارت‌ها -->
         <section id="cards-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-id-card ml-1 text-red-500"></i> کارت‌های حقوقی</h2>
             <div class="flex space-x-3 space-x-reverse overflow-x-auto hide-scrollbar py-2" id="storyHighlightsBar"></div>
-            <div id="shareCardsContainer" class="space-y-3 mt-2"><div class="custom-skeleton h-32 w-full"></div></div>
+            <div id="shareCardsContainer" class="space-y-3 mt-2 content-box-stable"><div class="custom-skeleton h-32 w-full"></div></div>
         </section>
 
         <!-- تب ۷: اطلاعیه‌ها -->
         <section id="news-tab" class="page-section hidden space-y-4">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-bullhorn ml-1 text-red-500"></i> اخبار رسمی</h2>
-            <div id="newsContainer" class="space-y-3"><div class="custom-skeleton h-20 w-full"></div></div>
+            <div id="newsContainer" class="space-y-3 content-box-stable"><div class="custom-skeleton h-20 w-full"></div></div>
         </section>
 
         <!-- تب ۸: ابزارها -->
@@ -563,25 +573,25 @@
         <!-- تب ۹: سوالات عمومی -->
         <section id="public-faq-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-clipboard-question ml-1 text-red-500"></i> بانک سوالات عمومی</h2>
-            <div id="publicFaqContainer" class="space-y-3"><div class="custom-skeleton h-24 w-full"></div></div>
+            <div id="publicFaqContainer" class="space-y-3 content-box-stable"><div class="custom-skeleton h-24 w-full"></div></div>
         </section>
 
         <!-- تب ۱۰: اینستاگرام -->
         <section id="instagram-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs mb-2 text-gradient"><i class="fa-brands fa-instagram ml-1 text-red-500"></i> کانال‌های اینستاگرام</h2>
-            <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center"></div>
+            <div id="instagramContainer" class="grid grid-cols-3 gap-3 text-center content-box-stable"></div>
         </section>
 
         <!-- تب ۱۱: پادکست -->
         <section id="podcasts-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-podcast ml-1 text-red-500"></i> پادکست‌های حقوقی</h2>
-            <div id="podcastsContainer" class="space-y-3"></div>
+            <div id="podcastsContainer" class="space-y-3 content-box-stable"></div>
         </section>
 
         <!-- تب ۱۲: پرونده‌ها -->
         <section id="files-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-folder-open ml-1 text-red-500"></i> پرونده‌های ویژه</h2>
-            <div id="filesContainer" class="space-y-3"></div>
+            <div id="filesContainer" class="space-y-3 content-box-stable"></div>
         </section>
 
         <!-- تب ۱۳: پخش زنده -->
@@ -599,13 +609,13 @@
         <!-- تب ۱۴: اینفوگرافیک -->
         <section id="infographics-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-image ml-1 text-red-500"></i> اینفوگرافیک‌ها</h2>
-            <div id="infographicsContainer" class="grid grid-cols-2 gap-3"></div>
+            <div id="infographicsContainer" class="grid grid-cols-2 gap-3 content-box-stable"></div>
         </section>
 
         <!-- تب ۱۵: سریال -->
         <section id="series-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-film ml-1 text-red-500"></i> سریال‌ها و ویدیوها</h2>
-            <div id="seriesContainer" class="grid grid-cols-2 gap-3"></div>
+            <div id="seriesContainer" class="grid grid-cols-2 gap-3 content-box-stable"></div>
         </section>
     </main>
 
@@ -636,7 +646,7 @@
         <i class="fa-solid fa-arrow-up text-xs"></i>
     </button>
 
-    <!-- مودال رسانه با پلیر ویدیو حرفه‌ای دارای حالت تصویر در تصویر (PiP) و کنترل‌های جذاب -->
+    <!-- مودال رسانه -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
         <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-lg w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -664,7 +674,7 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین با دقیقاً 5 تب اصلی و افکت Dynamic Island هنگام اسکرول -->
+    <!-- ناوبری پایین با افکت پیشرفته Frosted Blur Dock و Dynamic Island -->
     <nav id="mainNavContainer" class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center justify-around whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-3 py-1 relative"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
@@ -678,7 +688,11 @@
     <script>
         let fallbackData = {
             legalSystems: [{ title: "سامانه ثنا", description: "سامانه ثبت‌نام الکترونیک قضایی", url: "https://sana.adliran.ir" }],
-            dictionary: [{ term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان.", category: "کیفری" }],
+            dictionary: [
+                { term: "تجدیدنظر", definition: "اعتراض به رای دادگاه بدوی در دادگاه تجدیدنظر استان.", category: "کیفری" },
+                { term: "فرجام‌خواهی", definition: "اعتراض به آرای دادگاه‌های تجدیدنظر در دیوان عالی کشور.", category: "کیفری" },
+                { term: "فسخ قرارداد", definition: "انحلال یک‌طرفه قرارداد به حکم قانون یا شرط خیار.", category: "مدنی" }
+            ],
             news: [{ title: "اطلاعیه مهم حقوقی", summary: "تغییرات جدید در نحوه ابلاغ الکترونیک", date: "۱۴۰۵/۰۶/۲۸" }],
             quickTips: [{ title: "نکته طلایی چک", text: "در زمان دریافت چک صیادی حتماً وضعیت ثبت آن در سامانه صیاد را بررسی کنید." }],
             publicFaqs: [{ question: "نحوه اعتراض به چک برگشتی چگونه است؟", answer: "از طریق دفاتر خدمات الکترونیک قضایی اقدام نمایید." }],
@@ -693,25 +707,83 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 6.0.0 (پلیر حرفه‌ای ویدیو، حالت PiP واقعی و ناوبری پویا با هوش اسکرول)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 7.0.0 (کش پیشرفته IndexedDB، جستجوی فازی، بارگذاری تنبل و Frosted Blur Dock)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
         let chatConversationHistory = JSON.parse(sessionStorage.getItem('mizan_active_chat')) || [];
         let selectedDictCat = 'all';
 
+        // پیاده‌سازی سیستم کش پیشرفته IndexedDB برای ذخیره فوق‌سریع داده‌ها
+        const dbName = "SIJT_DB";
+        const storeName = "cacheStore";
+
+        function openIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, 1);
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => resolve(request.result);
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(storeName)) {
+                        db.createObjectStore(storeName);
+                    }
+                };
+            });
+        }
+
+        async function saveToIndexedDB(key, data) {
+            try {
+                const db = await openIndexedDB();
+                const tx = db.transaction(storeName, "readwrite");
+                tx.objectStore(storeName).put(data, key);
+            } catch (e) { console.log("IndexedDB save error", e); }
+        }
+
+        async function getFromIndexedDB(key) {
+            try {
+                const db = await openIndexedDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(storeName, "readonly");
+                    const req = tx.objectStore(storeName).get(key);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => resolve(null);
+                });
+            } catch (e) { return null; }
+        }
+
+        async function clearIndexedDBCache() {
+            try {
+                const db = await openIndexedDB();
+                const tx = db.transaction(storeName, "readwrite");
+                tx.objectStore(storeName).clear();
+                localStorage.removeItem('mizan_cache');
+                alert('کش IndexedDB و حافظه موقت پاک شد.');
+                location.reload();
+            } catch (e) { alert('خطا در پاکسازی کش'); }
+        }
+
         async function initApp() {
-            renderAll();
+            // بارگذاری آنی از کش محلی برای سرعت زیر 0.5 ثانیه
+            const cachedDbData = await getFromIndexedDB('app_data');
+            if (cachedDbData) {
+                appData = cachedDbData;
+                renderAll();
+            } else {
+                renderAll();
+            }
+
             try {
                 const response = await fetch(API_URL + "?action=get_all&t=" + new Date().getTime(), { redirect: "follow" });
                 const newData = await response.json();
                 if (newData && Object.keys(newData).length > 0) {
                     appData = { ...fallbackData, ...newData };
+                    saveToIndexedDB('app_data', appData);
                     localStorage.setItem('mizan_cache', JSON.stringify(appData));
                     renderAll();
                 }
             } catch (error) {
-                console.log("Using cached data.");
+                console.log("Using local IndexedDB cache.");
             }
         }
 
@@ -727,7 +799,27 @@
             initRippleEffect();
             initSwipeToClose();
             initOutsideClickForSettings();
+            initLazyLoadingObserver();
         });
+
+        // سیستم بارگذاری تنبل هوشمند (Smart Lazy Loading با Intersection Observer)
+        function initLazyLoadingObserver() {
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        if(target.dataset.src && !target.src) {
+                            target.src = target.dataset.src;
+                        }
+                        observer.unobserve(target);
+                    }
+                });
+            }, { rootMargin: '150px' });
+
+            document.querySelectorAll('img[loading="lazy"], video[loading="lazy"]').forEach(el => {
+                observer.observe(el);
+            });
+        }
 
         function applySavedSettings() {
             const savedFont = localStorage.getItem('mizan_font') || 'Tahoma';
@@ -796,14 +888,55 @@
             renderSeries();
             renderLiveChannels();
             renderStoryHighlights();
+            initLazyLoadingObserver();
         }
 
         function normalizeNumbers(str) {
             if (!str) return '';
-            let output = String(str).replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/ۀ/g, 'ه');
+            let output = String(str).replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/ۀ/g, 'ه').replace(/\u200c/g, '');
             const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
             for (let i = 0; i < 10; i++) output = output.replace(persianNumbers[i], i);
             return output.toLowerCase().trim();
+        }
+
+        // الگوریتم جستجوی هوشمند فازی (Fuzzy Search Engine برای پوشش غلط املایی و شباهت واژگان)
+        function calculateLevenshteinDistance(a, b) {
+            const matrix = [];
+            for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
+            for (let j = 0; j <= a.length; j++) { matrix[0][j] = j; }
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) == a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
+                    }
+                }
+            }
+            return matrix[b.length][a.length];
+        }
+
+        function fuzzyMatch(query, text) {
+            const q = normalizeNumbers(query);
+            const t = normalizeNumbers(text);
+            if (!q) return true;
+            if (t.includes(q)) return true;
+            // تطبیق کلمه به کلمه با فاصله مجاز ویرایشی (Fuzzy)
+            const queryWords = q.split(' ');
+            const textWords = t.split(' ');
+            let matches = 0;
+            for (let qw of queryWords) {
+                if (qw.length < 2) continue;
+                let found = false;
+                for (let tw of textWords) {
+                    if (tw.includes(qw) || (qw.length > 3 && calculateLevenshteinDistance(qw, tw) <= 2)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) matches++;
+            }
+            return matches >= Math.ceil(queryWords.length * 0.5);
         }
 
         function filterDictCategory(cat, btn) {
@@ -823,10 +956,10 @@
             if (!container) return;
             let list = appData.dictionary || [];
             if (selectedDictCat !== 'all') list = list.filter(d => (d.category || '').includes(selectedDictCat));
-            const q = normalizeNumbers(filter);
+            const q = filter.trim();
             if (q.length > 0) {
                 clearBtn.classList.remove('hidden');
-                list = list.filter(d => normalizeNumbers(d.term).includes(q) || normalizeNumbers(d.definition).includes(q));
+                list = list.filter(d => fuzzyMatch(q, d.term) || fuzzyMatch(q, d.definition));
             } else {
                 clearBtn.classList.add('hidden');
             }
@@ -856,12 +989,10 @@
 
         function renderLaws(filter = '') {
             const c = document.getElementById('lawsContainer');
-            const counterElem = document.getElementById('lawsCounter');
             if(!c) return;
             let list = appData.laws || [];
-            const q = normalizeNumbers(filter);
-            if(q.length > 0) list = list.filter(l => normalizeNumbers(l.title).includes(q) || normalizeNumbers(l.content).includes(q));
-            if(counterElem) counterElem.innerText = `${list.length} قانون`;
+            const q = filter.trim();
+            if(q.length > 0) list = list.filter(l => fuzzyMatch(q, l.title) || fuzzyMatch(q, l.content));
             const currentSize = localStorage.getItem('mizan_font_size') || '12px';
             c.innerHTML = list.map(l => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><h3 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${l.title}</h3><p class="font-bold text-amber-600 dark:text-amber-300" style="font-size: ${currentSize}">${l.summary || ''}</p><p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${l.content}</p></div>`).join('');
         }
@@ -886,34 +1017,33 @@
 
         function renderInstagram() {
             const c = document.getElementById('instagramContainer');
-            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-md"><img src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] font-bold">${ig.title}</span></a>`).join('');
+            if(c) c.innerHTML = (appData.instagram || []).map(ig => `<a href="${ig.url}" target="_blank" class="flex flex-col items-center space-y-1"><div class="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-md"><img data-src="${ig.image}" loading="lazy" class="w-full h-full object-cover rounded-full"></div><span class="text-[10px] font-bold">${ig.title}</span></a>`).join('');
         }
 
         function renderPodcasts() {
             const c = document.getElementById('podcastsContainer');
             const currentSize = localStorage.getItem('mizan_font_size') || '12px';
-            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3.5 rounded-2xl space-y-2 shadow-md"><h4 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${p.title}</h4><audio controls class="w-full h-8"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
+            if(c) c.innerHTML = (appData.podcasts || []).map(p => `<div class="ultra-glass p-3.5 rounded-2xl space-y-2 shadow-md"><h4 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${p.title}</h4><audio controls class="w-full h-8" preload="none"><source src="${p.url}" type="audio/mpeg"></audio></div>`).join('');
         }
 
         function renderFiles() {
             const c = document.getElementById('filesContainer');
             const currentSize = localStorage.getItem('mizan_font_size') || '12px';
-            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><img src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-red-600 dark:text-red-400" style="font-size: calc(${currentSize} + 2px)">${f.title}</h3><p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${f.description}</p></div>`).join('');
+            if(c) c.innerHTML = (appData.files || []).map(f => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><img data-src="${f.image}" loading="lazy" class="w-full h-36 object-cover rounded-xl"><h3 class="font-bold text-red-600 dark:text-red-400" style="font-size: calc(${currentSize} + 2px)">${f.title}</h3><p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${f.description}</p></div>`).join('');
         }
 
         function renderInfographics() {
             const c = document.getElementById('infographicsContainer');
             const currentSize = localStorage.getItem('mizan_font_size') || '12px';
-            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><img src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${inf.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.infographics || []).map((inf, idx) => `<div onclick="openMediaModal(${idx}, 'infographic')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><img data-src="${inf.image}" loading="lazy" class="w-full h-28 object-cover rounded-xl"><h4 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${inf.title}</h4></div>`).join('');
         }
 
         function renderSeries() {
             const c = document.getElementById('seriesContainer');
             const currentSize = localStorage.getItem('mizan_font_size') || '12px';
-            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
+            if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img data-src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
-        // پلیر اختصاصی ویدیو همراه با قابلیت تصویر در تصویر (PiP) واقعی
         function openMediaModal(idx, type) {
             const item = type === 'series' ? appData.series[idx] : appData.infographics[idx];
             if(!item) return;
@@ -948,9 +1078,7 @@
                 } else if (document.pictureInPictureEnabled) {
                     await video.requestPictureInPicture();
                 }
-            } catch (error) {
-                console.log("PiP failed", error);
-            }
+            } catch (error) { console.log("PiP error", error); }
         }
 
         let scale = 1;
@@ -1154,7 +1282,7 @@
             const box = document.getElementById('liveSuggestionsBox');
             if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
             
-            const results = (appData.dictionary || []).filter(d => d.term.includes(query));
+            const results = (appData.dictionary || []).filter(d => fuzzyMatch(query, d.term));
             if (results.length > 0) {
                 box.innerHTML = results.map(d => `
                     <div onclick="selectSearchResult('${d.term}')" class="p-2 text-xs cursor-pointer hover:bg-white/15 rounded font-bold transition">
@@ -1276,7 +1404,7 @@
             window.scrollTo(0, 0);
         }
 
-        // ناوبری شناور با هوش اسکرول (Dynamic Island / Floating Navigation)
+        // ناوبری پویا با هوش اسکرول (Dynamic Island / Frosted Blur Dock)
         function initScrollHeaderEffect() {
             const header = document.getElementById('appHeader');
             const backToTopBtn = document.getElementById('backToTopBtn');

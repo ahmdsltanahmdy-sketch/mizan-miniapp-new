@@ -110,18 +110,26 @@
             color: #0f172a;
         }
 
+        /* ناوبری شناور پویا با قابلیت جمع‌شوندگی هنگام اسکرول (Dynamic Island / Floating Navigation) */
         .floating-nav {
             background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(35px);
             -webkit-backdrop-filter: blur(35px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 15px rgba(197, 27, 36, 0.2);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s ease, width 0.4s ease;
         }
         .light .floating-nav, body:not(.dark):not(.oled-mode) .floating-nav {
             background: rgba(255, 255, 255, 0.92);
             border: 1px solid rgba(0, 0, 0, 0.15);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
+        .nav-scrolled-compact {
+            transform: translateY(6px) scale(0.96);
+            padding-top: 4px !important;
+            padding-bottom: 4px !important;
+        }
+
         .nav-btn {
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
         }
@@ -220,6 +228,23 @@
             max-height: 100%;
             object-fit: contain;
             user-select: none;
+        }
+
+        /* استایل‌های اختصاصی و لوکس پلیر ویدیو */
+        .pro-video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .pro-video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .custom-skeleton {
@@ -569,7 +594,7 @@
             <h2 class="font-black text-xs text-gradient mb-2"><i class="fa-solid fa-tower-broadcast ml-1 text-red-500"></i> پخش زنده شبکه‌ها</h2>
             <div class="ultra-glass rounded-3xl overflow-hidden p-3 space-y-3 shadow-xl">
                 <div class="relative w-full aspect-video rounded-2xl bg-slate-950 flex items-center justify-center">
-                    <video id="liveStreamVideo" class="w-full h-full object-cover rounded-2xl" controls playsinline></video>
+                    <video id="liveStreamVideo" class="w-full h-full object-cover rounded-2xl" controls playsinline webkit-playsinline></video>
                     <div id="liveStreamPlaceholder" class="absolute inset-0 flex items-center justify-center bg-slate-900 text-slate-300 text-xs">یک شبکه انتخاب کنید</div>
                 </div>
             </div>
@@ -616,15 +641,20 @@
         <i class="fa-solid fa-arrow-up text-xs"></i>
     </button>
 
-    <!-- مودال رسانه با پلیر اختصاصی ویدیو سازگار با همه پلتفرم‌ها و قابلیت جابجایی اینفوگرافیک زوم‌شده -->
+    <!-- مودال رسانه با پلیر ویدیو حرفه‌ای دارای حالت تصویر در تصویر (PiP) و کنترل‌های جذاب -->
     <div id="mediaModal" class="fixed inset-0 bg-black/85 z-[110] hidden flex items-center justify-center p-4 transition-opacity duration-300">
         <div id="mediaModalBox" class="ultra-glass rounded-3xl max-w-lg w-full p-4 relative shadow-2xl space-y-3 text-center transform transition-transform duration-300">
             <button onclick="closeMediaModal()" class="absolute top-3 left-3 text-slate-300 p-2 z-10 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             <h3 id="mediaModalTitle" class="font-bold text-xs text-amber-300 pt-1"></h3>
             <div id="mediaModalContent" class="relative w-full rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10"></div>
-            <a id="mediaModalExternalBtn" href="#" target="_blank" class="hidden block w-full bg-red-600/30 text-red-200 border border-red-500/40 py-2 rounded-xl text-xs font-bold transition hover:bg-red-600 hover:text-white">
-                <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای مستقیم در پلیر خارج از مینی‌اپ
-            </a>
+            <div class="flex space-x-2 space-x-reverse">
+                <button id="pipBtn" onclick="togglePiP()" class="hidden flex-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 py-2 rounded-xl text-xs font-bold transition hover:bg-amber-500 hover:text-black">
+                    <i class="fa-solid fa-clone ml-1"></i> تصویر در تصویر (PiP)
+                </button>
+                <a id="mediaModalExternalBtn" href="#" target="_blank" class="hidden flex-1 bg-red-600/30 text-red-200 border border-red-500/40 py-2 rounded-xl text-xs font-bold transition hover:bg-red-600 hover:text-white">
+                    <i class="fa-solid fa-external-link-alt ml-1"></i> تماشای مستقیم خارجی
+                </a>
+            </div>
         </div>
     </div>
 
@@ -639,8 +669,8 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین با دقیقاً 5 تب اصلی -->
-    <nav class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center justify-around whitespace-nowrap">
+    <!-- ناوبری پایین با دقیقاً 5 تب اصلی و افکت Dynamic Island هنگام اسکرول -->
+    <nav id="mainNavContainer" class="fixed bottom-3 left-3 right-3 floating-nav rounded-3xl max-w-md mx-auto py-2 px-2 flex space-x-1.5 space-x-reverse overflow-x-auto hide-scrollbar z-50 items-center justify-around whitespace-nowrap">
         <button onclick="switchTab('dictionary-tab', this); triggerHaptic('light');" class="nav-btn active-tab flex flex-col items-center text-red-500 font-bold px-3 py-1 relative"><i class="fa-solid fa-book text-sm mb-0.5"></i><span class="text-[8px]">اصطلاحات</span></button>
         <button onclick="switchTab('legal-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-scale-balanced text-sm mb-0.5"></i><span class="text-[8px]">سامانه‌ها</span></button>
         <button onclick="switchTab('laws-tab', this); triggerHaptic('light');" class="nav-btn flex flex-col items-center opacity-70 hover:opacity-100 px-3 py-1 relative"><i class="fa-solid fa-gavel text-sm mb-0.5"></i><span class="text-[8px]">قوانین</span></button>
@@ -668,7 +698,7 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 5.9.0 (سازگاری کامل پلیر ویدیو در تمامی پلتفرم‌ها و جابجایی اینفوگرافیک زوم‌شده)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 6.0.0 (پلیر حرفه‌ای ویدیو، حالت PiP واقعی و ناوبری پویا با هوش اسکرول)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -888,24 +918,44 @@
             if(c) c.innerHTML = (appData.series || []).map((ser, idx) => `<div onclick="openMediaModal(${idx}, 'series')" class="ultra-glass p-3 rounded-2xl text-center space-y-2 cursor-pointer transition hover:border-red-500 shadow-md"><div class="relative w-full h-28 rounded-xl overflow-hidden bg-slate-900 group"><img src="${ser.image}" loading="lazy" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="fa-solid fa-play text-white text-base"></i></div></div><h4 class="font-bold text-red-600 dark:text-red-400 truncate" style="font-size: ${currentSize}">${ser.title}</h4></div>`).join('');
         }
 
-        // پلیر اختصاصی ویدیو سازگار با تمامی پلتفرم‌ها و جابجایی اینفوگرافیک زوم‌شده
+        // پلیر اختصاصی ویدیو همراه با قابلیت تصویر در تصویر (PiP) واقعی
         function openMediaModal(idx, type) {
             const item = type === 'series' ? appData.series[idx] : appData.infographics[idx];
             if(!item) return;
             document.getElementById('mediaModalTitle').innerText = item.title;
             const content = document.getElementById('mediaModalContent');
             const extBtn = document.getElementById('mediaModalExternalBtn');
+            const pipBtn = document.getElementById('pipBtn');
+
             if(type === 'series') {
                 let url = item.url || '';
-                content.innerHTML = `<video src="${url}" class="w-full aspect-video rounded-2xl object-cover bg-black shadow-2xl" controls autoplay playsinline webkit-playsinline preload="auto"></video>`;
+                content.innerHTML = `<div class="pro-video-wrapper"><video id="modalVideoPlayer" src="${url}" controls autoplay playsinline webkit-playsinline preload="auto"></video></div>`;
                 extBtn.classList.remove('hidden');
                 extBtn.href = url;
+                if (document.pictureInPictureEnabled) {
+                    pipBtn.classList.remove('hidden');
+                }
             } else {
                 content.innerHTML = `<div class="zoomable-container" id="zoomContainer"><img src="${item.image}" loading="lazy" class="zoomable-img" id="zoomImg" onclick="toggleZoom(this)" title="برای زوم کلیک کنید"></div>`;
                 extBtn.classList.add('hidden');
+                pipBtn.classList.add('hidden');
                 initPanAndZoom();
             }
             document.getElementById('mediaModal').classList.remove('hidden');
+        }
+
+        async function togglePiP() {
+            const video = document.getElementById('modalVideoPlayer');
+            if (!video) return;
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else if (document.pictureInPictureEnabled) {
+                    await video.requestPictureInPicture();
+                }
+            } catch (error) {
+                console.log("PiP failed", error);
+            }
         }
 
         let scale = 1;
@@ -972,6 +1022,7 @@
         function closeMediaModal() {
             document.getElementById('mediaModal').classList.add('hidden');
             document.getElementById('mediaModalContent').innerHTML = '';
+            document.getElementById('pipBtn').classList.add('hidden');
             scale = 1;
             const video = document.querySelector('#mediaModalContent video');
             if(video) video.pause();
@@ -1230,10 +1281,13 @@
             window.scrollTo(0, 0);
         }
 
+        // ناوبری شناور با هوش اسکرول (Dynamic Island / Floating Navigation)
         function initScrollHeaderEffect() {
             const header = document.getElementById('appHeader');
             const backToTopBtn = document.getElementById('backToTopBtn');
+            const navContainer = document.getElementById('mainNavContainer');
             let lastScrollY = window.scrollY;
+
             window.addEventListener('scroll', () => {
                 const currentScrollY = window.scrollY;
                 if (currentScrollY > 15) {
@@ -1244,8 +1298,10 @@
 
                 if (currentScrollY > lastScrollY && currentScrollY > 60) {
                     header.classList.add('header-hidden');
+                    navContainer.classList.add('nav-scrolled-compact');
                 } else {
                     header.classList.remove('header-hidden');
+                    navContainer.classList.remove('nav-scrolled-compact');
                 }
                 lastScrollY = currentScrollY;
 

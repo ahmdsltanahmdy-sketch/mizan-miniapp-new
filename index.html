@@ -265,16 +265,6 @@
             from { opacity: 0; transform: translateY(-20px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-
-        body.reader-mode .ultra-glass {
-            background: rgba(18, 18, 20, 0.99) !important;
-            border: 1px solid rgba(245, 158, 11, 0.4) !important;
-            font-size: calc(var(--app-font-size, 12px) + 2px) !important;
-            line-height: 2.2 !important;
-        }
-        body.reader-mode header, body.reader-mode nav, body.reader-mode #appHeader {
-            opacity: 0.2; pointer-events: none;
-        }
     </style>
 </head>
 <body id="bodyRoot" class="mesh-bg text-slate-900 dark:text-slate-100 min-h-screen flex flex-col relative">
@@ -496,7 +486,7 @@
             </div>
         </section>
 
-        <!-- تب ۴: چت‌بات (پاسخگوی جامع و هوشمند حقوقی و تفکیک پرسش‌های غیرحقوقی) -->
+        <!-- تب ۴: چت‌بات (دستیار حقوقی واقعی و هوشمند) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl space-y-3 shadow-xl">
                 <h2 class="font-extrabold text-xs text-gradient">دستیار هوشمند حقوقی SIJT</h2>
@@ -511,12 +501,9 @@
             </div>
         </section>
 
-        <!-- تب ۵: قوانین -->
+        <!-- تب ۵: قوانین (بدون دکمه حالت مطالعه) -->
         <section id="laws-tab" class="page-section hidden space-y-3">
-            <div class="flex items-center justify-between">
-                <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> آرشیو قوانین</h2>
-                <button onclick="toggleReaderMode()" class="bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-amber-500/30"><i class="fa-solid fa-book-open ml-1"></i>حالت مطالعه سریع</button>
-            </div>
+            <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-scale-balanced ml-1 text-red-500"></i> آرشیو قوانین</h2>
             <div id="lawsContainer" class="space-y-2.5 content-box-stable"><div class="custom-skeleton h-24 w-full"></div></div>
         </section>
 
@@ -606,7 +593,7 @@
             </div>
         </section>
 
-        <!-- تب ۹: یادداشت‌های شخصی پرونده -->
+        <!-- تب ۹: یادداشت‌های شخصی پرونده (با قابلیت حذف یادداشت) -->
         <section id="notes-tab" class="page-section hidden space-y-3">
             <h2 class="font-black text-xs text-gradient"><i class="fa-solid fa-note-sticky ml-1 text-red-500"></i> یادداشت‌ها و پیگیری پرونده شخصی</h2>
             <div class="ultra-glass p-4 rounded-2xl space-y-3 shadow-lg">
@@ -752,7 +739,7 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 8.6.0 (سیستم پردازش هوشمند پرسش و پاسخ چت‌بات)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 8.7.0 (چت‌بات کاملاً تخصصی و حذف یادداشت فعال)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -1175,13 +1162,6 @@
             c.innerHTML = list.map(l => `<div class="ultra-glass p-4 rounded-2xl space-y-2 shadow-md"><h3 class="font-bold text-red-600 dark:text-red-400" style="font-size: ${currentSize}">${l.title}</h3><p class="font-bold text-amber-600 dark:text-amber-300" style="font-size: ${currentSize}">${l.summary || ''}</p><p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${l.content}</p></div>`).join('');
         }
 
-        function toggleReaderMode() {
-            document.body.classList.toggle('reader-mode');
-            const active = document.body.classList.contains('reader-mode');
-            showToast(active ? 'حالت مطالعه سریع فعال شد' : 'حالت مطالعه غیرفعال شد');
-            triggerHaptic('light');
-        }
-
         function renderShareCards() {
             const c = document.getElementById('shareCardsContainer');
             const currentSize = localStorage.getItem('mizan_font_size') || '12px';
@@ -1460,6 +1440,16 @@
             showToast('یادداشت ذخیره شد');
         }
 
+        // قابلیت حذف یادداشت شخصی
+        function deletePersonalNote(index) {
+            let notes = JSON.parse(localStorage.getItem('mizan_personal_notes')) || [];
+            notes.splice(index, 1);
+            localStorage.setItem('mizan_personal_notes', JSON.stringify(notes));
+            renderPersonalNotes();
+            showToast('یادداشت حذف شد');
+            triggerHaptic('light');
+        }
+
         function renderPersonalNotes() {
             const container = document.getElementById('personalNotesContainer');
             if(!container) return;
@@ -1469,10 +1459,13 @@
                 return;
             }
             container.innerHTML = notes.map((n, idx) => `
-                <div class="ultra-glass p-3 rounded-xl space-y-1">
+                <div class="ultra-glass p-3 rounded-xl space-y-1 relative">
                     <div class="flex justify-between items-center text-[10px]">
                         <span class="font-bold text-amber-300">${n.title}</span>
-                        <span class="text-slate-400">${n.date}</span>
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <span class="text-slate-400">${n.date}</span>
+                            <button onclick="deletePersonalNote(${idx})" class="text-red-400 hover:text-red-200 p-1" title="حذف یادداشت"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        </div>
                     </div>
                     <p class="text-xs leading-relaxed">${n.note}</p>
                 </div>
@@ -1495,7 +1488,7 @@
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
-        // چت‌بات هوشمند پیشرفته با موتور تحلیل دقیق پرسش‌های حقوقی و غیرحقوقی
+        // موتور تخصصی و هوشمند واقعی چت‌بات حقوقی
         function renderChatUI() {
             const container = document.getElementById('chatMessagesContainer');
             if(!container) return;
@@ -1549,45 +1542,51 @@
                 }
             } catch(e) {}
 
-            // موتور تحلیلی و تخصصی پاسخگویی به هرگونه پرسش حقوقی و غیرحقوقی
+            // تحلیل پیشرفته و جامع حقوقی برای هرگونه پرسش
             if (!botResponse || botResponse.includes('خطا')) {
                 const p = prompt.toLowerCase();
                 
-                // بررسی احوالپرسی
-                if (p.includes('سلام') || p.includes('درود') || p.includes('خوبید') || p.includes('چطور') || p.includes('صبحتان') || p.includes('عصرت')) {
-                    botResponse = "سلام و درود! من دستیار هوشمند حقوقی SIJT هستم. آماده پاسخگویی به سوالات حقوقی، بررسی قوانین، قراردادها و مسائل قضایی شما هستم.";
+                if (p.includes('سلام') || p.includes('درود') || p.includes('خوبید') || p.includes('چطور')) {
+                    botResponse = "سلام و درود! من دستیار تخصصی حقوقی SIJT هستم. چه سوال یا مشکلی در زمینه‌های حقوقی، کیفری، قراردادها یا قوانین دارید؟";
                 } 
-                // بررسی سوالات غیرحقوقی متفرقه
-                else if (p.includes('هوا چطوره') || p.includes('فوتبال') || p.includes('رستوران') || p.includes('فیلم') || p.includes('موزیک') || p.includes('آشپزی')) {
-                    botResponse = "من یک دستیار تخصصی حقوقی هستم و تخصصم در زمینه قوانین، حقوق مدنی، کیفری، قراردادها و امور قضایی است. لطفاً سوال یا مسئله حقوقی خود را بپرسید تا راهنمایی‌تان کنم.";
+                else if (p.includes('هوا') || p.includes('فوتبال') || p.includes('آشپزی') || p.includes('فیلم') || p.includes('موزیک')) {
+                    botResponse = "من یک دستیار تخصصی حقوقی هستم و تخصصم منحصراً در زمینه قوانین، حقوق مدنی، کیفری، قراردادها و امور قضایی است. لطفاً سوال یا مسئله حقوقی خود را مطرح فرمایید.";
                 }
-                // پرسش درباره تعداد مواد قانون کیفری / مجازات اسلامی
-                else if ((p.includes('کیفری') || p.includes('مجازات')) && (p.includes('چند ماده') || p.includes('تعداد مواد') || p.includes('چند تا ماده'))) {
-                    botResponse = "قانون مجازات اسلامی (مصوب ۱۳۹۲) دارای ۷۲۸ ماده است که شامل کلیات، حدود، قصاص، دیات و تعزیرات می‌باشد.";
+                // پرسش درباره قانون مدنی
+                else if (p.includes('قانون مدنی')) {
+                    if (p.includes('چند ماده') || p.includes('تعداد مواد') || p.includes('چند تا')) {
+                        botResponse = "قانون مدنی جمهوری اسلامی ایران دارای ۱۳۳۵ ماده است که در سه جلد (اموال، اشخاص و ادله اثبات دعوا) تنظیم شده است.";
+                    } else {
+                        botResponse = "پاسخ حقوقی: قانون مدنی به عنوان قانون مادر در روابط حقوقی افراد، قراردادها، مالکیت، ارث، وصیت، نکاح و طلاق حاکم است. سوال جزئی‌تر خود را بپرسید.";
+                    }
                 }
-                // پرسش درباره تعداد مواد قانون مدنی
-                else if (p.includes('قانون مدنی') && (p.includes('چند ماده') || p.includes('تعداد مواد') || p.includes('چند تا ماده'))) {
-                    botResponse = "قانون مدنی جمهوری اسلامی ایران دارای ۱۳۳۵ ماده است که در سه جلد (اموال، اشخاص و ادله اثبات دعوا) تنظیم شده است.";
+                // پرسش درباره قانون کیفری / مجازات اسلامی
+                else if (p.includes('کیفری') || p.includes('مجازات') || p.includes('جرم')) {
+                    if (p.includes('چند ماده') || p.includes('تعداد مواد') || p.includes('چند تا')) {
+                        botResponse = "قانون مجازات اسلامی (مصوب ۱۳۹۲) دارای ۷۲۸ ماده است که شامل کلیات، حدود، قصاص، دیات و تعزیرات می‌باشد.";
+                    } else {
+                        botResponse = "پاسخ حقوقی: در امور کیفری، اعمالی جرم محسوب می‌شوند که قانون برای آن‌ها مجازات تعیین کرده باشد. پیگیری جرایم مستلزم ثبت شکواییه در دفاتر خدمات الکترونیک قضایی است.";
+                    }
                 }
                 // چک و سفته
                 else if (p.includes('چک') || p.includes('سفته') || p.includes('برات') || p.includes('صیاد')) {
-                    botResponse = "پاسخ حقوقی تخصصی: طبق قانون صدور چک، تمامی چک‌های صیادی باید در سامانه صیاد ثبت، تایید و منتقل شوند. در صورت برگشت خوردن چک، دارنده می‌تواند با اخذ گواهینامه عدم پرداخت، از طریق اجرای ثبت یا تقدیم دادخواست حقوقی/کیفری اقدام نماید.";
+                    botResponse = "پاسخ حقوقی: طبق قانون جدید چک، صادرکننده و دارنده ملزم به ثبت و تایید چک در سامانه صیاد هستند. در صورت برگشت خوردن چک، می‌توانید گواهینامه عدم پرداخت دریافت کرده و از طریق اجرای ثبت یا دادگاه حقوقی/کیفری پیگیری کنید.";
                 }
-                // مهریه و طلاق
-                else if (p.includes('مهریه') || p.includes('طلاق') || p.includes('نکاح') || p.includes('حضانت')) {
-                    botResponse = "پاسخ حقوقی تخصصی: مهریه عندالمطالبه است و زن هر زمان می‌تواند آن را مطالبه کند. در صورت صدور حکم قطعی پرداخت، مرد می‌تواند با اثبات عسرت، دادخواست اعسار و تقسط مهریه تقدیم دادگاه نماید.";
+                // مهریه و خانواده
+                else if (p.includes('مهریه') || p.includes('طلاق') || p.includes('نفقه') || p.includes('حضانت')) {
+                    botResponse = "پاسخ حقوقی: مهریه دین ممتاز و عندالمطالبه است. زن حق مطالبه کل آن را دارد و در صورت عدم توانایی مالی مرد، امکان صدور حکم تقسط (اعسار) از سوی دادگاه وجود دارد.";
                 }
-                // اجاره و ملک
-                else if (p.includes('اجاره') || p.includes('مستأجر') || p.includes('موجر') || p.includes('تخلیه ملک')) {
-                    botResponse = "پاسخ حقوقی تخصصی: روابط موجر و مستأجر در املاک مسکونی تابع قانون روابط موجر و مستأجر مصوب ۱۳۷۶ است. با پایان مدت اجاره، موجر می‌تواند تقاضای دستور تخلیه فوری نماید به شرط آن که قرارداد در دو نسخه و با امضای دو شاهد تنظیم شده باشد.";
+                // اجاره و تخلیه ملک
+                else if (p.includes('اجاره') || p.includes('مستأجر') || p.includes('موجر') || p.includes('تخلیه')) {
+                    botResponse = "پاسخ حقوقی: روابط موجر و مستأجر املاک مسکونی تابع قانون ۷۶ است. با اتمام مدت اجاره یا عدم پرداخت اجاره‌بها، موجر می‌تواند تقاضای دستور تخلیه فوری نماید.";
                 }
-                // ارث و ترکه
+                // ارث
                 else if (p.includes('ارث') || p.includes('ترکه') || p.includes('سهم الارث')) {
-                    botResponse = "پاسخ حقوقی تخصصی: سهم‌الارث وراث بر اساس طبقات سه‌گانه ارث (پدری-مادری، اجداد-خواهر و برادر، عمو-عمه-خاله-دایی) و میزان سهم هر یک طبق قانون مدنی پس از کسر بدهی و وصیت متوفی محاسبه و تقسیم می‌گردد.";
+                    botResponse = "پاسخ حقوقی: سهم‌الارث وراث بر اساس طبقات سه‌گانه ارث در قانون مدنی و پس از کسر بدهی‌ها و وصیت متوفی تقسیم می‌گردد.";
                 }
-                // سایر سوالات حقوقی عمومی
+                // پاسخ پیش‌فرض جامع برای هر سوال حقوقی دیگر
                 else {
-                    botResponse = `پاسخ مشاور حقوقی SIJT: درباره پرسش شما («${prompt}»)، موضوع شما به حوزه حقوقی مربوط می‌شود. پیشنهاد می‌شود جزئیات پرونده یا قرارداد خود را بررسی کرده و در صورت نیاز از طریق بخش «مشاور» مینی‌اپ یا دفاتر خدمات الکترونیک قضایی اقدام به ثبت دادخواست یا شکواییه نمایید.`;
+                    botResponse = `پاسخ تخصصی حقوقی SIJT: درباره پرسش شما («${prompt}»)، موضوع مربوط به حقوق موضوعه ایران است. توصیه می‌شود جهت اقدام دقیق قانونی، متن قرارداد یا اوراق پرونده خود را به یک وکیل دادگستری نشان دهید یا از طریق دفاتر خدمات الکترونیک قضایی اقدام فرمایید.`;
                 }
             }
 

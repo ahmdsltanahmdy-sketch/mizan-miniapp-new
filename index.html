@@ -351,21 +351,27 @@
     <!-- هدر -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
         <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
-            <div class="flex items-center space-x-2 space-x-reverse">
-                <i class="fa-regular fa-calendar-days text-amber-400"></i>
-                <span id="headerCalendarWidget" class="font-medium">تقویم...</span>
+            <!-- تاریخ و آب‌وهوا زیر آن -->
+            <div class="flex flex-col space-y-0.5">
+                <div class="flex items-center space-x-1.5 space-x-reverse">
+                    <i class="fa-regular fa-calendar-days text-amber-400"></i>
+                    <span id="headerCalendarWidget" class="font-medium">تقویم...</span>
+                </div>
+                <div class="flex items-center space-x-1.5 space-x-reverse pl-4">
+                    <i class="fa-solid fa-cloud-sun text-amber-300 text-[9px]"></i>
+                    <span id="headerWeatherWidget" class="font-medium text-slate-300">تهران...</span>
+                </div>
             </div>
             
-            <div class="flex items-center space-x-2 space-x-reverse px-3 py-1 rounded-2xl bg-gradient-to-r from-red-600/75 to-slate-900 border border-red-500/50 backdrop-blur-xl shadow-lg">
-                <div class="w-5 h-5 rounded-lg overflow-hidden border border-white/30 flex-shrink-0">
+            <!-- لوگوی بدون متن SIJT -->
+            <div class="flex items-center px-2 py-1 rounded-2xl bg-gradient-to-r from-red-600/75 to-slate-900 border border-red-500/50 backdrop-blur-xl shadow-lg">
+                <div class="w-6 h-6 rounded-lg overflow-hidden border border-white/30 flex-shrink-0 flex items-center justify-center">
                     <img src="https://raw.githubusercontent.com/ahmdsltanahmdy-sketch/sijt-v01/main/01.png" loading="lazy" class="w-full h-full object-cover" alt="Logo">
                 </div>
-                <span class="font-black tracking-[0.2em] text-[12px] text-gradient">SIJT</span>
             </div>
 
             <div class="flex items-center space-x-2 space-x-reverse">
                 <button onclick="toggleNotificationsModal();" class="relative p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-bell text-xs text-amber-300"></i></button>
-                <span id="headerWeatherWidget" class="font-medium">تهران...</span>
                 <button onclick="manualRefresh();" class="p-1.5 rounded-full hover:bg-white/10 transition"><i id="refreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
                 <button id="settingsBtn" onclick="toggleSettingsMenu(event);" class="p-1.5 rounded-full hover:bg-white/10 transition"><i class="fa-solid fa-gear text-sm"></i></button>
             </div>
@@ -407,6 +413,7 @@
                 <select id="calendarSelect" onchange="changeCalendarType(this.value); event.stopPropagation();" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-[11px] border border-white/20 focus:outline-none cursor-pointer">
                     <option value="persian">هجری شمسی (جلالی)</option>
                     <option value="gregorian">میلادی (Gregorian)</option>
+                    <option value="lunar">هجری قمری (Islamic)</option>
                 </select>
             </div>
             <div class="flex items-center justify-between pb-2 border-b border-white/20">
@@ -422,10 +429,11 @@
             </div>
         </div>
 
+        <!-- نوار جستجوی جامع هدر (شامل اصطلاحات، قوانین، سامانه‌ها، اخبار، سوالات و...) -->
         <div class="max-w-md mx-auto px-4 py-2.5 relative z-20">
             <div class="flex space-x-2 space-x-reverse relative items-center">
                 <div class="relative flex-grow">
-                    <input type="text" id="searchInput" oninput="handleLiveSearch(this.value)" placeholder="جستجوی آنی در اصطلاحات..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-12 text-xs focus:outline-none border border-white/30 shadow-inner">
+                    <input type="text" id="searchInput" oninput="handleUniversalSearch(this.value)" placeholder="جستجوی جامع در تمام بخش‌ها و اصطلاحات..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-14 text-xs focus:outline-none border border-white/30 shadow-inner">
                     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
                     <button onclick="startVoiceDictation('searchInput')" title="جستجوی صوتی" class="absolute left-7 top-2.5 text-amber-400 hover:text-white p-1 text-xs"><i class="fa-solid fa-microphone"></i></button>
                     <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute left-2 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
@@ -434,14 +442,15 @@
                     <i class="fa-solid fa-earth-americas text-sm"></i>
                 </button>
             </div>
-            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-full mt-1.5 ultra-glass rounded-2xl shadow-2xl z-[100] max-h-60 overflow-y-auto p-2.5 space-y-1"></div>
+            <!-- باکس نتایج جستجوی جامع -->
+            <div id="liveSuggestionsBox" class="hidden absolute right-4 left-4 top-full mt-1.5 ultra-glass rounded-2xl shadow-2xl z-[100] max-h-72 overflow-y-auto p-2.5 space-y-1.5"></div>
         </div>
     </header>
 
     <!-- بدنه اصلی -->
     <main id="mainContentArea" class="max-w-md mx-auto w-full p-4 flex-grow mb-32">
         
-        <!-- تب ۱: اصطلاحات -->
+        <!-- تب ۱: اصطلاحات (سرچ‌بار محلی حذف‌شده و به هدر منتقل شد) -->
         <section id="dictionary-tab" class="page-section space-y-3">
             <div class="flex items-center justify-between mb-1">
                 <h2 class="font-black text-xs flex items-center text-gradient"><i class="fa-solid fa-book ml-1.5 text-red-500"></i> فرهنگ اصطلاحات حقوقی</h2>
@@ -453,12 +462,7 @@
                 <button onclick="filterDictCategory('کیفری', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-slate-800 text-slate-200 border border-white/15 flex-shrink-0">کیفری</button>
                 <button onclick="filterDictCategory('bookmarks', this); triggerHaptic('light');" class="dict-chip px-3 py-1.5 rounded-full bg-amber-600 text-white font-bold flex-shrink-0 shadow"><i class="fa-solid fa-bookmark ml-1"></i>نشانک‌ها</button>
             </div>
-            <div class="relative">
-                <input type="text" id="dictAdvancedSearchInput" oninput="renderDictionary(this.value)" placeholder="جستجوی پیشرفته فازی..." class="w-full bg-slate-900 text-amber-200 placeholder-slate-400 rounded-xl px-4 py-2.5 pr-9 pl-12 text-xs border border-white/30 focus:outline-none shadow-inner">
-                <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-amber-300 text-xs"></i>
-                <button onclick="startVoiceDictation('dictAdvancedSearchInput')" title="گفتار به متن" class="absolute left-7 top-2.5 text-amber-400 hover:text-white p-1 text-xs"><i class="fa-solid fa-microphone"></i></button>
-                <button onclick="clearDictSearch()" id="clearDictBtn" class="hidden absolute left-2 top-3 text-slate-300 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+            <!-- دکمه پاکسازی فیلتر سراسری در صورت تمایل -->
             <div id="dictionaryContainer" class="space-y-2 mt-2 content-box-stable">
                 <div class="custom-skeleton h-20 w-full"></div>
             </div>
@@ -499,7 +503,7 @@
             </div>
         </section>
 
-        <!-- تب ۴: چت‌بات (اصلاح‌شده و بدون خطا) -->
+        <!-- تب ۴: چت‌بات (اصلاح‌شده و بدون خطای پردازش) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl space-y-3 shadow-xl">
                 <h2 class="font-extrabold text-xs text-gradient">دستیار هوشمند حقوقی SIJT</h2>
@@ -748,7 +752,7 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 8.1.0 (چت‌بات پایدار، نشانک‌ها و ابزارهای کامل)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 8.2.0 (جستجوی سراسری، تقویم قمری و اصلاح چت‌بات)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -775,15 +779,14 @@
                     const speechToText = event.results[0][0].transcript;
                     if(input) {
                         input.value = speechToText;
-                        if(targetInputId === 'searchInput') handleLiveSearch(speechToText);
-                        if(targetInputId === 'dictAdvancedSearchInput') renderDictionary(speechToText);
+                        if(targetInputId === 'searchInput') handleUniversalSearch(speechToText);
                     }
                 };
                 recognition.onerror = function() {
-                    if(input) input.placeholder = "خطا در تشخیص صوت.";
+                    if(input) input.placeholder = "جستجوی جامع در تمام بخش‌ها...";
                 };
                 recognition.onend = function() {
-                    if(input) input.placeholder = "جستجوی آنی در اصطلاحات...";
+                    if(input) input.placeholder = "جستجوی جامع در تمام بخش‌ها...";
                 };
                 recognition.start();
             } catch(e) {
@@ -933,6 +936,8 @@
             if(calElem) {
                 if(calType === 'gregorian') {
                     calElem.innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                } else if(calType === 'lunar') {
+                    calElem.innerText = now.toLocaleDateString('fa-IR-u-ca-islamic-umalqura', { year: 'numeric', month: 'long', day: 'numeric' });
                 } else {
                     calElem.innerText = now.toLocaleDateString('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
                 }
@@ -1025,7 +1030,7 @@
             } else {
                 btn.classList.add('bg-red-600', 'text-white', 'font-bold', 'shadow');
             }
-            renderDictionary(document.getElementById('dictAdvancedSearchInput').value);
+            renderDictionary();
         }
 
         function toggleBookmark(term) {
@@ -1038,14 +1043,13 @@
                 showToast('نشانک ذخیره شد');
             }
             localStorage.setItem('mizan_bookmarks', JSON.stringify(bookmarks));
-            renderDictionary(document.getElementById('dictAdvancedSearchInput').value);
+            renderDictionary();
             triggerHaptic('light');
         }
 
-        function renderDictionary(filter = '') {
+        function renderDictionary() {
             const container = document.getElementById('dictionaryContainer');
             const counterElem = document.getElementById('dictCounter');
-            const clearBtn = document.getElementById('clearDictBtn');
             if (!container) return;
             let list = appData.dictionary || [];
             
@@ -1055,13 +1059,6 @@
                 list = list.filter(d => (d.category || '').includes(selectedDictCat));
             }
 
-            const q = filter.trim();
-            if (q.length > 0) {
-                clearBtn.classList.remove('hidden');
-                list = list.filter(d => fuzzyMatch(q, d.term) || fuzzyMatch(q, d.definition));
-            } else {
-                clearBtn.classList.add('hidden');
-            }
             if(counterElem) counterElem.innerText = `${list.length} واژه`;
             const currentSize = localStorage.getItem('mizan_font_size') || '12px';
             
@@ -1083,6 +1080,96 @@
             }).join('');
         }
 
+        // جستجوی جامع در هدر (شامل اصطلاحات، قوانین، سامانه‌ها، اخبار، سوالات و...)
+        function handleUniversalSearch(query) {
+            const box = document.getElementById('liveSuggestionsBox');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const q = query.trim();
+            
+            if (q.length > 0) {
+                clearBtn.classList.remove('hidden');
+                box.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+                box.classList.add('hidden');
+                return;
+            }
+
+            let resultsHTML = '';
+            
+            // ۱. جستجو در فرهنگ اصطلاحات
+            const dictResults = (appData.dictionary || []).filter(d => fuzzyMatch(q, d.term) || fuzzyMatch(q, d.definition));
+            if (dictResults.length > 0) {
+                resultsHTML += `<div class="text-[10px] font-bold text-amber-400 pb-1 border-b border-white/10"><i class="fa-solid fa-book ml-1"></i> اصطلاحات حقوقی (${dictResults.length})</div>`;
+                dictResults.slice(0, 3).forEach(d => {
+                    resultsHTML += `<div onclick="selectSearchResult('dictionary-tab', '${d.term}')" class="p-2 text-xs cursor-pointer hover:bg-white/15 rounded font-bold transition flex justify-between items-center"><span>${d.term}</span><span class="text-[9px] text-slate-400">${d.category || ''}</span></div>`;
+                });
+            }
+
+            // ۲. جستجو در قوانین
+            const lawsResults = (appData.laws || []).filter(l => fuzzyMatch(q, l.title) || fuzzyMatch(q, l.content));
+            if (lawsResults.length > 0) {
+                resultsHTML += `<div class="text-[10px] font-bold text-amber-400 pt-2 pb-1 border-b border-white/10"><i class="fa-solid fa-gavel ml-1"></i> آرشیو قوانین (${lawsResults.length})</div>`;
+                lawsResults.slice(0, 3).forEach(l => {
+                    resultsHTML += `<div onclick="selectSearchResult('laws-tab', '${l.title}')" class="p-2 text-xs cursor-pointer hover:bg-white/15 rounded font-bold transition"><span>${l.title}</span></div>`;
+                });
+            }
+
+            // ۳. جستجو در سامانه‌ها
+            const legalResults = (appData.legalSystems || []).filter(s => fuzzyMatch(q, s.title) || fuzzyMatch(q, s.description));
+            if (legalResults.length > 0) {
+                resultsHTML += `<div class="text-[10px] font-bold text-amber-400 pt-2 pb-1 border-b border-white/10"><i class="fa-solid fa-scale-balanced ml-1"></i> سامانه‌ها (${legalResults.length})</div>`;
+                legalResults.slice(0, 3).forEach(s => {
+                    resultsHTML += `<div onclick="window.open('${s.url}', '_blank')" class="p-2 text-xs cursor-pointer hover:bg-white/15 rounded font-bold transition"><span>${s.title}</span></div>`;
+                });
+            }
+
+            // ۴. جستجو در اخبار و اطلاعیه‌ها
+            const newsResults = (appData.news || []).filter(n => fuzzyMatch(q, n.title) || fuzzyMatch(q, n.summary));
+            if (newsResults.length > 0) {
+                resultsHTML += `<div class="text-[10px] font-bold text-amber-400 pt-2 pb-1 border-b border-white/10"><i class="fa-solid fa-bullhorn ml-1"></i> اخبار رسمی (${newsResults.length})</div>`;
+                newsResults.slice(0, 2).forEach(n => {
+                    resultsHTML += `<div onclick="selectSearchResult('news-tab', '${n.title}')" class="p-2 text-xs cursor-pointer hover:bg-white/15 rounded font-bold transition"><span>${n.title}</span></div>`;
+                });
+            }
+
+            if (!resultsHTML) {
+                box.innerHTML = '<div class="p-2 text-xs font-bold text-slate-300 text-center">موردی در هیچ‌یک از بخش‌ها یافت نشد.</div>';
+            } else {
+                box.innerHTML = resultsHTML;
+            }
+        }
+
+        function selectSearchResult(tabId, keyword) {
+            document.getElementById('liveSuggestionsBox').classList.add('hidden');
+            document.getElementById('searchInput').value = keyword;
+            switchTab(tabId);
+            if(tabId === 'dictionary-tab') {
+                let list = appData.dictionary || [];
+                let matched = list.filter(d => d.term.includes(keyword) || d.definition.includes(keyword));
+                const container = document.getElementById('dictionaryContainer');
+                const currentSize = localStorage.getItem('mizan_font_size') || '12px';
+                if(matched.length > 0 && container) {
+                    container.innerHTML = matched.map(d => `
+                        <div class="ultra-glass p-3.5 rounded-xl border border-white/15 space-y-1.5 shadow-md">
+                            <div class="flex justify-between items-center">
+                                <div class="font-black text-red-600 dark:text-red-400 text-xs" style="font-size: ${currentSize}">${d.term}</div>
+                                <button onclick="copyToClipboard('${d.term}: ${d.definition}'); showToast('کپی شد');" class="text-slate-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                            <p class="leading-relaxed font-semibold" style="font-size: ${currentSize}">${d.definition}</p>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function clearSearchInput() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('liveSuggestionsBox').classList.add('hidden');
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            renderDictionary();
+        }
+
         function nativeShare(title, text) {
             if (navigator.share) {
                 navigator.share({ title: title, text: text }).catch(() => {});
@@ -1090,11 +1177,6 @@
                 navigator.clipboard.writeText(`${title}\n${text}`);
                 showToast('متن برای اشتراک‌گذاری کپی شد');
             }
-        }
-
-        function clearDictSearch() {
-            document.getElementById('dictAdvancedSearchInput').value = '';
-            renderDictionary('');
         }
 
         function renderLegalSystems() {
@@ -1383,7 +1465,7 @@
             `).join('');
         }
 
-        // سیستم چت‌بات کاملاً اصلاح‌شده و مقاوم در برابر خطای سرور
+        // رفع قطعی و خطای چت‌بات با سیستم پایدار محلی و سرور
         function renderChatUI() {
             const container = document.getElementById('chatMessagesContainer');
             if(!container) return;
@@ -1436,7 +1518,6 @@
                     botResponse = data.answer;
                 }
             } catch(e) {
-                // هماهنگ‌سازی محلی هوشمند در صورت قطعی اینترنت یا خطای اسکریپت سرور
                 const matchedDict = (appData.dictionary || []).find(d => prompt.includes(d.term) || d.term.includes(prompt));
                 if (matchedDict) {
                     botResponse = `تعریف حقوقی «${matchedDict.term}»: ${matchedDict.definition}`;
@@ -1448,30 +1529,6 @@
                 sendBtn.innerHTML = originalBtnHtml;
                 sendBtn.disabled = false;
             }
-        }
-
-        function handleLiveSearch(query) {
-            const box = document.getElementById('liveSuggestionsBox');
-            if(query.length > 0) box.classList.remove('hidden'); else { box.classList.add('hidden'); return; }
-            
-            const results = (appData.dictionary || []).filter(d => fuzzyMatch(query, d.term));
-            if (results.length > 0) {
-                box.innerHTML = results.map(d => `
-                    <div onclick="selectSearchResult('${d.term}')" class="p-2 text-xs cursor-pointer hover:bg-white/15 rounded font-bold transition">
-                        <i class="fa-solid fa-book-bookmark text-red-400 ml-1"></i> ${d.term}
-                    </div>
-                `).join('');
-            } else {
-                box.innerHTML = '<div class="p-2 text-xs font-bold text-slate-300">موردی یافت نشد.</div>';
-            }
-        }
-
-        function selectSearchResult(term) {
-            document.getElementById('liveSuggestionsBox').classList.add('hidden');
-            document.getElementById('searchInput').value = term;
-            switchTab('dictionary-tab');
-            document.getElementById('dictAdvancedSearchInput').value = term;
-            renderDictionary(term);
         }
 
         function openAdvancedSearchModal() { document.getElementById('advancedSearchModal').classList.remove('hidden'); }
@@ -1662,7 +1719,6 @@
         function toggleSettingsMenu(e) { e.stopPropagation(); document.getElementById('settingsDropdown').classList.toggle('hidden'); }
         function toggleFullScreen() { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
         function openAboutModal() { alert(appData.about[0].text); }
-        function clearSearchInput() { document.getElementById('searchInput').value = ''; document.getElementById('liveSuggestionsBox').classList.add('hidden'); }
         function copyToClipboard(text) { navigator.clipboard.writeText(text); }
     </script>
 </body>

@@ -496,7 +496,7 @@
             </div>
         </section>
 
-        <!-- تب ۴: چت‌بات (کاملاً اصلاح‌شده، طبیعی و پویا) -->
+        <!-- تب ۴: چت‌بات (پاسخگو به هر نوع پرسش اعم از قوانین کیفری، مدنی، احوالپرسی و...) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl space-y-3 shadow-xl">
                 <h2 class="font-extrabold text-xs text-gradient">دستیار هوشمند حقوقی SIJT</h2>
@@ -752,7 +752,7 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 8.4.0 (چت‌بات هوشمند کاملاً طبیعی و پویای حقوقی)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 8.5.0 (چت‌بات هوشمند پویا با پاکسازی کامل کش)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -835,7 +835,7 @@
             } catch (e) { return null; }
         }
 
-        // پاکسازی کامل کش و همچنین پاک شدن تاریخچه چت‌بات در SessionStorage
+        // پاکسازی کامل کش و همچنین پاک شدن کامل تاریخچه چت در SessionStorage
         async function clearIndexedDBCache() {
             try {
                 const db = await openIndexedDB();
@@ -844,6 +844,7 @@
                 localStorage.removeItem('mizan_cache');
                 sessionStorage.removeItem('mizan_active_chat');
                 chatConversationHistory = [];
+                renderChatUI();
                 showToast('کش و تاریخچه چت پاک شدند');
                 setTimeout(() => location.reload(), 1000);
             } catch (e) { showToast('خطا در پاکسازی کش', 'error'); }
@@ -1495,7 +1496,7 @@
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
-        // چت‌بات کاملاً طبیعی و پویا (پاسخ به سلام، احوالپرسی و هرگونه سوال حقوقی)
+        // چت‌بات هوشمند کاملاً طبیعی و پویا با پشتیبانی از سوالات خاص قوانین و احوالپرسی
         function renderChatUI() {
             const container = document.getElementById('chatMessagesContainer');
             if(!container) return;
@@ -1549,18 +1550,32 @@
                 }
             } catch(e) {}
 
-            // تحلیل طبیعی و پویای پرسش کاربر (پاسخ به احوالپرسی یا سوالات حقوقی)
+            // تحلیل هوشمند پرسش کاربر متناسب با قوانین کیفری، مدنی و احوالپرسی
             if (!botResponse || botResponse.includes('خطا')) {
                 const p = prompt.toLowerCase();
                 if (p.includes('سلام') || p.includes('درود') || p.includes('خوبید') || p.includes('چطور')) {
                     botResponse = "سلام و درود! من دستیار هوشمند حقوقی SIJT هستم. امروز چه کمکی می‌توانم در خصوص مسائل حقوقی، قراردادها یا قوانین به شما کنم؟";
-                } else if (p.includes('چک') || p.includes('سفته') || p.includes('برات')) {
+                } else if (p.includes('کیفری') || p.includes('مجازات') || p.includes('جرم')) {
+                    if (p.includes('چند ماده') || p.includes('چند تا ماده')) {
+                        botResponse = "قانون مجازات اسلامی (مصوب ۱۳۹۲) دارای ۷۲۸ ماده است که شامل کلیات، حدود، قصاص و دیات می‌شود.";
+                    } else {
+                        botResponse = "پاسخ حقوقی (امور کیفری): جرایم و مجازات‌ها بر اساس قانون مجازات اسلامی تعریف می‌شوند. برای پیگیری شکواییه کیفری باید به دفاتر خدمات الکترونیک قضایی مراجعه کنید.";
+                    }
+                } else if (p.includes('مدنی') || p.includes('قانون مدنی')) {
+                    if (p.includes('چند ماده') || p.includes('چند تا ماده')) {
+                        botResponse = "قانون مدنی جمهوری اسلامی ایران دارای ۱۳۳۵ ماده است که در سه جلد (اموال، اشخاص و ادله اثبات دعوا) تدوین شده است.";
+                    } else {
+                        botResponse = "پاسخ حقوقی (قانون مدنی): قانون مدنی اساس روابط حقوقی، قراردادها، مالکیت، ارث و خانواده در ایران است.";
+                    }
+                } else if (p.includes('آیین دادرسی')) {
+                    botResponse = "قوانین آیین دادرسی (مدنی و کیفری) نحوه رسیدگی دادگاه‌ها و تشریفات قانونی دعاوی را مشخص می‌کنند.";
+                } else if (p.includes('چک') || p.includes('سفته')) {
                     botResponse = "پاسخ حقوقی: طبق قانون جدید چک، صادرکننده و دریافت‌کننده ملزم به ثبت چک در سامانه صیاد هستند. چک برگشتی از طریق اجرای ثبت یا دادگاه حقوقی قابل پیگیری فوری است.";
                 } else if (p.includes('مهریه') || p.includes('طلاق') || p.includes('ازدواج')) {
                     botResponse = "پاسخ حقوقی: مهریه دین ممتاز و عندالمطالبه است. زن حق مطالبه تمام آن را دارد و مرد در صورت عدم تمکن مالی می‌تواند دادخواست اعسار و تقسط تقدیم دادگاه کند.";
                 } else if (p.includes('اجاره') || p.includes('مستأجر') || p.includes('تخلیه')) {
                     botResponse = "پاسخ حقوقی: روابط موجر و مستأجر در مسکن تابع قانون ۷۶ است. با پایان مدت اجاره یا عدم پرداخت اجاره‌بها، موجر می‌تواند تقاضای دستور تخلیه فوری نماید.";
-                } else if (p.includes('ارث') || p.includes('ترکه') || p.includes('ماتم')) {
+                } else if (p.includes('ارث') || p.includes('ترکه')) {
                     botResponse = "پاسخ حقوقی: اموال متوفی پس از کسر دیون، واجبات مالی و وصیت (تا یک‌سوم)، میان وراث مطابق سهم‌الارث قانونی (طبقات سه‌گانه) تقسیم می‌شود.";
                 } else {
                     botResponse = `دستیار حقوقی SIJT: درباره پرسش شما («${prompt}»)، پیشنهاد می‌شود به بخش «مشاور» مینی‌اپ مراجعه کرده و سوال خود را با انتخاب دسته‌بندی ثبت نمایید یا از طریق دفاتر خدمات الکترونیک قضایی پیگیری کنید.`;

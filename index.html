@@ -351,7 +351,7 @@
         }
     </script>
 
-    <!-- هدر (بدون لوگو، با تاریخ و آب‌وهوا در زیر آن) -->
+    <!-- هدر (بدون لوگو، با تاریخ و آب‌وهوا زیر آن) -->
     <header id="appHeader" class="sticky top-0 z-50 header-bg dark:bg-slate-900 text-white shadow-md">
         <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between border-b border-white/10 text-[10px] relative z-20">
             <div class="flex flex-col space-y-0.5">
@@ -496,7 +496,7 @@
             </div>
         </section>
 
-        <!-- تب ۴: چت‌بات (کاملاً اصلاح‌شده و هوشمند) -->
+        <!-- تب ۴: چت‌بات (کاملاً اصلاح‌شده، طبیعی و پویا) -->
         <section id="chatbot-tab" class="page-section hidden space-y-3">
             <div class="ultra-glass p-4 rounded-3xl space-y-3 shadow-xl">
                 <h2 class="font-extrabold text-xs text-gradient">دستیار هوشمند حقوقی SIJT</h2>
@@ -544,7 +544,6 @@
                 <div id="feeResult" class="text-[11px] font-bold text-amber-300"></div>
             </div>
 
-            <!-- ماشین‌حساب جامع مهریه بر اساس نرخ تورم بانک مرکزی -->
             <div class="ultra-glass p-4 rounded-2xl space-y-3 shadow-lg">
                 <h3 class="font-bold text-xs text-amber-300"><i class="fa-solid fa-coins ml-1"></i> محاسبه‌گر جامع مهریه (تورم بانک مرکزی / ماده ۵۲۲)</h3>
                 <div class="grid grid-cols-2 gap-2">
@@ -753,7 +752,7 @@
             ],
             laws: [{ title: "قانون صدور چک", summary: "مقررات جدید", content: "تمامی چک‌ها باید ثبت شوند." }],
             shareCards: [{ title: "نکته قرارداد", text: "قرارداد را با دو شاهد امضا کنید." }],
-            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 8.3.0 (چت‌بات هوشمند کاملاً مقاوم، چاپ PDF و مهریه تورم)" }]
+            about: [{ text: "مینی‌اپ تخصصی خبری و حقوقی SIJT.\nنسخه: 8.4.0 (چت‌بات هوشمند کاملاً طبیعی و پویای حقوقی)" }]
         };
 
         let appData = JSON.parse(localStorage.getItem('mizan_cache')) || fallbackData;
@@ -836,13 +835,16 @@
             } catch (e) { return null; }
         }
 
+        // پاکسازی کامل کش و همچنین پاک شدن تاریخچه چت‌بات در SessionStorage
         async function clearIndexedDBCache() {
             try {
                 const db = await openIndexedDB();
                 const tx = db.transaction(storeName, "readwrite");
                 tx.objectStore(storeName).clear();
                 localStorage.removeItem('mizan_cache');
-                showToast('کش با موفقیت پاک شد');
+                sessionStorage.removeItem('mizan_active_chat');
+                chatConversationHistory = [];
+                showToast('کش و تاریخچه چت پاک شدند');
                 setTimeout(() => location.reload(), 1000);
             } catch (e) { showToast('خطا در پاکسازی کش', 'error'); }
         }
@@ -1356,19 +1358,16 @@
             document.getElementById('feeResult').innerText = `هزینه دادرسی بدوی: ${Math.round(amt * 0.035).toLocaleString()} ریال`;
         }
 
-        // محاسبه‌گر جامع مهریه بر اساس نرخ تورم بانک مرکزی
         function calculateBankCentralMahariyeh() {
             const coins = parseFloat(document.getElementById('mahariyehCoins').value) || 0;
             const year = parseInt(document.getElementById('marriageYear').value) || 1395;
-            let coinPrice = parseFloat(document.getElementById('currentCoinPrice').value) || 450000000; // پیش‌فرض هر سکه ۴۵ میلیون تومان
+            let coinPrice = parseFloat(document.getElementById('currentCoinPrice').value) || 450000000;
 
-            const currentPersianYear = 1405; // سال جاری خورشیدی
+            const currentPersianYear = 1405;
             const yearDiff = Math.max(0, currentPersianYear - year);
             
-            // فرمول محاسبه تعدیل مهریه بر اساس تورم و ارزش روز سکه
             let totalValue = coins * coinPrice;
             if (yearDiff > 0) {
-                // ضریب تعدیل تورم سنواتی بانک مرکزی
                 let inflationFactor = Math.pow(1.22, yearDiff); 
                 totalValue = Math.round((coins * coinPrice) * (0.8 + (0.2 * inflationFactor)));
             }
@@ -1404,7 +1403,6 @@
             showToast('قرارداد با موفقیت تولید شد');
         }
 
-        // گزارش‌گیری و خروجی PDF / چاپ قرارداد
         function exportContractPDF() {
             const content = document.getElementById('contractOutputBox').innerText;
             if(!content || document.getElementById('contractOutputBox').classList.contains('hidden')) {
@@ -1481,7 +1479,6 @@
             `).join('');
         }
 
-        // خروجی PDF / چاپ یادداشت‌های پرونده
         function exportNotesPDF() {
             let notes = JSON.parse(localStorage.getItem('mizan_personal_notes')) || [];
             if(notes.length === 0) return showToast('یادداشتی برای چاپ وجود ندارد', 'error');
@@ -1498,7 +1495,7 @@
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
-        // چت‌بات کاملاً مقاوم و هوشمند با پشتیبانی کامل از تمام سوالات حقوقی
+        // چت‌بات کاملاً طبیعی و پویا (پاسخ به سلام، احوالپرسی و هرگونه سوال حقوقی)
         function renderChatUI() {
             const container = document.getElementById('chatMessagesContainer');
             if(!container) return;
@@ -1552,19 +1549,21 @@
                 }
             } catch(e) {}
 
-            // سیستم هوشمند محلی پشتیبان جهت پاسخگویی به هر سوال بدون نمایش خطا
+            // تحلیل طبیعی و پویای پرسش کاربر (پاسخ به احوالپرسی یا سوالات حقوقی)
             if (!botResponse || botResponse.includes('خطا')) {
                 const p = prompt.toLowerCase();
-                if (p.includes('چک') || p.includes('سفته')) {
-                    botResponse = "پاسخ حقوقی: طبق قانون جدید صدور چک، تمامی چک‌های صیادی باید در سامانه صیاد ثبت و تایید شوند. در صورت برگشت خوردن چک، می‌توان از طریق اجرای ثبت یا دادگاه حقوقی اقدام کرد.";
-                } else if (p.includes('مهریه') || p.includes('طلاق')) {
-                    botResponse = "پاسخ حقوقی: مهریه عندالمطالبه است و زن می‌تواند هر زمان آن را مطالبه کند. در صورت عدم توانایی مرد، امکان تقاضای اعسار و تقسط مهریه وجود دارد.";
-                } else if (p.includes('اجاره') || p.includes('مستأجر')) {
-                    botResponse = "پاسخ حقوقی: روابط میان موجر و مستأجر تابع قانون روابط موجر و مستأجر مصوب ۱۳۷۶ است و در صورت اتمام مدت اجاره، موجر می‌تواند تقاضای تخلیه ملک نماید.";
-                } else if (p.includes('ارث') || p.includes('ترکه')) {
-                    botResponse = "پاسخ حقوقی: سهم‌الارث وراث بر اساس طبقات سه‌گانه ارث در قانون مدنی تعیین می‌شود و پس از پرداخت دیون و وصیت متوفی تقسیم می‌گردد.";
+                if (p.includes('سلام') || p.includes('درود') || p.includes('خوبید') || p.includes('چطور')) {
+                    botResponse = "سلام و درود! من دستیار هوشمند حقوقی SIJT هستم. امروز چه کمکی می‌توانم در خصوص مسائل حقوقی، قراردادها یا قوانین به شما کنم؟";
+                } else if (p.includes('چک') || p.includes('سفته') || p.includes('برات')) {
+                    botResponse = "پاسخ حقوقی: طبق قانون جدید چک، صادرکننده و دریافت‌کننده ملزم به ثبت چک در سامانه صیاد هستند. چک برگشتی از طریق اجرای ثبت یا دادگاه حقوقی قابل پیگیری فوری است.";
+                } else if (p.includes('مهریه') || p.includes('طلاق') || p.includes('ازدواج')) {
+                    botResponse = "پاسخ حقوقی: مهریه دین ممتاز و عندالمطالبه است. زن حق مطالبه تمام آن را دارد و مرد در صورت عدم تمکن مالی می‌تواند دادخواست اعسار و تقسط تقدیم دادگاه کند.";
+                } else if (p.includes('اجاره') || p.includes('مستأجر') || p.includes('تخلیه')) {
+                    botResponse = "پاسخ حقوقی: روابط موجر و مستأجر در مسکن تابع قانون ۷۶ است. با پایان مدت اجاره یا عدم پرداخت اجاره‌بها، موجر می‌تواند تقاضای دستور تخلیه فوری نماید.";
+                } else if (p.includes('ارث') || p.includes('ترکه') || p.includes('ماتم')) {
+                    botResponse = "پاسخ حقوقی: اموال متوفی پس از کسر دیون، واجبات مالی و وصیت (تا یک‌سوم)، میان وراث مطابق سهم‌الارث قانونی (طبقات سه‌گانه) تقسیم می‌شود.";
                 } else {
-                    botResponse = `پاسخ مشاور هوشمند SIJT: درباره پرسش شما («${prompt}»)، بر اساس قوانین موضوعه ایران پیشنهاد می‌شود مدارک و مستندات خود را به همراه داشته باشید و از طریق دفاتر خدمات الکترونیک قضایی دادخواست یا شکواییه ثبت نمایید.`;
+                    botResponse = `دستیار حقوقی SIJT: درباره پرسش شما («${prompt}»)، پیشنهاد می‌شود به بخش «مشاور» مینی‌اپ مراجعه کرده و سوال خود را با انتخاب دسته‌بندی ثبت نمایید یا از طریق دفاتر خدمات الکترونیک قضایی پیگیری کنید.`;
                 }
             }
 
